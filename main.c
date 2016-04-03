@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/03 17:15:45 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/03 17:57:17 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,7 @@ int		main(void)
 	draw(&map);
 	mlx_key_hook(map.win, key_hook, &map);
 	mlx_hook(map.win, 2, (1L << 0), key_press, &map);
+	mlx_hook(map.win, 6, (1L << 6), motion_notify, &map);
 	mlx_loop_hook(map.mlx, loop_hook, &map);
 	mlx_loop(map.mlx);
 }
