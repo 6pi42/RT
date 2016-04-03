@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/03 13:51:07 by cboyer           ###   ########.fr       */
+/*   Updated: 2016/04/03 15:50:40 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@ int		main(void)
 	sphere[0].color.z = 0;
 	sphere[0].color.w = 0;
 	sphere[0].radius.x = 25.0;
+	sphere[0].type.x = 1;
 
 	sphere[1].pos.x = 40.0;
 	sphere[1].pos.y = 0.0;
@@ -140,6 +141,7 @@ int		main(void)
 	sphere[1].color.z = 255;
 	sphere[1].color.w = 0;
 	sphere[1].radius.x = 35.0;
+	sphere[1].type.x = 1;
 
 
 	map.scene.nb_sphere = 2;
