@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/03 17:08:05 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/03 17:50:00 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define RT_H
 # include <OpenCL/cl.h>
 # include <mlx.h>
+# include <math.h>
 # include <fcntl.h>
 # include <unistd.h>
 # include "libft.h"
@@ -59,6 +60,14 @@ typedef struct	s_key
 	int			right;
 	int			mleft;
 	int			mright;
+	int			num_8;
+	int			num_4;
+	int			num_2;
+	int			num_6;
+	int			mx;
+	int			my;
+	double		theta;
+	double		phi;
 }				t_key;
 
 typedef struct	s_env
@@ -94,6 +103,8 @@ t_prog	get_prog(char *file_name);
 int		key_hook(int keycode, t_map *map);
 int		loop_hook(t_map *map);
 void	move(t_map *map);
+void	rotate(t_map *map);
 void	init_key(t_map *map);
 int		key_press(int keycode, t_map *map);
+int		motion_notify(int x, int y, t_map *map);
 #endif

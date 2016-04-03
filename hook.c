@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/02 15:34:48 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/03 11:13:10 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/03 17:57:15 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,23 @@ void	init_key(t_map *map)
 	map->key.right = 0;
 	map->key.mleft = 0;
 	map->key.mright = 0;
+	map->key.mx = 0;
+	map->key.my = 0;
+	map->key.num_8 = 0;
+	map->key.num_4 = 0;
+	map->key.num_2 = 0;
+	map->key.num_6 = 0;
+	map->key.phi = 0.0;
+	map->key.theta = 0.0;
+}
+
+int		motion_notify(int x, int y, t_map *map)
+{
+	if (x > 0 && y > 0 && x < map->height && y < map->width)
+	{
+		(void)map;
+	}
+	return (0);
 }
 
 int		key_press(int keycode, t_map *map)
@@ -36,6 +53,15 @@ int		key_press(int keycode, t_map *map)
 		map->key.right = 1;
 	if (keycode == 2)
 		map->key.left = 1;
+	if (keycode == 91)
+		map->key.num_8 = 1;
+	if (keycode == 86)
+		map->key.num_4 = 1;
+	if (keycode == 84)
+		map->key.num_2 = 1;
+	if (keycode == 88)
+		map->key.num_6 = 1;
+
 	return (0);
 }
 
@@ -65,5 +91,14 @@ int		key_hook(int keycode, t_map *map)
 		map->key.right = 0;
 	if (keycode == 2)
 		map->key.left = 0;
+	if (keycode == 91)
+		map->key.num_8 = 0;
+	if (keycode == 86)
+		map->key.num_4 = 0;
+	if (keycode == 84)
+		map->key.num_2 = 0;
+	if (keycode == 88)
+		map->key.num_6 = 0;
+
 	return (0);
 }
