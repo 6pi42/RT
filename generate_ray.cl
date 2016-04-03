@@ -22,6 +22,11 @@ static float4 vec_sub(float4 a, float4 b)
 	return (c);
 }
 
+static float to_rad(float a)
+{
+		return (a * M_PI / 180.0);
+}
+
 static float intersect_sph(t_ray *ray, t_sphere sph)
 {
 	//printf("sphere pos %f %f %f\n", sph->pos.x, sph->pos.y, sph->pos.z);
@@ -199,18 +204,25 @@ __kernel void generate_ray(__global float4* data, uint height, uint width,
 							__global t_sphere* plans, uint num_plans)
 {
 	t_ray r;
+	t_ray tmp;
 	float4 color;
 	float w = (float)width;
 	float h = (float)height;
 	float global_id = (float)get_global_id(0);
-	r.origin.x = 0.0;
-	r.origin.y = 30.0;
-	r.origin.z = 200.0;
-	r.origin.w = 0.0;
+	r.origin = init_float4(cam->origin.x, cam->origin.y, cam->origin.z, 0.0);
 	r.dir.x = (float)(fmod(global_id, w) - (w / 2.0));
 	r.dir.y = (float)(h - ((global_id) / w)) - (h / 2.0);
 	r.dir.z = (float)(-(w / (2.0 * tan((50.0 / 2.0) * M_PI / 180.0))));
 	r.dir.w = 0.0;
+	tmp = ray;
+	ray.dir.x = tmp.origin.x * cos(to_rad(cam->dir.z)) - tmp.origin.y * sin(to_rad(cam->dir.z));
+	ray.dir.y = tmp.origin.x * sin(to_rad(cam->dir..z)) + tmp.origin.y * cos(to_rad(cam->dir.z));
+	tmp = ray;
+	ray.dir.y = tmp.origin.y * cos(to_rad(cam->dir.x)) - tmp.origin.z * sin(to_rad(cam->dir.x));
+	ray.dir.z = tmp.origin.y * sin(to_rad(cam->dir.x)) + tmp.origin.z * cos(to_rad(cam->dir.x));
+	tmp = ray;
+	ray.dir.z = tmp.origin.z * cos(to_rad(cam->dir.y)) - tmp.origin.x * sin(to_rad(cam->dir.y));
+	ray.dir.x = tmp.origin.z * sin(to_rad(cam->dir.y)) + tmp.origin.x * cos(to_rad(cam->dir.y));
 	r.dir = normalize(r.dir);
 	color = raytrace(&r, spheres, num_spheres, plans, num_plans);
 	data[get_global_id(0)] = color;
