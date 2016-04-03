@@ -49,6 +49,18 @@ static float intersect_sph(t_ray *ray, t_sphere sph)
 		return ((float)-1.0);
 }
 
+static float intersect_plan(t_ray *ray, t_sphere obj)
+{
+	float	t;
+
+	t = -(((obj.radius.x * (ray->origin.x - obj.pos.x)) +
+			(obj.radius.y * (ray->origin.y - obj.pos.y)) +
+			(obj.radius.z * (ray->origin.z - obj.pos.z)))
+			/ ((obj.radius.x * ray->dir.x) + (obj.radius.y * ray->dir.y) +
+			(obj.radius.z * ray->dir.z)));
+	return (t < 0.0 ? -1.0 : t);
+}
+
 static float4 init_float4(float a, float b, float c, float d)
 {
 	float4 z;
@@ -74,8 +86,7 @@ static t_sphere cpy_struct(t_sphere sph)
 static	float4 get_intersection(t_ray *ray, float t1)
 {
 	float4 inter;
-	
-	//printf("t1: %f\n", t1);
+
 	inter.x = ray->origin.x + (ray->dir.x * t1);
 	inter.y = ray->origin.y + (ray->dir.y * t1);
 	inter.z = ray->origin.z + (ray->dir.z * t1);
@@ -95,12 +106,26 @@ static float4 get_normal_sphere(t_sphere obj, float4 inter)
 	return(norm);
 }
 
+static float4 get_normal_plan(t_sphere obj)
+{
+	float4 norm;
+
+	norm.x = obj.radius.x;
+	norm.y = obj.radius.y;
+	norm.z = obj.radius.z;
+	norm.w = 0.0;
+	norm = normalize(norm);
+	return(norm);
+}
+
 static float4 get_normal(t_sphere obj, float4 inter)
 {
 	float4 norm;
 
 	if (obj.type.x == 1)
 		norm = get_normal_sphere(obj, inter);
+	if (obj.type.x == 2)
+		norm = get_normal_plan(obj);
 	return (norm);
 }
 
@@ -110,16 +135,12 @@ static float4 diffuse_lighting(float4 spot, float4 norm, float4 inter,
 	float4	light;
 	float	angle;
 
-	//printf("spot: %f %f %f %f\n", spot.x, spot.y, spot.z, spot.w);
-	//printf("inter: %f %f %f %f\n", inter.x, inter.y, inter.z, inter.w);
 	light.x = spot.x - inter.x;
 	light.y = spot.y - inter.y;
 	light.z = spot.z - inter.z;
 	light.w = 0;
 	light = normalize(light);
-	//printf("light: %f %f %f %f\n", light.x, light.y, light.z, light.w);
 	angle = fmax((float)0.0, (float)dot(light, norm));;
-	//printf("je suis angle: %f\n", angle);
 	color.x *= angle;
 	color.y *= angle;
 	color.z *= angle;
@@ -130,7 +151,8 @@ static float4 diffuse_lighting(float4 spot, float4 norm, float4 inter,
 	return (color);
 }
 
-static float4 raytrace(t_ray *ray, __global t_sphere *sph, uint num_spheres)
+static float4 raytrace(t_ray *ray, __global t_sphere *sph, uint num_spheres,
+									__global t_sphere *plan, uint num_plans)
 {
 	float4 		color;
 	float		t1;
@@ -156,6 +178,18 @@ static float4 raytrace(t_ray *ray, __global t_sphere *sph, uint num_spheres)
 		}
 		i++;
 	}
+	i = 0;
+	while (i < num_plans)
+	{
+		tmp = intersect_plan(ray, plan[i]);
+		if (tmp != -1.0 && (t1 == -1.0 || tmp < t1))
+		{
+			t1 = tmp;
+			obj = cpy_struct(plan[i]);
+			color = plan[i].color;
+		}
+		i++;
+	}
 	if (t1 != -1.0)
 	{
 		inter = get_intersection(ray, t1);
@@ -166,7 +200,9 @@ static float4 raytrace(t_ray *ray, __global t_sphere *sph, uint num_spheres)
 }
 
 __kernel void generate_ray(__global float4* data, uint height, uint width,
-							__global t_sphere* spheres, uint num_spheres) {
+							__global t_sphere* spheres, uint num_spheres,
+							__global t_sphere* plans, uint num_plans)
+{
 	t_ray r;
 	float4 color;
 	float w = (float)width;
@@ -176,12 +212,11 @@ __kernel void generate_ray(__global float4* data, uint height, uint width,
 	r.origin.y = 0.0;
 	r.origin.z = 200.0;
 	r.origin.w = 0.0;
-	//printf("");
 	r.dir.x = (float)(fmod(global_id, w) - (w / 2.0));
 	r.dir.y = (float)(h - ((global_id) / w)) - (h / 2.0);
 	r.dir.z = (float)(-(w / (2.0 * tan((50.0 / 2.0) * M_PI / 180.0))));
 	r.dir.w = 0.0;
 	r.dir = normalize(r.dir);
-	color = raytrace(&r, spheres, num_spheres);
+	color = raytrace(&r, spheres, num_spheres, plans, num_plans);
 	data[get_global_id(0)] = color;
 }
