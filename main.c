@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/03 12:24:41 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/03 13:51:07 by cboyer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ int		main(void)
 	sphere[0].color.w = 0;
 	sphere[0].radius.x = 25.0;
 
-	sphere[1].pos.x = 30.0;
+	sphere[1].pos.x = 40.0;
 	sphere[1].pos.y = 0.0;
 	sphere[1].pos.z = 0.0;
 	sphere[1].pos.w = 4.0;
@@ -148,7 +148,7 @@ int		main(void)
 	init_key(&map);
 	map.height = 800;
 	map.width = 1000;
-	map.win = mlx_new_window(map.mlx, map.width, map.height, "RT IN RT");	
+	map.win = mlx_new_window(map.mlx, map.width, map.height, "RT IN RT");
 	prog = get_prog("generate_ray.cl");
 	ocl_init(&map.env, prog);
 	raytracer(&map);
