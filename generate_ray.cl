@@ -180,7 +180,7 @@ static float4	specular(float4 color, float4 lightcolor, float coef)
 }
 
 static float4	spec_lighting(float4 spot, float4 norm, float4 inter,
-								float4 color,  t_ray *ray)
+								float4 color,  t_ray ray)
 {
 	float4	eye;
 	float4	light;
@@ -189,7 +189,7 @@ static float4	spec_lighting(float4 spot, float4 norm, float4 inter,
 	float4	lightcolor;
 
 	lightcolor = init_float4(255.0, 255.0, 255.0, 0.0);
-	eye = vec_sub(ray->origin, inter);
+	eye = vec_sub(ray.origin, inter);
 	eye = normalize(eye);
 	light = vec_sub(spot, inter);
 	light = normalize(light);
@@ -256,7 +256,7 @@ static float4 raytrace(t_ray *ray, __global t_sphere *sph, uint num_spheres,
 		inter = get_intersection(ray, t1);
 		norm = get_normal(obj, inter);
 		if (obj.type.x != 2)
-			color = spec_lighting(spot, norm, inter, color, ray);
+			color = spec_lighting(spot, norm, inter, color, *ray);
 		color = diffuse_lighting(spot, norm, inter, color);
 	}
 	return (color);
@@ -274,7 +274,20 @@ __kernel void generate_ray(__global float4* data, uint height, uint width,
 	float h = (float)height;
 	float global_id = (float)get_global_id(0);
 	r.origin = init_float4(cam->origin.x, cam->origin.y, cam->origin.z, 0.0);
-	r.dir = init_float4(cam->dir.x, cam->dir.origin.y, cam->dir.z, 0.0);
+	r.dir.x = (float)(fmod(global_id, w) - (w / 2.0));
+	r.dir.y = (float)(h - ((global_id) / w)) - (h / 2.0);
+	r.dir.z = (float)(-(w / (2.0 * tan((50.0 / 2.0) * M_PI / 180.0))));
+	r.dir.w = 0.0;
+	tmp = r;
+	r.dir.x = tmp.dir.x * cos(to_rad(cam->dir.z)) - tmp.dir.y * sin(to_rad(cam->dir.z));
+	r.dir.y = tmp.dir.x * sin(to_rad(cam->dir.z)) + tmp.dir.y * cos(to_rad(cam->dir.z));
+	tmp = r;
+	r.dir.y = tmp.dir.y * cos(to_rad(cam->dir.x)) - tmp.dir.z * sin(to_rad(cam->dir.x));
+	r.dir.z = tmp.dir.y * sin(to_rad(cam->dir.x)) + tmp.dir.z * cos(to_rad(cam->dir.x));
+	tmp = r;
+	r.dir.z = tmp.dir.z * cos(to_rad(cam->dir.y)) - tmp.dir.x * sin(to_rad(cam->dir.y));
+	r.dir.x = tmp.dir.z * sin(to_rad(cam->dir.y)) + tmp.dir.x * cos(to_rad(cam->dir.y));
+	r.dir = normalize(r.dir);
 	color = raytrace(&r, spheres, num_spheres, plans, num_plans);
 	data[get_global_id(0)] = color;
 }
