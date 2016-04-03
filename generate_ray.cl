@@ -51,14 +51,8 @@ static float intersect_sph(t_ray *ray, t_sphere sph)
 
 static float intersect_plan(t_ray *ray, t_sphere obj)
 {
-	float	t;
-
-	t = -(((obj.radius.x * (ray->origin.x - obj.pos.x)) +
-			(obj.radius.y * (ray->origin.y - obj.pos.y)) +
-			(obj.radius.z * (ray->origin.z - obj.pos.z)))
-			/ ((obj.radius.x * ray->dir.x) + (obj.radius.y * ray->dir.y) +
-			(obj.radius.z * ray->dir.z)));
-	return (t < 0.0 ? -1.0 : t);
+	float t1 = -(dot(obj.radius, vec_sub(ray->origin, obj.pos)) / dot(obj.radius, ray->dir));
+	return (t1 < 0.0 ? -1.0 : t1);
 }
 
 static float4 init_float4(float a, float b, float c, float d)
@@ -77,7 +71,7 @@ static t_sphere cpy_struct(t_sphere sph)
 	t_sphere	obj;
 
 	obj.pos = init_float4(sph.pos.x, sph.pos.y, sph.pos.z, 0.0);
-	obj.radius = init_float4(sph.radius.x, 0.0, 0.0, 0.0);
+	obj.radius = init_float4(sph.radius.x, sph.radius.y, sph.radius.z, 0.0);
 	obj.color = init_float4(sph.color.x, sph.color.y, sph.color.z, 0.0);
 	obj.type = init_float4(sph.type.x, 0.0, 0.0, 0.0);
 	return (obj);
@@ -200,6 +194,7 @@ static float4 raytrace(t_ray *ray, __global t_sphere *sph, uint num_spheres,
 }
 
 __kernel void generate_ray(__global float4* data, uint height, uint width,
+							__global t_ray* cam,
 							__global t_sphere* spheres, uint num_spheres,
 							__global t_sphere* plans, uint num_plans)
 {
@@ -209,7 +204,7 @@ __kernel void generate_ray(__global float4* data, uint height, uint width,
 	float h = (float)height;
 	float global_id = (float)get_global_id(0);
 	r.origin.x = 0.0;
-	r.origin.y = 0.0;
+	r.origin.y = 30.0;
 	r.origin.z = 200.0;
 	r.origin.w = 0.0;
 	r.dir.x = (float)(fmod(global_id, w) - (w / 2.0));
