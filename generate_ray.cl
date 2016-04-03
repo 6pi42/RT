@@ -22,6 +22,17 @@ static float4 vec_sub(float4 a, float4 b)
 	return (c);
 }
 
+static float4 add_vec(float4 a, float4 b)
+{
+	float4 c;
+
+	c.x = a.x + b.x;
+	c.y = a.y + b.y;
+	c.z = a.z + b.z;
+	c.w = 0.0;
+	return (c);
+}
+
 static float to_rad(float a)
 {
 		return (a * M_PI / 180.0);
@@ -150,6 +161,78 @@ static float4 diffuse_lighting(float4 spot, float4 norm, float4 inter,
 	return (color);
 }
 
+static float4	specular(float4 color, float4 lightcolor, float coef)
+{
+	lightcolor.x *= coef;
+	lightcolor.y *= coef;
+	lightcolor.z *= coef;
+	lightcolor.x = lightcolor.x > 0xFF ? 0xFF : lightcolor.x;
+	lightcolor.y = lightcolor.y > 0xFF ? 0xFF : lightcolor.y;
+	lightcolor.z = lightcolor.z > 0xFF ? 0xFF : lightcolor.z;
+	color.x = color.x + lightcolor.x;
+	color.y = color.y + lightcolor.y;
+	color.z = color.z + lightcolor.z;
+	color.x = color.x > 0xFF ? 0xFF : color.x;
+	color.y = color.y > 0xFF ? 0xFF : color.y;
+	color.z = color.z > 0xFF ? 0xFF : color.z;
+	color.w = 0.0;
+	return (color);
+}
+
+static float4	spec_lighting(float4 spot, float4 norm, float4 inter,
+								float4 color,  t_ray *ray)
+{
+	float4	eye;
+	float4	light;
+	float4	halfvec;
+	float	coef;
+	float4	lightcolor;
+
+	lightcolor = init_float4(255.0, 255.0, 255.0, 0.0);
+	eye = vec_sub(ray->origin, inter);
+	eye = normalize(eye);
+	light = vec_sub(spot, inter);
+	light = normalize(light);
+	halfvec = add_vec(eye, light);
+	coef = fmax((float)0.0, (float)dot(halfvec, norm));
+	coef = pow((float)coef, (float)16.0);
+	return (specular(color, lightcolor, coef));
+
+}
+
+static t_sphere intersect_all(t_ray *ray, __global t_sphere *sph, uint num_spheres,
+										__global t_sphere *plan, uint num_plans,
+										float *t1)
+{
+	uint i;
+	t_sphere obj;
+	float	tmp;
+
+	i = 0;
+	while (i < num_spheres)
+	{
+		tmp = intersect_sph(ray, sph[i]);
+		if (tmp != -1.0 && (*t1 == -1.0 || tmp < *t1))
+		{
+			*t1 = tmp;
+			obj = cpy_struct(sph[i]);
+		}
+		i++;
+	}
+	i = 0;
+	while (i < num_plans)
+	{
+		tmp = intersect_plan(ray, plan[i]);
+		if (tmp != -1.0 && (*t1 == -1.0 || tmp < *t1))
+		{
+			*t1 = tmp;
+			obj = cpy_struct(plan[i]);
+		}
+		i++;
+	}
+	return (obj);
+}
+
 static float4 raytrace(t_ray *ray, __global t_sphere *sph, uint num_spheres,
 									__global t_sphere *plan, uint num_plans)
 {
@@ -166,33 +249,14 @@ static float4 raytrace(t_ray *ray, __global t_sphere *sph, uint num_spheres,
 	i = 0;
 	t1 = -1.0;
 	color = init_float4(0.0, 0.0, 0.0, 0.0);
-	while (i < num_spheres)
+	obj = intersect_all(ray, sph, num_spheres, plan, num_plans, &t1);
+	if (t1 > 0)
 	{
-		tmp = intersect_sph(ray, sph[i]);
-		if (tmp != -1.0 && (t1 == -1.0 || tmp < t1))
-		{
-			t1 = tmp;
-			obj = cpy_struct(sph[i]);
-			color = sph[i].color;
-		}
-		i++;
-	}
-	i = 0;
-	while (i < num_plans)
-	{
-		tmp = intersect_plan(ray, plan[i]);
-		if (tmp != -1.0 && (t1 == -1.0 || tmp < t1))
-		{
-			t1 = tmp;
-			obj = cpy_struct(plan[i]);
-			color = plan[i].color;
-		}
-		i++;
-	}
-	if (t1 != -1.0)
-	{
+		color = obj.color;
 		inter = get_intersection(ray, t1);
 		norm = get_normal(obj, inter);
+		if (obj.type.x != 2)
+			color = spec_lighting(spot, norm, inter, color, ray);
 		color = diffuse_lighting(spot, norm, inter, color);
 	}
 	return (color);
@@ -210,20 +274,7 @@ __kernel void generate_ray(__global float4* data, uint height, uint width,
 	float h = (float)height;
 	float global_id = (float)get_global_id(0);
 	r.origin = init_float4(cam->origin.x, cam->origin.y, cam->origin.z, 0.0);
-	r.dir.x = (float)(fmod(global_id, w) - (w / 2.0));
-	r.dir.y = (float)(h - ((global_id) / w)) - (h / 2.0);
-	r.dir.z = (float)(-(w / (2.0 * tan((50.0 / 2.0) * M_PI / 180.0))));
-	r.dir.w = 0.0;
-	tmp = r;
-	r.dir.x = tmp.dir.x * cos(to_rad(cam->dir.z)) - tmp.dir.y * sin(to_rad(cam->dir.z));
-	r.dir.y = tmp.dir.x * sin(to_rad(cam->dir.z)) + tmp.dir.y * cos(to_rad(cam->dir.z));
-	tmp = r;
-	r.dir.y = tmp.dir.y * cos(to_rad(cam->dir.x)) - tmp.dir.z * sin(to_rad(cam->dir.x));
-	r.dir.z = tmp.dir.y * sin(to_rad(cam->dir.x)) + tmp.dir.z * cos(to_rad(cam->dir.x));
-	tmp = r;
-	r.dir.z = tmp.dir.z * cos(to_rad(cam->dir.y)) - tmp.dir.x * sin(to_rad(cam->dir.y));
-	r.dir.x = tmp.dir.z * sin(to_rad(cam->dir.y)) + tmp.dir.x * cos(to_rad(cam->dir.y));
-	r.dir = normalize(r.dir);
+	r.dir = init_float4(cam->dir.x, cam->dir.origin.y, cam->dir.z, 0.0);
 	color = raytrace(&r, spheres, num_spheres, plans, num_plans);
 	data[get_global_id(0)] = color;
 }
