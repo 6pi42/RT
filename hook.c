@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/02 15:34:48 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/03 17:57:15 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/05 13:47:03 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,9 @@ int		motion_notify(int x, int y, t_map *map)
 
 int		key_press(int keycode, t_map *map)
 {
-	if (keycode == 124)
+	if (keycode == 126)
 		map->key.mleft = 1;
-	if (keycode == 123)
+	if (keycode == 125)
 		map->key.mright = 1;
 	if (keycode == 13)
 		map->key.up = 1;
@@ -79,9 +79,9 @@ int		key_hook(int keycode, t_map *map)
 		mlx_destroy_window(map->mlx, map->win);
 		exit(0);
 	}
-	if (keycode == 124)
+	if (keycode == 126)
 		map->key.mleft = 0;
-	if (keycode == 123)
+	if (keycode == 125)
 		map->key.mright = 0;
 	if (keycode == 13)
 		map->key.up = 0;
