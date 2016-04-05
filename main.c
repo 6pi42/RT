@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/05 13:45:14 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/05 14:35:17 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ cl_mem mem_sphere;
 cl_mem mem_plane;
 cl_mem mem_cyl;
 cl_mem mem_cone;
+cl_mem mem_ellips;
 
 void	update(t_map *map)
 {
@@ -49,6 +50,9 @@ void	update(t_map *map)
 	clEnqueueWriteBuffer(env.cmds, mem_cone, CL_TRUE, 0,
 			map->scene.nb_cone * sizeof(t_shape),
 			map->scene.cone, 0, NULL, NULL);
+	clEnqueueWriteBuffer(env.cmds, mem_ellips, CL_TRUE, 0,
+			map->scene.nb_ellips * sizeof(t_shape),
+			map->scene.ellips, 0, NULL, NULL);	
 	clEnqueueWriteBuffer(env.cmds, mem_camera, CL_TRUE, 0, sizeof(t_ray),
 			map->scene.cam, 0, NULL, NULL);		
 	clEnqueueNDRangeKernel(env.cmds, env.kernel, 1, NULL, &work_size, NULL,
@@ -81,6 +85,8 @@ void	raytracer(t_map *map)
 			map->scene.nb_cyl * sizeof(t_shape), NULL, &err);
 	mem_cone = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
 			map->scene.nb_cone * sizeof(t_shape), NULL, &err);
+	mem_ellips = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
+			map->scene.nb_ellips * sizeof(t_shape), NULL, &err);
 	mem_camera = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
 			sizeof(t_ray), NULL, &err);
 	output = clCreateBuffer(env.context, CL_MEM_WRITE_ONLY,
@@ -97,6 +103,8 @@ void	raytracer(t_map *map)
 	err |= clSetKernelArg(env.kernel, 9, sizeof(cl_uint),&map->scene.nb_cyl);
 	err |= clSetKernelArg(env.kernel, 10, sizeof(cl_mem),&mem_cone);
 	err |= clSetKernelArg(env.kernel, 11, sizeof(cl_uint),&map->scene.nb_cone);
+	err |= clSetKernelArg(env.kernel, 12, sizeof(cl_mem),&mem_ellips);
+	err |= clSetKernelArg(env.kernel, 13, sizeof(cl_uint),&map->scene.nb_ellips);
 	if (err < 0)
 		ft_putstr("Failed to create kernel argument");
 }
@@ -139,6 +147,7 @@ int		main(void)
 	t_shape		*plan;
 	t_shape		*cyl;
 	t_shape		*cone;
+	t_shape		*ellips;
 	t_ray		cam;
 
 	map.scene.nb_sphere = 2;
@@ -231,7 +240,29 @@ int		main(void)
 	cone[0].axis.z = 0.0;
 	cone[0].axis.w = 0.0;
 	vec_normalize(&(cone[0].axis));
+	ellips = (t_shape*)malloc(sizeof(t_shape) * 1);
+/*
+	map.scene.nb_ellips = 1;
 
+	ellips = (t_shape*)malloc(sizeof(t_shape) * map.scene.nb_ellips);
+	ellips[0].pos.x = -50.0;
+	ellips[0].pos.y = 20.0;
+	ellips[0].pos.z = 0.0;
+	ellips[0].pos.w = 0.0;
+	ellips[0].color.x = 255;
+	ellips[0].color.y = 0;
+	ellips[0].color.z = 255;
+	ellips[0].color.w = 0;
+	ellips[0].radius.x = 10.0;
+	ellips[0].radius.y = 30.0;
+	ellips[0].radius.z = 15.0;
+	ellips[0].type.x = 5;
+	ellips[0].axis.x = 1.0;
+	ellips[0].axis.y = 1.0;
+	ellips[0].axis.z = 0.0;
+	ellips[0].axis.w = 0.0;
+	vec_normalize(&(ellips[0].axis));
+*/
 
 	cam.origin.x = 0.0;
 	cam.origin.y = 30.0;
@@ -244,6 +275,7 @@ int		main(void)
 	map.scene.plan = plan;
 	map.scene.cyl = cyl;
 	map.scene.cone = cone;
+	map.scene.ellips = ellips;
 	map.scene.cam = &cam;
 	map.mlx = mlx_init();
 	init_key(&map);

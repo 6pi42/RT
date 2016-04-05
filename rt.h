@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/05 13:47:02 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/05 14:35:19 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ typedef struct	s_scene
 	t_shape		*cyl;
 	int			nb_cone;
 	t_shape		*cone;
+	int			nb_ellips;
+	t_shape		*ellips;
 }				t_scene;
 
 typedef struct	s_img
