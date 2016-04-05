@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/05 11:01:03 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/05 11:37:07 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ cl_mem mem_camera;
 cl_mem mem_sphere;
 cl_mem mem_plane;
 cl_mem mem_cyl;
+cl_mem mem_cone;
 
 void	update(t_map *map)
 {
@@ -37,14 +38,17 @@ void	update(t_map *map)
 	env = map->env;
 	work_size = map->width * map->height;
 	clEnqueueWriteBuffer(env.cmds, mem_sphere, CL_TRUE, 0,
-			map->scene.nb_sphere *sizeof(t_sphere),
+			map->scene.nb_sphere *sizeof(t_shape),
 			map->scene.sphere, 0, NULL, NULL);
 	clEnqueueWriteBuffer(env.cmds, mem_plane, CL_TRUE, 0,
-			map->scene.nb_plan * sizeof(t_sphere),
+			map->scene.nb_plan * sizeof(t_shape),
 			map->scene.plan, 0, NULL, NULL);	
 	clEnqueueWriteBuffer(env.cmds, mem_cyl, CL_TRUE, 0,
-			map->scene.nb_cyl * sizeof(t_cyl),
+			map->scene.nb_cyl * sizeof(t_shape),
 			map->scene.cyl, 0, NULL, NULL);	
+	clEnqueueWriteBuffer(env.cmds, mem_cone, CL_TRUE, 0,
+			map->scene.nb_cone * sizeof(t_shape),
+			map->scene.cone, 0, NULL, NULL);
 	clEnqueueWriteBuffer(env.cmds, mem_camera, CL_TRUE, 0, sizeof(t_ray),
 			map->scene.cam, 0, NULL, NULL);		
 	clEnqueueNDRangeKernel(env.cmds, env.kernel, 1, NULL, &work_size, NULL,
@@ -70,13 +74,15 @@ void	raytracer(t_map *map)
 	env = map->env;
 	work_size = map->width * map->height;
 	mem_sphere = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
-			map->scene.nb_sphere * sizeof(t_sphere), NULL, &err);
+			map->scene.nb_sphere * sizeof(t_shape), NULL, &err);
 	mem_plane = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
-			map->scene.nb_plan * sizeof(t_sphere), NULL, &err);
+			map->scene.nb_plan * sizeof(t_shape), NULL, &err);
 	mem_cyl = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
-			map->scene.nb_cyl * sizeof(t_cyl), NULL, &err);
+			map->scene.nb_cyl * sizeof(t_shape), NULL, &err);
+	mem_cone = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
+			map->scene.nb_cone * sizeof(t_shape), NULL, &err);
 	mem_camera = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
-			sizeof(t_ray), NULL, &err);	
+			sizeof(t_ray), NULL, &err);
 	output = clCreateBuffer(env.context, CL_MEM_WRITE_ONLY,
 			map->width * map->height * sizeof(cl_float4), NULL, &err);
 	err = clSetKernelArg(env.kernel, 0, sizeof(cl_mem), &output);
@@ -89,6 +95,8 @@ void	raytracer(t_map *map)
 	err |= clSetKernelArg(env.kernel, 7, sizeof(cl_uint),&map->scene.nb_plan);
 	err |= clSetKernelArg(env.kernel, 8, sizeof(cl_mem),&mem_cyl);
 	err |= clSetKernelArg(env.kernel, 9, sizeof(cl_uint),&map->scene.nb_cyl);
+	err |= clSetKernelArg(env.kernel, 10, sizeof(cl_mem),&mem_cone);
+	err |= clSetKernelArg(env.kernel, 11, sizeof(cl_uint),&map->scene.nb_cone);
 	if (err < 0)
 		ft_putstr("Failed to create kernel argument");
 }
@@ -113,17 +121,28 @@ void	draw(t_map *map)
 
 }
 
+void	vec_normalize(cl_float4 *vec)
+{
+	double tmp;
+
+	tmp = 1.0 / sqrt((vec->x * vec->x + vec->y * vec->y + vec->z * vec->z));
+	vec->x *= tmp;
+	vec->y *= tmp;
+	vec->z *= tmp;
+	
+}
 int		main(void)
 {
 	t_map		map;
 	t_prog		prog;
-	t_sphere	*sphere;
-	t_sphere	*plan;
-	t_sphere	*cyl;
+	t_shape		*sphere;
+	t_shape		*plan;
+	t_shape		*cyl;
+	t_shape		*cone;
 	t_ray		cam;
 
 	map.scene.nb_sphere = 2;
-	sphere = (t_sphere*)malloc(sizeof(t_sphere) * map.scene.nb_sphere);
+	sphere = (t_shape*)malloc(sizeof(t_shape) * map.scene.nb_sphere);
 	sphere[0].pos.x = 0.0;
 	sphere[0].pos.y = 0.0;
 	sphere[0].pos.z = 0.0;
@@ -148,7 +167,7 @@ int		main(void)
 
 
 	map.scene.nb_plan = 2;
-	plan = (t_sphere*)malloc(sizeof(t_sphere) * map.scene.nb_plan);
+	plan = (t_shape*)malloc(sizeof(t_shape) * map.scene.nb_plan);
 	plan[0].pos.x = 0.0;
 	plan[0].pos.y = 0.0;
 	plan[0].pos.z = 0.0;
@@ -178,7 +197,7 @@ int		main(void)
 	plan[1].type.x = 2;
 
 	map.scene.nb_cyl = 1;
-	cyl = (t_sphere*)malloc(sizeof(t_sphere) * map.scene.nb_cyl);
+	cyl = (t_shape*)malloc(sizeof(t_shape) * map.scene.nb_cyl);
 	cyl[0].pos.x = 0.0;
 	cyl[0].pos.y = 0.0;
 	cyl[0].pos.z = 0.0;
@@ -189,10 +208,30 @@ int		main(void)
 	cyl[0].color.w = 0;
 	cyl[0].radius.x = 15.0;
 	cyl[0].type.x = 3;
-	cyl[0].axis.x = 0.0;
+	cyl[0].axis.x = -0.5;
 	cyl[0].axis.y = 1.0;
 	cyl[0].axis.z = 0.0;
 	cyl[0].axis.w = 0.0;
+	vec_normalize(&(cyl[0].axis));
+
+	map.scene.nb_cone = 1;
+	cone = (t_shape*)malloc(sizeof(t_shape) * map.scene.nb_cone);
+	cone[0].pos.x = -50.0;
+	cone[0].pos.y = 20.0;
+	cone[0].pos.z = 0.0;
+	cone[0].pos.w = 0.0;
+	cone[0].color.x = 255;
+	cone[0].color.y = 0;
+	cone[0].color.z = 255;
+	cone[0].color.w = 0;
+	cone[0].radius.x = 0.5;
+	cone[0].type.x = 4;
+	cone[0].axis.x = 1.0;
+	cone[0].axis.y = 1.0;
+	cone[0].axis.z = 0.0;
+	cone[0].axis.w = 0.0;
+	vec_normalize(&(cone[0].axis));
+
 
 	cam.origin.x = 0.0;
 	cam.origin.y = 30.0;
@@ -204,11 +243,12 @@ int		main(void)
 	map.scene.sphere = sphere;
 	map.scene.plan = plan;
 	map.scene.cyl = cyl;
+	map.scene.cone = cone;
 	map.scene.cam = &cam;
 	map.mlx = mlx_init();
 	init_key(&map);
-	map.height = 800;
-	map.width = 1000;
+	map.height = 720;
+	map.width = 900;
 	map.win = mlx_new_window(map.mlx, map.width, map.height, "RT IN RT");
 	prog = get_prog("generate_ray.cl");
 	ocl_init(&map.env, prog);
