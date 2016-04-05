@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/05 14:35:19 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/05 14:50:10 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,9 @@ typedef struct	s_ray
 {
 	cl_float4	origin;
 	cl_float4	ray;
+	cl_float4	down;
+	cl_float4	right;
+	cl_float	ratio;
 }				t_ray;
 
 typedef struct	s_scene
