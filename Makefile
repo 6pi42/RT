@@ -6,7 +6,7 @@
 #    By: amathias <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/04/03 12:11:27 by amathias         ###   ########.fr        #
+#    Updated: 2016/04/05 11:41:20 by amathias         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ OBJ = $(SRC:.c=.o)
 NAME = rt
 CC = gcc
 RM = rm -f
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra -Ofast
 
 LIB_PATH = ./libft/ /usr/local/lib/
 LIB_NAME = -lft -lmlx -framework OpenCL -framework OpenGL -framework AppKit

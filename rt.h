@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/05 11:01:01 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/05 11:18:39 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,23 +28,14 @@ typedef struct	s_fps
 	time_t		end;
 }				t_fps;
 
-typedef struct	s_cyl
-{
-	cl_float4	type;
-	cl_float4	pos;
-	cl_float4	radius;
-	cl_float4	color;
-	cl_float4	axis;
-}				t_cyl;
-
-typedef struct	s_sphere
+typedef struct	s_shape
 {
 	cl_float4 	type;
 	cl_float4	pos;
 	cl_float4	radius;
 	cl_float4	color;
 	cl_float4	axis;
-}				t_sphere;
+}				t_shape;
 
 typedef struct	s_ray
 {
@@ -56,11 +47,13 @@ typedef struct	s_scene
 {
 	t_ray		*cam;
 	int 		nb_sphere;
-	t_sphere 	*sphere;
+	t_shape 	*sphere;
 	int			nb_plan;
-	t_sphere	*plan;
+	t_shape		*plan;
 	int			nb_cyl;
-	t_sphere	*cyl;
+	t_shape		*cyl;
+	int			nb_cone;
+	t_shape		*cone;
 }				t_scene;
 
 typedef struct	s_img
