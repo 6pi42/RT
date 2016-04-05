@@ -74,7 +74,7 @@ static float4	clamp_color(float4 color)
 	color.x = color.x > 0xFF ? 0xFF : color.x;
 	color.y = color.y > 0xFF ? 0xFF : color.y;
 	color.z = color.z > 0xFF ? 0xFF : color.z;
-	color.w = 0.0;	
+	color.w = 0.0;
 	return (color);
 }
 
@@ -169,6 +169,32 @@ static float intersect_cyl(t_ray *ray, t_sphere cyl)
 		return (-1.0);
 }
 
+static float intersect_ellips(t_ray *ray, t_sphere ellips)
+{
+	float a = (ray->dir.x * ray->dir.x) / (ellips.radius.x * ellips.radius.x)
+			+ (ray->dir.y * ray->dir.y) / (ellips.radius.y * ellips.radius.y)
+			+ (ray->dir.z * ray->dir.z) / (ellips.radius.z * ellips.radius.z);
+	float b = ((2.0 * ellips.pos.x * ray->dir.x) / (ellips.radius.x * ellips.radius.x))
+			+ ((2.0 * ellips.pos.y * ray->dir.y) / (ellips.radius.y * ellips.radius.y))
+			+ ((2.0 * ellips.pos.z * ray->dir.z) / (ellips.radius.z * ellips.radius.z));
+	float c = ((ellips.pos.x * ellips.pos.x) / (ellips.radius.x * ellips.radius.x))
+				+ ((ellips.pos.y * ellips.pos.y) / (ellips.radius.y * ellips.radius.y))
+				+ ((ellips.pos.z * ellips.pos.z) / (ellips.radius.z * ellips.radius.z));
+	float d = (b * b) + 4 * a * c;
+	if (d >= 0.0)
+	{
+		float t1 = (-b + sqrt(d)) / (2 * a);
+		float t2 = (-b - sqrt(d)) / (2 * a);
+		if (t2 >= 0 && t2 < t1)
+			t1 = t2;
+		if (t1 < 0)
+			return (-1.0);
+		return (t1);
+	}
+	else
+		return (-1.0);
+}
+
 static float intersect_cone(t_ray *ray, t_sphere cyl)
 {
 	float k = (1 + cyl.radius.x * cyl.radius.x);
@@ -246,6 +272,17 @@ static float4 get_normal_plan(t_sphere obj)
 	return(norm);
 }
 
+static float4 get_normal_ellips(t_sphere ellips, float4 inter)
+{
+	float4 tmp;
+	float4 norm;
+
+	tmp = inter - ellips.pos;
+	norm = (float)2.0 * norm;
+	norm /= ellips.radius * ellips.radius;
+	return (norm);
+}
+
 static float4 get_normal_cyl(t_sphere cyl, float4 inter, float t, t_ray ray)
 {
 	float4 norm;
@@ -272,6 +309,9 @@ static float4 get_normal(t_sphere obj, float4 inter, float t1, t_ray ray)
 		norm = get_normal_cyl(obj, inter, t1, ray);
 	if (obj.type.x == 4)
 		norm = get_normal_cone(obj, ray, t1);
+	if (obj.type.x == 5)
+		norm = get_normal_ellips(obj, inter);
+	norm = normalize(norm);
 	return (norm);
 }
 
@@ -279,6 +319,7 @@ static t_sphere intersect_all(t_ray *ray, __global t_sphere *sph, uint num_spher
 										__global t_sphere *plan, uint num_plans,
 										__global t_sphere *cyl, uint num_cyls,
 										__global t_sphere *cone, uint num_cones,
+										__global t_sphere *ellips, uint num_ellips,
 										float *t1)
 {
 	uint i;
@@ -329,6 +370,17 @@ static t_sphere intersect_all(t_ray *ray, __global t_sphere *sph, uint num_spher
 		}
 		i++;
 	}
+	i = 0;
+	while (i < num_ellips)
+	{
+		tmp = intersect_ellips(ray, ellips[i]);
+		if (tmp != -1.0 && (*t1 == -1.0 || tmp < *t1))
+		{
+			*t1 = tmp;
+			obj = cpy_struct(cone[i]);
+		}
+		i++;
+	}
 	return (obj);
 }
 
@@ -358,7 +410,8 @@ static float4 get_color(t_sphere obj, float4 spot, float4 norm,
 static float4 raytrace(t_ray *ray, __global t_sphere *sph, uint num_spheres,
 									__global t_sphere *plan, uint num_plans,
 									__global t_sphere *cyl, uint num_cyls,
-									__global t_sphere *cone, uint num_cones)
+									__global t_sphere *cone, uint num_cones,
+									__global t_sphere *ellips, uint num_ellips)
 {
 	float4 		color;
 	float		t1;
@@ -373,7 +426,7 @@ static float4 raytrace(t_ray *ray, __global t_sphere *sph, uint num_spheres,
 	t1 = -1.0;
 	color = init_float4(0.0, 0.0, 0.0, 0.0);
 	obj = intersect_all(ray, sph, num_spheres, plan, num_plans, cyl, num_cyls,
-		cone, num_cones, &t1);
+		cone, num_cones, ellips, num_ellips, &t1);
 	if (t1 > 0)
 	{
 		//color = (obj.color * (float)0.2);
@@ -394,7 +447,8 @@ __kernel void generate_ray(__global float4* data, uint height, uint width,
 							__global t_sphere* spheres, uint num_spheres,
 							__global t_sphere* plans, uint num_plans,
 							__global t_sphere *cyl, uint num_cyls,
-							__global t_sphere *cone, uint num_cones)
+							__global t_sphere *cone, uint num_cones,
+							__global t_sphere *ellips, uint num_ellips)
 {
 	t_ray r;
 	t_ray tmp;
@@ -417,6 +471,6 @@ __kernel void generate_ray(__global float4* data, uint height, uint width,
 	r.dir.z = tmp.dir.z * cos(to_rad(cam->dir.y)) - tmp.dir.x * sin(to_rad(cam->dir.y));
 	r.dir.x = tmp.dir.z * sin(to_rad(cam->dir.y)) + tmp.dir.x * cos(to_rad(cam->dir.y));
 	*/r.dir = normalize(r.dir);
-	color = raytrace(&r, spheres, num_spheres, plans, num_plans, cyl, num_cyls, cone, num_cones);
+	color = raytrace(&r, spheres, num_spheres, plans, num_plans, cyl, num_cyls, cone, num_cones, ellips, num_ellips);
 	data[get_global_id(0)] = color;
 }
