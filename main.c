@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/03 17:57:17 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/05 11:01:03 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ cl_mem output;
 cl_mem mem_camera;
 cl_mem mem_sphere;
 cl_mem mem_plane;
+cl_mem mem_cyl;
 
 void	update(t_map *map)
 {
@@ -41,6 +42,9 @@ void	update(t_map *map)
 	clEnqueueWriteBuffer(env.cmds, mem_plane, CL_TRUE, 0,
 			map->scene.nb_plan * sizeof(t_sphere),
 			map->scene.plan, 0, NULL, NULL);	
+	clEnqueueWriteBuffer(env.cmds, mem_cyl, CL_TRUE, 0,
+			map->scene.nb_cyl * sizeof(t_cyl),
+			map->scene.cyl, 0, NULL, NULL);	
 	clEnqueueWriteBuffer(env.cmds, mem_camera, CL_TRUE, 0, sizeof(t_ray),
 			map->scene.cam, 0, NULL, NULL);		
 	clEnqueueNDRangeKernel(env.cmds, env.kernel, 1, NULL, &work_size, NULL,
@@ -69,6 +73,8 @@ void	raytracer(t_map *map)
 			map->scene.nb_sphere * sizeof(t_sphere), NULL, &err);
 	mem_plane = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
 			map->scene.nb_plan * sizeof(t_sphere), NULL, &err);
+	mem_cyl = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
+			map->scene.nb_cyl * sizeof(t_cyl), NULL, &err);
 	mem_camera = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
 			sizeof(t_ray), NULL, &err);	
 	output = clCreateBuffer(env.context, CL_MEM_WRITE_ONLY,
@@ -81,18 +87,30 @@ void	raytracer(t_map *map)
 	err |= clSetKernelArg(env.kernel, 5, sizeof(cl_uint),&map->scene.nb_sphere);
 	err |= clSetKernelArg(env.kernel, 6, sizeof(cl_mem),&mem_plane);
 	err |= clSetKernelArg(env.kernel, 7, sizeof(cl_uint),&map->scene.nb_plan);
+	err |= clSetKernelArg(env.kernel, 8, sizeof(cl_mem),&mem_cyl);
+	err |= clSetKernelArg(env.kernel, 9, sizeof(cl_uint),&map->scene.nb_cyl);
 	if (err < 0)
 		ft_putstr("Failed to create kernel argument");
 }
 
 void	draw(t_map *map)
 {
+	map->fps.frames++;
+	time(&map->fps.end);
+
 	map->img.img = mlx_new_image(map->mlx, map->width, map->height);
 	map->img.data = mlx_get_data_addr(map->img.img, &(map->img.bpp),
 			&(map->img.size_line), &(map->img.endian));
 	update(map);
 	mlx_put_image_to_window(map->mlx, map->win, map->img.img, 0, 0);
 	mlx_destroy_image(map->mlx, map->img.img);
+	if (difftime(map->fps.end, map->fps.start) >= 1.0)
+	{
+		printf("fps: %f\n", map->fps.frames);
+		map->fps.frames = 0;
+		time(&map->fps.start);
+	}
+
 }
 
 int		main(void)
@@ -101,6 +119,7 @@ int		main(void)
 	t_prog		prog;
 	t_sphere	*sphere;
 	t_sphere	*plan;
+	t_sphere	*cyl;
 	t_ray		cam;
 
 	map.scene.nb_sphere = 2;
@@ -158,6 +177,23 @@ int		main(void)
 	plan[1].radius.w = 0.0;
 	plan[1].type.x = 2;
 
+	map.scene.nb_cyl = 1;
+	cyl = (t_sphere*)malloc(sizeof(t_sphere) * map.scene.nb_cyl);
+	cyl[0].pos.x = 0.0;
+	cyl[0].pos.y = 0.0;
+	cyl[0].pos.z = 0.0;
+	cyl[0].pos.w = 0.0;
+	cyl[0].color.x = 0;
+	cyl[0].color.y = 255;
+	cyl[0].color.z = 255;
+	cyl[0].color.w = 0;
+	cyl[0].radius.x = 15.0;
+	cyl[0].type.x = 3;
+	cyl[0].axis.x = 0.0;
+	cyl[0].axis.y = 1.0;
+	cyl[0].axis.z = 0.0;
+	cyl[0].axis.w = 0.0;
+
 	cam.origin.x = 0.0;
 	cam.origin.y = 30.0;
 	cam.origin.z = 200.0;
@@ -167,6 +203,7 @@ int		main(void)
 
 	map.scene.sphere = sphere;
 	map.scene.plan = plan;
+	map.scene.cyl = cyl;
 	map.scene.cam = &cam;
 	map.mlx = mlx_init();
 	init_key(&map);
@@ -176,6 +213,7 @@ int		main(void)
 	prog = get_prog("generate_ray.cl");
 	ocl_init(&map.env, prog);
 	raytracer(&map);
+	time(&map.fps.start);
 	draw(&map);
 	mlx_key_hook(map.win, key_hook, &map);
 	mlx_hook(map.win, 2, (1L << 0), key_press, &map);
