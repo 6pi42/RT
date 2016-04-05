@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/03 17:50:00 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/05 11:01:01 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,34 @@
 # include <mlx.h>
 # include <math.h>
 # include <fcntl.h>
+# include <time.h>
 # include <unistd.h>
 # include "libft.h"
 #include <stdio.h>
 
+typedef struct	s_fps
+{
+	double		frames;
+	time_t		start;
+	time_t		end;
+}				t_fps;
+
+typedef struct	s_cyl
+{
+	cl_float4	type;
+	cl_float4	pos;
+	cl_float4	radius;
+	cl_float4	color;
+	cl_float4	axis;
+}				t_cyl;
+
 typedef struct	s_sphere
 {
-	cl_float4 type;
-	cl_float4 pos;
-	cl_float4 radius;
-	cl_float4 color;
+	cl_float4 	type;
+	cl_float4	pos;
+	cl_float4	radius;
+	cl_float4	color;
+	cl_float4	axis;
 }				t_sphere;
 
 typedef struct	s_ray
@@ -36,11 +54,13 @@ typedef struct	s_ray
 
 typedef struct	s_scene
 {
-	t_ray	*cam;
-	int nb_sphere;
-	t_sphere *sphere;
-	int	nb_plan;
-	t_sphere *plan;
+	t_ray		*cam;
+	int 		nb_sphere;
+	t_sphere 	*sphere;
+	int			nb_plan;
+	t_sphere	*plan;
+	int			nb_cyl;
+	t_sphere	*cyl;
 }				t_scene;
 
 typedef struct	s_img
@@ -86,6 +106,7 @@ typedef struct	s_map
 	t_env		env;
 	t_img		img;
 	t_key		key;
+	t_fps		fps;
 	t_scene		scene;
 	int			height;
 	int			width;
