@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/03 11:04:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/03 17:57:13 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/06 16:07:35 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,31 @@
 
 void	rotate(t_map *map)
 {
-	(void)map;
+	int a;
+
+	a = 0;
+	if (map->key.num_4)
+	{
+		map->scene.cam->ray.y += 1.0;
+		a = 1;
+	}
+	if (map->key.num_6)
+	{
+		map->scene.cam->ray.y -= 1.0;
+		a = 1;
+	}
+	if (map->key.num_8)
+	{
+		map->scene.cam->ray.x += 1.0;
+		a = 1;
+	}
+	if (map->key.num_2)
+	{
+		map->scene.cam->ray.x -= 1.0;
+		a = 1;
+	}
+	if (a)
+		draw(map);
 }
 
 void	move(t_map *map)
