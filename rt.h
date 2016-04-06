@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/05 14:50:10 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/06 15:44:38 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@
 typedef struct	s_fps
 {
 	double		frames;
-	time_t		start;
-	time_t		end;
+	clock_t		start;
+	clock_t		end;
 }				t_fps;
 
 typedef struct	s_shape
@@ -49,16 +49,8 @@ typedef struct	s_ray
 typedef struct	s_scene
 {
 	t_ray		*cam;
-	int 		nb_sphere;
-	t_shape 	*sphere;
-	int			nb_plan;
-	t_shape		*plan;
-	int			nb_cyl;
-	t_shape		*cyl;
-	int			nb_cone;
-	t_shape		*cone;
-	int			nb_ellips;
-	t_shape		*ellips;
+	int 		nb_shape;
+	t_shape 	*shape;
 }				t_scene;
 
 typedef struct	s_img
