@@ -345,7 +345,7 @@ __kernel void generate_ray(__global float4* data, uint height, uint width,
 	r.dir.y = (float)(h - ((global_id) / w)) - (h / 2.0f);
 	r.dir.z = (float)(-(w / (2.0f * 0.466307f)));
 	r.dir.w = 0.0f;
-	/*tmp = r;
+	tmp = r;
 	r.dir.x = tmp.dir.x * cos(rad * cam->dir.z) - tmp.dir.y * sin(rad * cam->dir.z);
 	r.dir.y = tmp.dir.x * sin(rad * cam->dir.z) + tmp.dir.y * cos(rad * cam->dir.z);
 	tmp = r;
@@ -354,7 +354,7 @@ __kernel void generate_ray(__global float4* data, uint height, uint width,
 	tmp = r;
 	r.dir.z = tmp.dir.z * cos(rad * cam->dir.y) - tmp.dir.x * sin(rad * cam->dir.y);
 	r.dir.x = tmp.dir.z * sin(rad * cam->dir.y) + tmp.dir.x * cos(rad * cam->dir.y);
-	*/r.dir = normalize(r.dir);
+	r.dir = normalize(r.dir);
 	color = raytrace(&r, shape, num_shapes);
 	data[get_global_id(0)] = color;
 }
