@@ -248,72 +248,37 @@ static float4 get_normal(t_sphere obj, float4 inter, float t1, t_ray ray)
 	return (norm);
 }
 
-static t_sphere intersect_all(t_ray *ray, __global t_sphere *sph, uint num_spheres,
-										__global t_sphere *plan, uint num_plans,
-										__global t_sphere *cyl, uint num_cyls,
-										__global t_sphere *cone, uint num_cones,
-										__global t_sphere *ellips, uint num_ellips,
-										float *t1)
+static t_sphere intersect_all(t_ray *ray,
+		__global t_sphere *shape, uint num_shapes,
+									float *t1)
 {
-	uint i;
+	uint	i;
+	uint	j;
 	t_sphere obj;
 	float	tmp;
 
 	i = 0;
-	while (i < num_spheres)
+	while (i < num_shapes)
 	{
-		tmp = intersect_sph(ray, sph[i]);
+		if (shape[i].type.x == 1.0)
+			tmp = intersect_sph(ray, shape[i]);
+		if (shape[i].type.x == 2.0)
+			tmp = intersect_plan(ray, shape[i]);
+		if (shape[i].type.x == 3.0)
+			tmp = intersect_cyl(ray, shape[i]);
+		if (shape[i].type.x == 4.0)
+			tmp = intersect_cone(ray, shape[i]);
+		if (shape[i].type.x == 5.0)
+			tmp = intersect_ellips(ray, shape[i]);
 		if (tmp != -1.0f && (*t1 == -1.0f || tmp < *t1))
 		{
 			*t1 = tmp;
-			obj = cpy_struct(sph[i]);
+			j = i;
 		}
 		i++;
 	}
-	i = 0;
-	while (i < num_plans)
-	{
-		tmp = intersect_plan(ray, plan[i]);
-		if (tmp != -1.0f && (*t1 == -1.0f || tmp < *t1))
-		{
-			*t1 = tmp;
-			obj = cpy_struct(plan[i]);
-		}
-		i++;
-	}
-	i = 0;
-	while (i < num_cyls)
-	{
-		tmp = intersect_cyl(ray, cyl[i]);
-		if (tmp != -1.0f && (*t1 == -1.0f || tmp < *t1))
-		{
-			*t1 = tmp;
-			obj = cpy_struct(cyl[i]);
-		}
-		i++;
-	}
-	i = 0;
-	while (i < num_cones)
-	{
-		tmp = intersect_cone(ray, cone[i]);
-		if (tmp != -1.0f && (*t1 == -1.0f || tmp < *t1))
-		{
-			*t1 = tmp;
-			obj = cpy_struct(cone[i]);
-		}
-		i++;
-	}
-	i = 0;
-	while (i < num_ellips)
-	{
-		tmp = intersect_ellips(ray, ellips[i]);
-		if (tmp != -1.0f && (*t1 == -1.0f || tmp < *t1))
-		{
-			*t1 = tmp;
-			obj = cpy_struct(cone[i]);
-		}
-		i++;
-	}
+	if (*t1 != -1.0f)
+		obj = cpy_struct(shape[j]);
 	return (obj);
 }
 
@@ -329,7 +294,7 @@ static float4 get_color(t_sphere obj, float4 spot, float4 norm,
 	mat.kd = 0.6f;
 	mat.ka = 0.2f;
 	mat.ks = 0.8f;
-	lightcolor = (float4)(255.0f, 255.0f, 255.0f, 255.0f);	
+	lightcolor = (float4)(255.0f, 255.0f, 255.0f, 255.0f);
 	spec = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
 	ambient = (obj.color * mat.ka);
 	if (obj.type.x != 2.0f)
@@ -340,11 +305,7 @@ static float4 get_color(t_sphere obj, float4 spot, float4 norm,
 	return (color);
 }
 
-static float4 raytrace(t_ray *ray, __global t_sphere *sph, uint num_spheres,
-									__global t_sphere *plan, uint num_plans,
-									__global t_sphere *cyl, uint num_cyls,
-									__global t_sphere *cone, uint num_cones,
-									__global t_sphere *ellips, uint num_ellips)
+static float4 raytrace(t_ray *ray, __global t_sphere *shape, uint num_shapes)
 {
 	float4 		color;
 	float		t1;
@@ -358,8 +319,7 @@ static float4 raytrace(t_ray *ray, __global t_sphere *sph, uint num_spheres,
 	i = 0;
 	t1 = -1.0f;
 	color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
-	obj = intersect_all(ray, sph, num_spheres, plan, num_plans, cyl, num_cyls,
-		cone, num_cones, ellips, num_ellips, &t1);
+	obj = intersect_all(ray, shape, num_shapes, &t1);
 	if (t1 > 0.0f)
 	{
 		inter = get_intersection(ray, t1);
@@ -371,11 +331,7 @@ static float4 raytrace(t_ray *ray, __global t_sphere *sph, uint num_spheres,
 
 __kernel void generate_ray(__global float4* data, uint height, uint width,
 							__global t_ray* cam,
-							__global t_sphere* spheres, uint num_spheres,
-							__global t_sphere* plans, uint num_plans,
-							__global t_sphere *cyl, uint num_cyls,
-							__global t_sphere *cone, uint num_cones,
-							__global t_sphere *ellips, uint num_ellips)
+							__global t_sphere *shape, uint num_shapes)
 {
 	t_ray r;
 	t_ray tmp;
@@ -399,6 +355,6 @@ __kernel void generate_ray(__global float4* data, uint height, uint width,
 	r.dir.z = tmp.dir.z * cos(rad * cam->dir.y) - tmp.dir.x * sin(rad * cam->dir.y);
 	r.dir.x = tmp.dir.z * sin(rad * cam->dir.y) + tmp.dir.x * cos(rad * cam->dir.y);
 	*/r.dir = normalize(r.dir);
-	color = raytrace(&r, spheres, num_spheres, plans, num_plans, cyl, num_cyls, cone, num_cones, ellips, num_ellips);
+	color = raytrace(&r, shape, num_shapes);
 	data[get_global_id(0)] = color;
 }
