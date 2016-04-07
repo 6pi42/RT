@@ -128,18 +128,25 @@ static float intersect_cyl(t_ray *ray, t_sphere cyl)
 		return (-1.0f);
 }
 
-static float intersect_ellips(t_ray *ray, t_sphere ellips)
+static float get_dist(float4 a, float4 b)
 {
-	/*float a = (ray->dir.x * ray->dir.x) / (ellips.radius.x * ellips.radius.x)
-			+ (ray->dir.y * ray->dir.y) / (ellips.radius.y * ellips.radius.y)
-			+ (ray->dir.z * ray->dir.z) / (ellips.radius.z * ellips.radius.z);
-	float b = ((2.0f * ellips.pos.x * ray->dir.x) / (ellips.radius.x * ellips.radius.x))
-			+ ((2.0f * ellips.pos.y * ray->dir.y) / (ellips.radius.y * ellips.radius.y))
-			+ ((2.0f * ellips.pos.z * ray->dir.z) / (ellips.radius.z * ellips.radius.z));
-	float c = ((ellips.pos.x * ellips.pos.x) / (ellips.radius.x * ellips.radius.x))
-				+ ((ellips.pos.y * ellips.pos.y) / (ellips.radius.y * ellips.radius.y))
-				+ ((ellips.pos.z * ellips.pos.z) / (ellips.radius.z * ellips.radius.z));
-	float d = (b * b) + 4.0f * a * c;
+	float c = sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) +
+	(a.z - b.z) * (a.z - b.z));
+	return (c);
+}
+
+static float intersect_ellips(t_ray *ray, t_sphere e)
+{
+	return (-1.0f);
+	float k = get_dist(e.axis, e.pos);
+	float4 v = normalize(e.axis - e.pos);
+	float4 x = normalize((e.pos - e.axis) - ray->origin);
+	float a1 = 2.0f * k * dot(ray->dir, v);
+	float a2 = e.radius.x * e.radius.x + 2 * k * dot(v, x) - k;
+	float a = 4 * e.radius.x * e.radius.x * dot(ray->dir, ray->dir) - a1 * a1;
+	float b = 2 * (4 * e.radius.x * e.radius.x * dot(ray->dir, x) - a1 * a2);
+	float c = 4 * e.radius.x * e.radius.x * dot(x, x) - a2 * a2;
+	float d = b * b - 4 * a * c;
 	if (d >= 0.0f)
 	{
 		float t1 = (-b + sqrt(d)) / (2.0f * a);
@@ -150,7 +157,7 @@ static float intersect_ellips(t_ray *ray, t_sphere ellips)
 			return (-1.0f);
 		return (t1);
 	}
-	else */
+	else
 		return (-1.0f);
 }
 
@@ -219,7 +226,7 @@ static float4 get_normal_ellips(t_sphere ellips, float4 inter)
 	float4 norm;
 
 	tmp = inter - ellips.pos;
-	norm = 2.0f * norm;
+	norm = 2.0f * tmp;
 	norm /= ellips.radius * ellips.radius;
 	return (norm);
 }
@@ -252,16 +259,16 @@ static float4 get_normal(t_sphere obj, float4 inter, float t1, t_ray ray)
 	return (norm);
 }
 
-static t_sphere intersect_all(t_ray *ray,
+static uint intersect_all(t_ray *ray,
 		__global t_sphere *shape, uint num_shapes,
 									float *t1)
 {
 	uint	i;
 	uint	j;
-	t_sphere obj;
 	float	tmp;
 
 	i = 0;
+	j = -1.0f;
 	while (i < num_shapes)
 	{
 		if (shape[i].type.x == 1.0)
@@ -281,9 +288,7 @@ static t_sphere intersect_all(t_ray *ray,
 		}
 		i++;
 	}
-	if (*t1 != -1.0f)
-		obj = cpy_struct(shape[j]);
-	return (obj);
+	return (j);
 }
 
 static float4 get_color(t_sphere obj, float4 spot, float4 norm,
@@ -309,6 +314,16 @@ static float4 get_color(t_sphere obj, float4 spot, float4 norm,
 	return (color);
 }
 
+float4 shadow_color(t_sphere obj)
+{
+	float4 color;
+
+	color = obj.color;
+	color *= 0.2f;
+	color = clamp_color(color);
+	return (color);
+}
+
 static	float4	reflect(t_ray *ray, __global t_sphere *shape, uint num_shapes)
 {
 	float4 		color;
@@ -317,18 +332,37 @@ static	float4	reflect(t_ray *ray, __global t_sphere *shape, uint num_shapes)
 	float4		norm;
 	float4		inter;
 	float4		spot;
+	uint id;
 
 	spot = (float4)(-100.0f, 100.0f, 0.0f, 0.0f);
 	t1 = -1.0f;
 	color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
-	obj = intersect_all(ray, shape, num_shapes, &t1);
+	id = intersect_all(ray, shape, num_shapes, &t1);
+	obj = shape[id];
 	if (t1 > 0.0f)
 	{
 		inter = get_intersection(ray, t1);
 		norm = get_normal(obj, inter, t1, *ray);
+
 		color = get_color(obj, spot, norm, inter, color, *ray);
 	}
 	return (color);
+}
+
+int get_shadow(float4 inter, float4 spot, __global t_sphere *shape, uint num_shapes, uint id)
+{
+	t_ray tmp;
+	uint id2;
+	float t;
+
+	t = -1.0f;
+	tmp.origin = spot;
+	tmp.dir = normalize(inter - spot);
+	id2 = intersect_all(&tmp, shape, num_shapes, &t);
+	if (id2 != id)
+		return (1);
+	return (0);
+
 }
 
 static float4 raytrace(t_ray *ray, __global t_sphere *shape, uint num_shapes)
@@ -341,12 +375,14 @@ static float4 raytrace(t_ray *ray, __global t_sphere *shape, uint num_shapes)
 	float4		norm;
 	float4		inter;
 	float4		spot;
+	uint id;
 
 	spot = (float4)(-100.0f, 100.0f, 0.0f, 0.0f);
 	i = 0;
 	t1 = -1.0f;
 	color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
-	obj = intersect_all(ray, shape, num_shapes, &t1);
+	id = intersect_all(ray, shape, num_shapes, &t1);
+	obj = shape[id];
 	if (t1 > 0.0f)
 	{
 		inter = get_intersection(ray, t1);
@@ -356,7 +392,10 @@ static float4 raytrace(t_ray *ray, __global t_sphere *shape, uint num_shapes)
 		{
 			tmp.origin = get_intersection(ray, t1 - 0.001);
 			tmp.dir = ray->dir - 2 * (dot(norm, ray->dir)) * norm;
-			color = (color + (float4)0.3 * clamp_color(reflect(&tmp, shape, num_shapes))); // 00.1 = coef reflt
+			if (get_shadow(inter, spot, shape, num_shapes, id))
+				color = shadow_color(obj);
+			else
+				color = (color + (float4)0.3 * clamp_color(reflect(&tmp, shape, num_shapes))); // 00.1 = coef reflt
 			clamp_color(color);
 		}
 	}
@@ -389,7 +428,6 @@ __kernel void generate_ray(__global float4* data, uint height, uint width,
 	t_ray r;
 	//t_ray tmp;
 	float4 color;
-	float rad = M_PI / 180.0f;
 	float w = (float)width;
 	float h = (float)height;
 	float global_id = (float)get_global_id(0);
