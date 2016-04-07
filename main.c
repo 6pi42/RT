@@ -6,11 +6,24 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/06 16:05:50 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/07 13:54:27 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt.h"
+
+void	init_cam(t_map *map)
+{
+	cl_float4 tmp;
+	tmp.x = 0;
+	tmp.y = 1;
+	tmp.z = 0;
+	map->free_cam.aspect_ratio = map->width / map->height;
+	normalize_vec(&map->free_cam.dir);
+	map->free_cam.left = cross_vec(tmp, map->free_cam.dir);
+	normalize_vec(&map->free_cam.left);
+	map->free_cam.down = cross_vec(map->free_cam.dir, map->free_cam.left);
+}
 
 void	draw_pixel_to_image(t_map *map, int x, int y, cl_float4 c)
 {
@@ -34,6 +47,12 @@ void	update(t_map *map)
 	i = 0;
 	env = map->env;
 	work_size = map->width * map->height;
+	init_cam(map);
+	map->scene.cam->ray = map->free_cam.dir;
+	map->scene.cam->origin = map->free_cam.pos;
+	map->scene.cam->down = map->free_cam.down;
+	map->scene.cam->right = map->free_cam.left;
+	map->scene.cam->ratio = map->free_cam.aspect_ratio;
 	clEnqueueWriteBuffer(env.cmds, mem_camera, CL_TRUE, 0, sizeof(t_ray),
 			map->scene.cam, 0, NULL, NULL);
 	clEnqueueNDRangeKernel(env.cmds, env.kernel, 1, NULL,
@@ -71,14 +90,6 @@ void	raytracer(t_map *map)
 	err |= clSetKernelArg(env.kernel, 3, sizeof(cl_mem), &mem_camera);
 	err |= clSetKernelArg(env.kernel, 4, sizeof(cl_mem), &mem_shape);
 	err |= clSetKernelArg(env.kernel, 5, sizeof(cl_uint),&map->scene.nb_shape);
-	/*err |= clSetKernelArg(env.kernel, 6, sizeof(cl_mem),&mem_plane);
-	err |= clSetKernelArg(env.kernel, 7, sizeof(cl_uint),&map->scene.nb_plan);
-	err |= clSetKernelArg(env.kernel, 8, sizeof(cl_mem),&mem_cyl);
-	err |= clSetKernelArg(env.kernel, 9, sizeof(cl_uint),&map->scene.nb_cyl);
-	err |= clSetKernelArg(env.kernel, 10, sizeof(cl_mem),&mem_cone);
-	err |= clSetKernelArg(env.kernel, 11, sizeof(cl_uint),&map->scene.nb_cone);
-	err |= clSetKernelArg(env.kernel, 12, sizeof(cl_mem),&mem_ellips);
-	err |= clSetKernelArg(env.kernel, 13, sizeof(cl_uint),&map->scene.nb_ellips); */
 	if (err < 0)
 		ft_putstr("Failed to create kernel argument");
 }
@@ -94,7 +105,7 @@ void	draw(t_map *map)
 	update(map);
 	mlx_put_image_to_window(map->mlx, map->win, map->img.img, 0, 0);
 	mlx_destroy_image(map->mlx, map->img.img);
-	if ((float)(map->fps.end - map->fps.start) / CLOCKS_PER_SEC >= 1.0)
+	if ((map->fps.end - map->fps.start) / CLOCKS_PER_SEC >= 1.0)
 	{
 		printf("fps: %f\n", map->fps.frames);
 		map->fps.frames = 0;
@@ -111,7 +122,7 @@ void	vec_normalize(cl_float4 *vec)
 	vec->x *= tmp;
 	vec->y *= tmp;
 	vec->z *= tmp;
-	
+
 }
 int		main(void)
 {
@@ -122,20 +133,20 @@ int		main(void)
 
 	map.scene.nb_shape = 6;
 	shape = (t_shape*)malloc(sizeof(t_shape) * map.scene.nb_shape);
-	shape[0].pos.x = 0.0;
-	shape[0].pos.y = 2.0;
-	shape[0].pos.z = 0.0;
+	shape[0].pos.x = 20.0;
+	shape[0].pos.y = 20.0;
+	shape[0].pos.z = 20.0;
 	shape[0].pos.w = 0.0;
 	shape[0].color.x = 255;
-	shape[0].color.y = 0;
+	shape[0].color.y = 255;
 	shape[0].color.z = 0;
 	shape[0].color.w = 0;
 	shape[0].radius.x = 25.0;
 	shape[0].type.x = 1;
 
-	shape[1].pos.x = 40.0;
-	shape[1].pos.y = 0.0;
-	shape[1].pos.z = 0.0;
+	shape[1].pos.x = 60.0;
+	shape[1].pos.y = 20.0;
+	shape[1].pos.z = 60.0;
 	shape[1].pos.w = 4.0;
 	shape[1].color.x = 0;
 	shape[1].color.y = 0;
@@ -145,36 +156,36 @@ int		main(void)
 	shape[1].type.x = 1;
 
 
-	shape[2].pos.x = 0.0;
-	shape[2].pos.y = 0.0;
-	shape[2].pos.z = 0.0;
+	shape[2].pos.x = 40.0;
+	shape[2].pos.y = -50.0;
+	shape[2].pos.z = 20.0;
 	shape[2].pos.w = 0.0;
-	shape[2].color.x = 255;	
-	shape[2].color.y = 255;	
-	shape[2].color.z = 0;	
-	shape[2].color.w = 0;	
+	shape[2].color.x = 255;
+	shape[2].color.y = 255;
+	shape[2].color.z = 0;
+	shape[2].color.w = 0;
 	shape[2].radius.x = 0.0;
 	shape[2].radius.y = 1.0;
 	shape[2].radius.z = 0.0;
 	shape[2].radius.w = 0.0;
 	shape[2].type.x = 2;
 
-	shape[3].pos.x = 0.0;
+	shape[3].pos.x = 40.0;
 	shape[3].pos.y = 0.0;
 	shape[3].pos.z = -190;
 	shape[3].pos.w = 0.0;
-	shape[3].color.x = 0;	
-	shape[3].color.y = 255;	
-	shape[3].color.z = 0;	
-	shape[3].color.w = 0;	
+	shape[3].color.x = 0;
+	shape[3].color.y = 255;
+	shape[3].color.z = 0;
+	shape[3].color.w = 0;
 	shape[3].radius.x = 0.0;
 	shape[3].radius.y = 0.0;
 	shape[3].radius.z = 1.0;
 	shape[3].radius.w = 0.0;
 	shape[3].type.x = 2;
 
-	shape[4].pos.x = 0.0;
-	shape[4].pos.y = 0.0;
+	shape[4].pos.x = 300.0;
+	shape[4].pos.y = 40.0;
 	shape[4].pos.z = 0.0;
 	shape[4].pos.w = 0.0;
 	shape[4].color.x = 0;
@@ -205,19 +216,21 @@ int		main(void)
 	shape[5].axis.w = 0.0;
 	vec_normalize(&(shape[5].axis));
 
-	cam.origin.x = 0.0;
-	cam.origin.y = 30.0;
-	cam.origin.z = 200.0;
-	cam.ray.x = 0.0;
-	cam.ray.y = 0.0;
-	cam.ray.z = 0.0;
+	map.width = 900;
+	map.height = 720;
 
+	map.free_cam.dir.x = -1;
+	map.free_cam.dir.y = -1;
+	map.free_cam.dir.z = -1;
+	map.free_cam.pos.x = 100;
+	map.free_cam.pos.y = 100;
+	map.free_cam.pos.z = 200;
+	map.free_cam.old_mouse_pos.x = map.width / 2;
+	map.free_cam.old_mouse_pos.y = map.height / 2;
 	map.scene.shape = shape;
 	map.scene.cam = &cam;
 	map.mlx = mlx_init();
 	init_key(&map);
-	map.height = 720;
-	map.width = 900;
 	map.win = mlx_new_window(map.mlx, map.width, map.height, "RT IN RT");
 	prog = get_prog("generate_ray.cl");
 	ocl_init(&map.env, prog);

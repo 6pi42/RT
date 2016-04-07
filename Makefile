@@ -6,7 +6,7 @@
 #    By: amathias <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/04/05 11:41:20 by amathias         ###   ########.fr        #
+#    Updated: 2016/04/06 18:22:38 by apaget           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,13 +15,16 @@ INC = /
 SRC =	main.c			\
 		cl_utils.c		\
 		hook.c			\
+		vec_calc.c		\
+		vec_calc2.c		\
+		free_cam.c		\
 		move.c			\
 
 OBJ = $(SRC:.c=.o)
 NAME = rt
 CC = gcc
 RM = rm -f
-CFLAGS = -Wall -Werror -Wextra -Ofast
+CFLAGS = -Wall -Werror -Wextra 
 
 LIB_PATH = ./libft/ /usr/local/lib/
 LIB_NAME = -lft -lmlx -framework OpenCL -framework OpenGL -framework AppKit

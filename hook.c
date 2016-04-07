@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/02 15:34:48 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/06 16:06:18 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/06 19:13:20 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,12 @@ void	init_key(t_map *map)
 
 int		motion_notify(int x, int y, t_map *map)
 {
-	if (x > 0 && y > 0 && x < map->height && y < map->width)
-	{
-		(void)map;
-	}
+		map->free_cam.sensitivity = 0.3;
+		map->free_cam.phi += (map->free_cam.old_mouse_pos.y - y) * map->free_cam.sensitivity;
+		map->free_cam.theta -= (map->free_cam.old_mouse_pos.x - x) * map->free_cam.sensitivity;
+		map->free_cam.old_mouse_pos.y = y;
+		map->free_cam.old_mouse_pos.x = x;
+		vector_from_angle(&map->free_cam);
 	return (0);
 }
 
@@ -68,9 +70,10 @@ int		key_press(int keycode, t_map *map)
 
 int		loop_hook(t_map *map)
 {
-	move(map);
-	rotate(map);
+	draw(map);
+	update_cam(&map->free_cam, &map->key);
 	return (0);
+
 }
 
 int		key_hook(int keycode, t_map *map)
