@@ -1,3 +1,11 @@
+typedef struct	s_mat
+{
+	float4		ka;
+	float4		kd;
+	float4		ks;
+	float4		kr;
+}				t_mat;
+
 typedef struct s_sphere
 {
 	float4		type;
@@ -7,17 +15,13 @@ typedef struct s_sphere
 	float4		axis;
 }				t_sphere;
 
-typedef struct	s_mat
-{
-	float4		ka;
-	float4		kd;
-	float4		ks;
-}				t_mat;
-
 typedef struct	s_ray
 {
 	float4		origin;
 	float4		dir;
+	float4		down;
+	float4		right;
+	float		ratio;
 }				t_ray;
 
 static t_sphere cpy_struct(t_sphere sph)
@@ -305,12 +309,35 @@ static float4 get_color(t_sphere obj, float4 spot, float4 norm,
 	return (color);
 }
 
+static	float4	reflect(t_ray *ray, __global t_sphere *shape, uint num_shapes)
+{
+	float4 		color;
+	float		t1;
+	t_sphere	obj;
+	float4		norm;
+	float4		inter;
+	float4		spot;
+
+	spot = (float4)(-100.0f, 100.0f, 0.0f, 0.0f);
+	t1 = -1.0f;
+	color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
+	obj = intersect_all(ray, shape, num_shapes, &t1);
+	if (t1 > 0.0f)
+	{
+		inter = get_intersection(ray, t1);
+		norm = get_normal(obj, inter, t1, *ray);
+		color = get_color(obj, spot, norm, inter, color, *ray);
+	}
+	return (color);
+}
+
 static float4 raytrace(t_ray *ray, __global t_sphere *shape, uint num_shapes)
 {
 	float4 		color;
 	float		t1;
 	uint		i;
 	t_sphere	obj;
+	t_ray tmp;
 	float4		norm;
 	float4		inter;
 	float4		spot;
@@ -325,36 +352,49 @@ static float4 raytrace(t_ray *ray, __global t_sphere *shape, uint num_shapes)
 		inter = get_intersection(ray, t1);
 		norm = get_normal(obj, inter, t1, *ray);
 		color = get_color(obj, spot, norm, inter, color, *ray);
+		if (obj.type.x == 2)
+		{
+			tmp.origin = get_intersection(ray, t1 - 0.001);
+			tmp.dir = ray->dir - 2 * (dot(norm, ray->dir)) * norm;
+			color = (color + (float4)0.3 * clamp_color(reflect(&tmp, shape, num_shapes))); // 00.1 = coef reflt
+			clamp_color(color);
+		}
 	}
 	return (color);
 }
 
+static	float4	get_dir(float4 dir, float4 down, float4 right,
+						float x, float y, float width, float height,
+						float aspect_ratio)
+{
+	t_ray ray;
+	float4 vp_right;
+	float4 vp_down;
+	float xamnt;
+	float yamnt;
+
+	xamnt = (float)(((float)x + 0.5) / (float)width) * (float)aspect_ratio
+		- (((float)(width - height) / (float)height) / 2.0);
+	yamnt = (float)((height - y) + 0.5) / height;
+	vp_down = (yamnt - (float)0.5) * down;
+	vp_right = (xamnt - (float)0.5) * right;
+	ray.dir = (vp_right + vp_down) + dir;
+	ray.dir = normalize(ray.dir);
+	return (ray.dir);
+}
 __kernel void generate_ray(__global float4* data, uint height, uint width,
 							__global t_ray* cam,
 							__global t_sphere *shape, uint num_shapes)
 {
 	t_ray r;
-	t_ray tmp;
+	//t_ray tmp;
 	float4 color;
 	float rad = M_PI / 180.0f;
 	float w = (float)width;
 	float h = (float)height;
 	float global_id = (float)get_global_id(0);
 	r.origin = (float4)(cam->origin.x, cam->origin.y, cam->origin.z, 0.0f);
-	r.dir.x = (float)(fmod(global_id, w) - (w / 2.0f));
-	r.dir.y = (float)(h - ((global_id) / w)) - (h / 2.0f);
-	r.dir.z = (float)(-(w / (2.0f * 0.466307f)));
-	r.dir.w = 0.0f;
-	tmp = r;
-	r.dir.x = tmp.dir.x * cos(rad * cam->dir.z) - tmp.dir.y * sin(rad * cam->dir.z);
-	r.dir.y = tmp.dir.x * sin(rad * cam->dir.z) + tmp.dir.y * cos(rad * cam->dir.z);
-	tmp = r;
-	r.dir.y = tmp.dir.y * cos(rad * cam->dir.x) - tmp.dir.z * sin(rad * cam->dir.x);
-	r.dir.z = tmp.dir.y * sin(rad * cam->dir.x) + tmp.dir.z * cos(rad * cam->dir.x);
-	tmp = r;
-	r.dir.z = tmp.dir.z * cos(rad * cam->dir.y) - tmp.dir.x * sin(rad * cam->dir.y);
-	r.dir.x = tmp.dir.z * sin(rad * cam->dir.y) + tmp.dir.x * cos(rad * cam->dir.y);
-	r.dir = normalize(r.dir);
+	r.dir = get_dir(cam->dir, cam->down, cam->right, fmod(global_id, w), global_id / w, w, h, cam->ratio);
 	color = raytrace(&r, shape, num_shapes);
 	data[get_global_id(0)] = color;
 }
