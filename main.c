@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/07 13:54:27 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/08 17:51:23 by cboyer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ int		main(void)
 	t_shape		*shape;
 	t_ray		cam;
 
-	map.scene.nb_shape = 6;
+	map.scene.nb_shape = 7;
 	shape = (t_shape*)malloc(sizeof(t_shape) * map.scene.nb_shape);
 	shape[0].pos.x = 20.0;
 	shape[0].pos.y = 20.0;
@@ -160,8 +160,8 @@ int		main(void)
 	shape[2].pos.y = -50.0;
 	shape[2].pos.z = 20.0;
 	shape[2].pos.w = 0.0;
-	shape[2].color.x = 255;
-	shape[2].color.y = 255;
+	shape[2].color.x = 128;
+	shape[2].color.y = 128;
 	shape[2].color.z = 0;
 	shape[2].color.w = 0;
 	shape[2].radius.x = 0.0;
@@ -215,6 +215,23 @@ int		main(void)
 	shape[5].axis.z = 0.0;
 	shape[5].axis.w = 0.0;
 	vec_normalize(&(shape[5].axis));
+
+	shape[6].pos.x = -100.0;
+	shape[6].pos.y = 50.0;
+	shape[6].pos.z = 80.0;
+	shape[6].pos.w = 0.0;
+	shape[6].color.x = 255;
+	shape[6].color.y = 255;
+	shape[6].color.z = 255;
+	shape[6].color.w = 0;
+	shape[6].radius.x = 15.0;
+	shape[6].radius.y = 40.0;
+	shape[6].radius.z = 10.0;
+	shape[6].type.x = 5;
+	shape[6].axis.x = 0.0;
+	shape[6].axis.y = 0.0;
+	shape[6].axis.z = 0.0;
+	shape[6].axis.w = 0.0;
 
 	map.width = 900;
 	map.height = 720;
