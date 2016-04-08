@@ -66,14 +66,14 @@ static float	spec_lighting(float4 spot, float4 norm, float4 inter, t_ray ray)
 	eye = normalize(eye);
 	light = spot - inter;
 	light = normalize(light);
-	if (dot(light, norm) > 0.0f)
-	{
+	//if (dot(light, norm) > 0.0f)
+	//{
 		halfvec = eye + light;
 		halfvec = normalize(halfvec);
 		coef = fmax(0.0f, (float)dot(halfvec, norm));
 		coef = pow((float)coef, (float)42.0f);
 		return (coef);
-	}
+//	}
 	return (0.0f);
 }
 
@@ -86,8 +86,9 @@ static float intersect_sph(t_ray *ray, t_sphere sph)
 	float d = (b * b) - (4.0f * a * c);
 	if (d >= 0.0f)
 	{
-		float t1 = (-b + sqrt(d)) / (2.0f * a);
-		float t2 = (-b - sqrt(d)) / (2.0f * a);
+		d = sqrt(d);
+		float t1 = (-b + d) / (2.0f * a);
+		float t2 = (-b - d) / (2.0f * a);
 		if (t2 >= 0.0f && t2 < t1)
 			t1 = t2;
 		if (t1 < 0.0f)
@@ -116,8 +117,9 @@ static float intersect_cyl(t_ray *ray, t_sphere cyl)
 	float d = (b * b) - (4.0f * a * c);
 	if (d >= 0.0f)
 	{
-		float t1 = (-b + sqrt(d)) / (2.0f * a);
-		float t2 = (-b - sqrt(d)) / (2.0f * a);
+		d = sqrt(d);
+		float t1 = (-b + d) / (2.0f * a);
+		float t2 = (-b - d) / (2.0f * a);
 		if (t2 >= 0.0f && t2 < t1)
 			t1 = t2;
 		if (t1 < 0.0f)
@@ -137,46 +139,55 @@ static float get_dist(float4 a, float4 b)
 
 static float intersect_ellips(t_ray *ray, t_sphere e)
 {
-	return (-1.0f);
-	float k = get_dist(e.axis, e.pos);
-	float4 v = normalize(e.axis - e.pos);
-	float4 x = normalize((e.pos - e.axis) - ray->origin);
-	float a1 = 2.0f * k * dot(ray->dir, v);
-	float a2 = e.radius.x * e.radius.x + 2 * k * dot(v, x) - k;
-	float a = 4 * e.radius.x * e.radius.x * dot(ray->dir, ray->dir) - a1 * a1;
-	float b = 2 * (4 * e.radius.x * e.radius.x * dot(ray->dir, x) - a1 * a2);
-	float c = 4 * e.radius.x * e.radius.x * dot(x, x) - a2 * a2;
-	float d = b * b - 4 * a * c;
-	if (d >= 0.0f)
-	{
-		float t1 = (-b + sqrt(d)) / (2.0f * a);
-		float t2 = (-b - sqrt(d)) / (2.0f * a);
-		if (t2 >= 0.0f && t2 < t1)
-			t1 = t2;
-		if (t1 < 0.0f)
-			return (-1.0f);
-		return (t1);
-	}
-	else
+	float4 v = (ray->origin - e.pos);
+	float a = ((ray->dir.x * ray->dir.x) / (e.radius.x * e.radius.x))
+		+ ((ray->dir.y * ray->dir.y) / (e.radius.y * e.radius.y))
+		+ ((ray->dir.z * ray->dir.z) / (e.radius.z * e.radius.z));
+	float b = ((2.0f * v.x * ray->dir.x) / (e.radius.x * e.radius.x))
+		+ ((2.0f * v.y * ray->dir.y) / (e.radius.y * e.radius.y))
+		+ ((2.0f * v.z * ray->dir.z) / (e.radius.z * e.radius.z));
+	float c = (v.x * v.x) / (e.radius.x * e.radius.x)
+		+ (v.y * v.y) / (e.radius.y * e.radius.y)
+		+ (v.z * v.z) / (e.radius.z * e.radius.z) - 1.0f;
+	float d = (b * b) - (4 * a * c);
+	if (d < 0.0f || a == 0.0f || b == 0.0f || c == 0.0f)
 		return (-1.0f);
+	d = sqrt(d);
+	float t1 = (-b + d) / (2.0f * a);
+	float t2 = (-b - d) / (2.0f * a);
+	if (t1 <= 0.0f && t2 <= 0.0f)
+		return (-1.0f);
+	e.radius.w = (t1 <= 0.0f || t2 <= 0.0f);
+	float t = 0.0f;
+	if (t1 <= 0.0f)
+		t = t2;
+	else
+	{
+		if (t2 <= 0.0f)
+			t = t1;
+		else
+			t = (t1 < t2) ? t1 : t2;
+	}
+	if (t < 0.0f)
+		return (-1.0f);
+	return (t);
 }
 
 static float intersect_cone(t_ray *ray, t_sphere cyl)
 {
+	float4 x = ray->origin - cyl.pos;
 	float k = (1.0f + cyl.radius.x * cyl.radius.x);
 	float a = dot(ray->dir, ray->dir) - k * dot(ray->dir, cyl.axis) *
 		dot(ray->dir, cyl.axis);
-	float b = 2.0f * (dot(ray->dir, ray->origin - cyl.pos) - k * (dot(ray->dir, cyl.axis) *
-		dot(ray->origin - cyl.pos, cyl.axis)));
-	float c = dot(ray->origin - cyl.pos, ray->origin - cyl.pos) -
-		k * (dot(ray->origin - cyl.pos, cyl.axis) *
-		dot(ray->origin - cyl.pos, cyl.axis)) -
-		cyl.radius.x * cyl.radius.x;
+	float b = 2.0f * (dot(ray->dir, x) - k * (dot(ray->dir, cyl.axis) *
+		dot(x, cyl.axis)));
+	float c = dot(x, x) - k * (dot(x, cyl.axis) * dot(x, cyl.axis));
 	float d = (b * b) - (4.0f * a * c);
 	if (d >= 0.0f)
 	{
-		float t1 = (-b + sqrt(d)) / (2.0f * a);
-		float t2 = (-b - sqrt(d)) / (2.0f * a);
+		d = sqrt(d);
+		float t1 = (-b + d) / (2.0f * a);
+		float t2 = (-b - d) / (2.0f * a);
 		if (t2 >= 0.0f && t2 < t1)
 			t1 = t2;
 		if (t1 < 0.0f)
@@ -227,7 +238,10 @@ static float4 get_normal_ellips(t_sphere ellips, float4 inter)
 
 	tmp = inter - ellips.pos;
 	norm = 2.0f * tmp;
-	norm /= ellips.radius * ellips.radius;
+	norm /= (ellips.radius * ellips.radius);
+	norm.w = 0.0f;
+	norm *= ellips.radius.w ? -1.0f : 1.0f;
+	norm = normalize(norm);
 	return (norm);
 }
 
@@ -320,7 +334,6 @@ float4 shadow_color(t_sphere obj)
 
 	color = obj.color;
 	color *= 0.2f;
-	color = clamp_color(color);
 	return (color);
 }
 
@@ -343,7 +356,6 @@ static	float4	reflect(t_ray *ray, __global t_sphere *shape, uint num_shapes)
 	{
 		inter = get_intersection(ray, t1);
 		norm = get_normal(obj, inter, t1, *ray);
-
 		color = get_color(obj, spot, norm, inter, color, *ray);
 	}
 	return (color);
@@ -388,14 +400,13 @@ static float4 raytrace(t_ray *ray, __global t_sphere *shape, uint num_shapes)
 		inter = get_intersection(ray, t1);
 		norm = get_normal(obj, inter, t1, *ray);
 		color = get_color(obj, spot, norm, inter, color, *ray);
+		if (get_shadow(inter, spot, shape, num_shapes, id))
+				color = shadow_color(obj);
 		if (obj.type.x == 2)
 		{
-			tmp.origin = get_intersection(ray, t1 - 0.001);
-			tmp.dir = ray->dir - 2 * (dot(norm, ray->dir)) * norm;
-			if (get_shadow(inter, spot, shape, num_shapes, id))
-				color = shadow_color(obj);
-			else
-				color = (color + (float4)0.3 * clamp_color(reflect(&tmp, shape, num_shapes))); // 00.1 = coef reflt
+			tmp.origin = get_intersection(ray, t1 - 0.001f);
+			tmp.dir = ray->dir - 2.0f * (dot(norm, ray->dir)) * norm;
+			color = (color + 0.2f * reflect(&tmp, shape, num_shapes)); // 00.1 = coef reflt
 			clamp_color(color);
 		}
 	}
@@ -412,11 +423,11 @@ static	float4	get_dir(float4 dir, float4 down, float4 right,
 	float xamnt;
 	float yamnt;
 
-	xamnt = (float)(((float)x + 0.5) / (float)width) * (float)aspect_ratio
-		- (((float)(width - height) / (float)height) / 2.0);
-	yamnt = (float)((height - y) + 0.5) / height;
-	vp_down = (yamnt - (float)0.5) * down;
-	vp_right = (xamnt - (float)0.5) * right;
+	xamnt = (float)(((float)x + 0.5f) / (float)width) * (float)aspect_ratio
+		- (((float)(width - height) / (float)height) / 2.0f);
+	yamnt = (float)((height - y) + 0.5f) / height;
+	vp_down = (yamnt - (float)0.5f) * down;
+	vp_right = (xamnt - (float)0.5f) * right;
 	ray.dir = (vp_right + vp_down) + dir;
 	ray.dir = normalize(ray.dir);
 	return (ray.dir);
@@ -426,7 +437,6 @@ __kernel void generate_ray(__global float4* data, uint height, uint width,
 							__global t_sphere *shape, uint num_shapes)
 {
 	t_ray r;
-	//t_ray tmp;
 	float4 color;
 	float w = (float)width;
 	float h = (float)height;
