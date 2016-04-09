@@ -1,3 +1,5 @@
+//#pragma OPENCL EXTENSION cl_khr_fp16 : enable
+
 typedef struct	s_mat
 {
 	float4		ka;
@@ -66,22 +68,23 @@ static float	spec_lighting(float4 spot, float4 norm, float4 inter, t_ray ray)
 	eye = normalize(eye);
 	light = spot - inter;
 	light = normalize(light);
-	//if (dot(light, norm) > 0.0f)
-	//{
+	if (dot(light, norm) > 0.0f)
+	{
 		halfvec = eye + light;
 		halfvec = normalize(halfvec);
 		coef = fmax(0.0f, (float)dot(halfvec, norm));
 		coef = pow((float)coef, (float)42.0f);
 		return (coef);
-//	}
+	}
 	return (0.0f);
 }
 
 static float intersect_sph(t_ray *ray, t_sphere sph)
 {
+	float4 x = ray->origin - sph.pos;
 	float a = dot(ray->dir, ray->dir);
-	float b = 2.0f * (dot(ray->dir, ray->origin - sph.pos));
-	float c = (dot(ray->origin - sph.pos, ray->origin - sph.pos)) -
+	float b = 2.0f * (dot(ray->dir, x));
+	float c = (dot(x, x)) -
 			(sph.radius.x * sph.radius.x);
 	float d = (b * b) - (4.0f * a * c);
 	if (d >= 0.0f)
@@ -107,12 +110,12 @@ static float intersect_plan(t_ray *ray, t_sphere obj)
 
 static float intersect_cyl(t_ray *ray, t_sphere cyl)
 {
-	float a = dot(ray->dir, ray->dir) - dot(ray->dir, cyl.axis) * dot(ray->dir, cyl.axis);
-	float b = 2.0f * (dot(ray->dir, ray->origin - cyl.pos) - (dot(ray->dir, cyl.axis) *
+	float dir_axis = dot(ray->dir, cyl.axis);
+	float4 x = ray->origin - cyl.pos;
+	float a = dot(ray->dir, ray->dir) - dir_axis * dir_axis;
+	float b = 2.0f * (dot(ray->dir, x) - (dir_axis *
 		dot(ray->origin - cyl.pos, cyl.axis)));
-	float c = dot(ray->origin - cyl.pos, ray->origin - cyl.pos) -
-		(dot(ray->origin - cyl.pos, cyl.axis) *
-		dot(ray->origin - cyl.pos, cyl.axis)) -
+	float c = dot(x, x) - (dot(x, cyl.axis) * dot(x, cyl.axis)) -
 		cyl.radius.x * cyl.radius.x;
 	float d = (b * b) - (4.0f * a * c);
 	if (d >= 0.0f)
@@ -176,12 +179,14 @@ static float intersect_ellips(t_ray *ray, t_sphere e)
 static float intersect_cone(t_ray *ray, t_sphere cyl)
 {
 	float4 x = ray->origin - cyl.pos;
+	float dir_axis = dot(ray->dir, cyl.axis);
+	float x_axis = dot(x, cyl.axis);
 	float k = (1.0f + cyl.radius.x * cyl.radius.x);
-	float a = dot(ray->dir, ray->dir) - k * dot(ray->dir, cyl.axis) *
-		dot(ray->dir, cyl.axis);
-	float b = 2.0f * (dot(ray->dir, x) - k * (dot(ray->dir, cyl.axis) *
-		dot(x, cyl.axis)));
-	float c = dot(x, x) - k * (dot(x, cyl.axis) * dot(x, cyl.axis));
+	float a = dot(ray->dir, ray->dir) - k * dir_axis *
+		dir_axis;
+	float b = 2.0f * (dot(ray->dir, x) - k * dir_axis *
+		x_axis);
+	float c = dot(x, x) - k * (x_axis * x_axis);
 	float d = (b * b) - (4.0f * a * c);
 	if (d >= 0.0f)
 	{
