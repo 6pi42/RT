@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/07 13:52:36 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/13 11:15:24 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,16 @@
 # include <mlx.h>
 # include <math.h>
 # include <fcntl.h>
-# include <time.h>
+# include <sys/time.h>
 # include <unistd.h>
 # include "libft.h"
 #include <stdio.h>
 
 typedef struct	s_fps
 {
-	double		frames;
-	clock_t		start;
-	clock_t		end;
+	double			frames;
+	struct timeval	start;
+	struct timeval	end;
 }				t_fps;
 
 typedef struct	s_shape
