@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/08 17:51:23 by cboyer           ###   ########.fr       */
+/*   Updated: 2016/04/13 11:19:28 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,20 +96,21 @@ void	raytracer(t_map *map)
 
 void	draw(t_map *map)
 {
+	struct timeval sub;
 	map->fps.frames++;
-	map->fps.end = clock();
-
+	gettimeofday(&map->fps.end, NULL);
 	map->img.img = mlx_new_image(map->mlx, map->width, map->height);
 	map->img.data = mlx_get_data_addr(map->img.img, &(map->img.bpp),
 			&(map->img.size_line), &(map->img.endian));
 	update(map);
 	mlx_put_image_to_window(map->mlx, map->win, map->img.img, 0, 0);
 	mlx_destroy_image(map->mlx, map->img.img);
-	if ((map->fps.end - map->fps.start) / CLOCKS_PER_SEC >= 1.0)
+	timersub(&map->fps.end, &map->fps.start, &sub);
+	if (sub.tv_sec >= 1.0)
 	{
 		printf("fps: %f\n", map->fps.frames);
-		map->fps.frames = 0;
-		map->fps.start = clock();
+		map->fps.frames = 0;		
+		gettimeofday(&map->fps.start, NULL);
 	}
 
 }
@@ -252,7 +253,7 @@ int		main(void)
 	prog = get_prog("generate_ray.cl");
 	ocl_init(&map.env, prog);
 	raytracer(&map);
-	map.fps.start = clock();
+	gettimeofday(&map.fps.start, NULL);
 	draw(&map);
 	update(&map);
 	mlx_key_hook(map.win, key_hook, &map);
