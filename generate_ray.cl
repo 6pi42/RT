@@ -1,3 +1,13 @@
+typedef struct	s_img
+{
+	int		bpp;
+	int		size_line;
+	int		endian;
+	void	*img;
+	char	*data;
+
+}				t_img;
+
 typedef struct	s_mat
 {
 	float4		ka;
@@ -205,7 +215,7 @@ static	float4 get_intersection(t_ray *ray, float t1)
 {
 	float4 inter;
 	inter = ray->origin + (ray->dir * t1);
-	inter.w = 0.0f;
+	//inter.w = 0.0f;
 	return (inter);
 }
 
@@ -432,18 +442,20 @@ static	float4	get_dir(float4 dir, float4 down, float4 right,
 	return (ray.dir);
 }
 
-__kernel void generate_ray(__global uchar4* data, uint height, uint width,
+__kernel void generate_ray(__global char* data, uint height, uint width,
 							__global t_ray* cam,
-							__constant t_sphere *shape, uint num_shapes)
+							__constant t_sphere *shape, uint num_shapes,
+							__constant t_img *img)
 {
 	t_ray r;
 	float4 color;
-	uchar4 c;
 	float w = (float)width;
 	float h = (float)height;
 	float id;
 	float x;
 	float y;
+	int   xi = (int)get_global_id(0) % (int)width;
+	int   yi = (int)get_global_id(0) / (int)width;
 
 	id = (float)get_global_id(0);
 	y = id / width;
@@ -451,9 +463,17 @@ __kernel void generate_ray(__global uchar4* data, uint height, uint width,
 	r.origin = (float4)(cam->origin.x, cam->origin.y, cam->origin.z, 0.0f);
 	r.dir = get_dir(cam->dir, cam->down, cam->right, x, y, w, h, cam->ratio);
 	color = raytrace(&r, shape, num_shapes);
-	c.x = (uchar)((int)(color.x) & 0xFF);
-	c.y = (uchar)((int)(color.y) & 0xFF);
-	c.z = (uchar)((int)(color.z) & 0xFF);
-	c.z = (uchar)color.z;
-	data[get_global_id(0)] = c;
+	data[(yi * img->size_line) + (xi * 32) / 8] =
+			(uchar)((int)(color.z) & 0xFF);
+	data[(yi * img->size_line) + (xi * 32) / 8 + 1] =
+			(uchar)((int)(color.y) & 0xFF);
+	data[(yi * img->size_line) + (xi * 32) / 8 + 2] =
+			(uchar)((int)(color.x) & 0xFF);
+
+	/*data[(int)y * img->size_line + ((int)x * img->bpp) / 8] =
+			(uchar)((int)(color.z) & 0xFF);
+	data[(int)y * img->size_line + ((int)x * img->bpp) / 8 + 1] =
+			(uchar)((int)(color.y) & 0xFF);
+	data[(int)y * img->size_line + ((int)x * img->bpp) / 8 + 2] =
+			(uchar)((int)(color.x) & 0xFF); */
 }
