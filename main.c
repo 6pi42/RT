@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/15 13:21:08 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/15 15:13:17 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ void	draw_pixel_to_image(t_map *map, int x, int y, cl_uchar4 c)
 cl_mem output;
 cl_mem mem_camera;
 cl_mem mem_shape;
+cl_mem mem_img;
 
 void	update(t_map *map)
 {
@@ -61,22 +62,24 @@ void	update(t_map *map)
 			map->scene.cam, 0, NULL, NULL);
 	clEnqueueNDRangeKernel(env.cmds, env.kernel, 1, NULL,
 			&work_size, NULL, 0, NULL, &event);
-	cl_uchar4 *ptr = (cl_uchar4*)clEnqueueMapBuffer(env.cmds, output,
+	char *ptr = (char*)clEnqueueMapBuffer(env.cmds, output,
 			CL_TRUE, CL_MAP_READ, 0,
-			map->width * map->height * sizeof(cl_uchar4), 0, NULL, NULL, NULL);
+			map->width * map->height * (sizeof(char) * 4), 0, NULL, NULL, NULL);
 	clWaitForEvents(1, &event);
 	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START,
 			sizeof(time_start), &time_start, NULL);
 	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END,
 			sizeof(time_end), &time_end, NULL);
 	total_time = time_end - time_start;
-	printf("\nExecution time in milliseconds = %0.3f ms\n",
-			(total_time / 1000000.0));
-	while (i < map->width * map->height)
+	//printf("\nExecution time = %0.3f ms\n",
+	//		(total_time / 1000000.0));
+	ft_memcpy(map->img.data, ptr,
+			map->width * map->height * (sizeof(char) * 4));
+	/*while (i < map->width * map->height)
 	{
 		draw_pixel_to_image(map, i % map->width, i / map->width, ptr[i]);
 		i++;
-	}
+	} */
 }
 
 void	raytracer(t_map *map)
@@ -94,14 +97,18 @@ void	raytracer(t_map *map)
 		map->scene.shape, &err);
 	mem_camera = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
 			sizeof(t_ray), NULL, &err);
+	mem_img = clCreateBuffer(env.context, CL_MEM_READ_ONLY
+		| CL_MEM_COPY_HOST_PTR, sizeof(t_img),
+		&map->img, &err);
 	output = clCreateBuffer(env.context, CL_MEM_WRITE_ONLY,
-			map->width * map->height * sizeof(cl_uchar4), NULL, &err);
+			map->width * map->height * (sizeof(char) * 4) , NULL, &err);
 	err = clSetKernelArg(env.kernel, 0, sizeof(cl_mem), &output);
 	err |= clSetKernelArg(env.kernel, 1, sizeof(cl_uint), &map->height);
 	err |= clSetKernelArg(env.kernel, 2, sizeof(cl_uint), &map->width);
 	err |= clSetKernelArg(env.kernel, 3, sizeof(cl_mem), &mem_camera);
 	err |= clSetKernelArg(env.kernel, 4, sizeof(cl_mem), &mem_shape);
 	err |= clSetKernelArg(env.kernel, 5, sizeof(cl_uint),&map->scene.nb_shape);
+	err |= clSetKernelArg(env.kernel, 6, sizeof(cl_mem),&mem_img);
 	if (err < 0)
 		ft_putstr("Failed to create kernel argument");
 }
@@ -111,7 +118,7 @@ void	draw(t_map *map)
 	struct timeval sub;
 	map->fps.frames++;
 	gettimeofday(&map->fps.end, NULL);
-		update(map);
+	update(map);
 	mlx_put_image_to_window(map->mlx, map->win, map->img.img, 0, 0);
 	//mlx_destroy_image(map->mlx, map->img.img);
 	timersub(&map->fps.end, &map->fps.start, &sub);
@@ -262,6 +269,7 @@ int		main(void)
 	map.img.img = mlx_new_image(map.mlx, map.width, map.height);
 	map.img.data = mlx_get_data_addr(map.img.img, &(map.img.bpp),
 			&(map.img.size_line), &(map.img.endian));
+	printf("bpp: %d, size_line: %d\n", map.img.bpp, map.img.size_line);
 	prog = get_prog("generate_ray.cl");
 	ocl_init(&map.env, prog);
 	raytracer(&map);

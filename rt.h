@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/13 11:15:24 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/15 14:03:01 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,11 @@ typedef struct	s_scene
 
 typedef struct	s_img
 {
-	void		*img;
-	char		*data;
 	int			bpp;
 	int			size_line;
 	int			endian;
+	void		*img;
+	char		*data;
 }				t_img;
 
 typedef struct	s_cam
