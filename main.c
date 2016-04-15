@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/13 11:19:28 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/15 13:21:08 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	init_cam(t_map *map)
 	map->free_cam.down = cross_vec(map->free_cam.dir, map->free_cam.left);
 }
 
-void	draw_pixel_to_image(t_map *map, int x, int y, cl_float4 c)
+void	draw_pixel_to_image(t_map *map, int x, int y, cl_uchar4 c)
 {
 	if (x < 0 || x > map->width - 1 || y < 0 || y > map->height - 1)
 		return ;
@@ -42,6 +42,10 @@ void	update(t_map *map)
 {
 	t_env env;
 	size_t work_size;
+	cl_event event;
+	cl_ulong time_start;
+	cl_ulong time_end;
+	double total_time;
 	int i;
 
 	i = 0;
@@ -56,10 +60,18 @@ void	update(t_map *map)
 	clEnqueueWriteBuffer(env.cmds, mem_camera, CL_TRUE, 0, sizeof(t_ray),
 			map->scene.cam, 0, NULL, NULL);
 	clEnqueueNDRangeKernel(env.cmds, env.kernel, 1, NULL,
-			&work_size, NULL, 0, NULL, NULL);
-	cl_float4 *ptr = (cl_float4*)clEnqueueMapBuffer(env.cmds, output,
+			&work_size, NULL, 0, NULL, &event);
+	cl_uchar4 *ptr = (cl_uchar4*)clEnqueueMapBuffer(env.cmds, output,
 			CL_TRUE, CL_MAP_READ, 0,
-			map->width * map->height * sizeof(cl_float4), 0, NULL, NULL, NULL);
+			map->width * map->height * sizeof(cl_uchar4), 0, NULL, NULL, NULL);
+	clWaitForEvents(1, &event);
+	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START,
+			sizeof(time_start), &time_start, NULL);
+	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END,
+			sizeof(time_end), &time_end, NULL);
+	total_time = time_end - time_start;
+	printf("\nExecution time in milliseconds = %0.3f ms\n",
+			(total_time / 1000000.0));
 	while (i < map->width * map->height)
 	{
 		draw_pixel_to_image(map, i % map->width, i / map->width, ptr[i]);
@@ -83,7 +95,7 @@ void	raytracer(t_map *map)
 	mem_camera = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
 			sizeof(t_ray), NULL, &err);
 	output = clCreateBuffer(env.context, CL_MEM_WRITE_ONLY,
-			map->width * map->height * sizeof(cl_float4), NULL, &err);
+			map->width * map->height * sizeof(cl_uchar4), NULL, &err);
 	err = clSetKernelArg(env.kernel, 0, sizeof(cl_mem), &output);
 	err |= clSetKernelArg(env.kernel, 1, sizeof(cl_uint), &map->height);
 	err |= clSetKernelArg(env.kernel, 2, sizeof(cl_uint), &map->width);
@@ -99,12 +111,9 @@ void	draw(t_map *map)
 	struct timeval sub;
 	map->fps.frames++;
 	gettimeofday(&map->fps.end, NULL);
-	map->img.img = mlx_new_image(map->mlx, map->width, map->height);
-	map->img.data = mlx_get_data_addr(map->img.img, &(map->img.bpp),
-			&(map->img.size_line), &(map->img.endian));
-	update(map);
+		update(map);
 	mlx_put_image_to_window(map->mlx, map->win, map->img.img, 0, 0);
-	mlx_destroy_image(map->mlx, map->img.img);
+	//mlx_destroy_image(map->mlx, map->img.img);
 	timersub(&map->fps.end, &map->fps.start, &sub);
 	if (sub.tv_sec >= 1.0)
 	{
@@ -250,6 +259,9 @@ int		main(void)
 	map.mlx = mlx_init();
 	init_key(&map);
 	map.win = mlx_new_window(map.mlx, map.width, map.height, "RT IN RT");
+	map.img.img = mlx_new_image(map.mlx, map.width, map.height);
+	map.img.data = mlx_get_data_addr(map.img.img, &(map.img.bpp),
+			&(map.img.size_line), &(map.img.endian));
 	prog = get_prog("generate_ray.cl");
 	ocl_init(&map.env, prog);
 	raytracer(&map);

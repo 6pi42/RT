@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:22:57 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/02 14:42:32 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/15 10:41:51 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,14 @@ void	ocl_init(t_env *env, t_prog prog)
 		ft_putstr("Error: Failed to create a device group\n");	
 	if (!(env->context = clCreateContext(NULL, 1, &env->id, NULL, NULL, &err)))
 		ft_putstr("Error: Failed to create a compute context\n");
-	if (!(env->cmds = clCreateCommandQueue(env->context, env->id, 0, &err)))
+	if (!(env->cmds = clCreateCommandQueue(env->context, env->id,
+					CL_QUEUE_PROFILING_ENABLE, &err)))
 		ft_putstr("Error: Failed to create a command commands\n");
 	if (!(env->program = clCreateProgramWithSource(env->context, 1,
 					(const char**)&prog.buffer, NULL, &err)))
 		ft_putstr("Error: Failed to create program\n");
 	if ((err =
-		clBuildProgram(env->program, 0, NULL, NULL, NULL, NULL)) != CL_SUCCESS)
+		clBuildProgram(env->program, 0, NULL, "-cl-fast-relaxed-math", NULL, NULL)) != CL_SUCCESS)
 		ft_putstr("Error: Failed to build program executable\n");
 	if (err < 0)
 	{

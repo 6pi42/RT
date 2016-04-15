@@ -1,5 +1,3 @@
-//#pragma OPENCL EXTENSION cl_khr_fp16 : enable
-
 typedef struct	s_mat
 {
 	float4		ka;
@@ -25,7 +23,7 @@ typedef struct	s_ray
 	float4		right;
 	float		ratio;
 }				t_ray;
-
+/*
 static t_sphere cpy_struct(t_sphere sph)
 {
 	t_sphere	obj;
@@ -36,7 +34,7 @@ static t_sphere cpy_struct(t_sphere sph)
 	obj.axis = (float4)(sph.axis.x, sph.axis.y, sph.axis.z, 0.0f);
 	return (obj);
 }
-
+*/
 static float4	clamp_color(float4 color)
 {
 	color.x = color.x > 0xFF ? 0xFF : color.x;
@@ -51,7 +49,7 @@ static float diffuse_lighting(float4 spot, float4 norm, float4 inter)
 	float	angle;
 
 	light = spot - inter;
-	light = normalize(light);
+	light = fast_normalize(light);
 	angle = fmax((float)0.0f, (float)dot(light, norm));;
 	return (angle);
 }
@@ -65,13 +63,13 @@ static float	spec_lighting(float4 spot, float4 norm, float4 inter, t_ray ray)
 	float	coef;
 
 	eye = ray.origin - inter;
-	eye = normalize(eye);
+	eye = fast_normalize(eye);
 	light = spot - inter;
-	light = normalize(light);
+	light = fast_normalize(light);
 	if (dot(light, norm) > 0.0f)
 	{
 		halfvec = eye + light;
-		halfvec = normalize(halfvec);
+		halfvec = fast_normalize(halfvec);
 		coef = fmax(0.0f, (float)dot(halfvec, norm));
 		coef = pow((float)coef, (float)42.0f);
 		return (coef);
@@ -219,7 +217,7 @@ static float4 get_normal_cone(t_sphere cone, t_ray ray, float t)
 
 	norm = (ray.dir * t) + (ray.origin - cone.pos) -
 		(1.0f + cone.radius * cone.radius) * (cone.axis * m);
-	norm = normalize(norm);
+	norm = fast_normalize(norm);
 	return (norm);
 }
 
@@ -246,7 +244,7 @@ static float4 get_normal_ellips(t_sphere ellips, float4 inter)
 	norm /= (ellips.radius * ellips.radius);
 	norm.w = 0.0f;
 	norm *= ellips.radius.w ? -1.0f : 1.0f;
-	norm = normalize(norm);
+	norm = fast_normalize(norm);
 	return (norm);
 }
 
@@ -274,12 +272,12 @@ static float4 get_normal(t_sphere obj, float4 inter, float t1, t_ray ray)
 		norm = get_normal_cone(obj, ray, t1);
 	if (obj.type.x == 5.0f)
 		norm = get_normal_ellips(obj, inter);
-	norm = normalize(norm);
+	norm = fast_normalize(norm);
 	return (norm);
 }
 
 static uint intersect_all(t_ray *ray,
-		__global t_sphere *shape, uint num_shapes,
+		__constant t_sphere *shape, uint num_shapes,
 									float *t1)
 {
 	uint	i;
@@ -342,11 +340,10 @@ float4 shadow_color(t_sphere obj)
 	return (color);
 }
 
-static	float4	reflect(t_ray *ray, __global t_sphere *shape, uint num_shapes)
+static	float4	reflect(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 {
 	float4 		color;
 	float		t1;
-	t_sphere	obj;
 	float4		norm;
 	float4		inter;
 	float4		spot;
@@ -356,17 +353,16 @@ static	float4	reflect(t_ray *ray, __global t_sphere *shape, uint num_shapes)
 	t1 = -1.0f;
 	color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
 	id = intersect_all(ray, shape, num_shapes, &t1);
-	obj = shape[id];
 	if (t1 > 0.0f)
 	{
 		inter = get_intersection(ray, t1);
-		norm = get_normal(obj, inter, t1, *ray);
-		color = get_color(obj, spot, norm, inter, color, *ray);
+		norm = get_normal(shape[id], inter, t1, *ray);
+		color = get_color(shape[id], spot, norm, inter, color, *ray);
 	}
 	return (color);
 }
 
-int get_shadow(float4 inter, float4 spot, __global t_sphere *shape, uint num_shapes, uint id)
+int get_shadow(float4 inter, float4 spot, __constant t_sphere *shape, uint num_shapes, uint id)
 {
 	t_ray tmp;
 	uint id2;
@@ -374,7 +370,7 @@ int get_shadow(float4 inter, float4 spot, __global t_sphere *shape, uint num_sha
 
 	t = -1.0f;
 	tmp.origin = spot;
-	tmp.dir = normalize(inter - spot);
+	tmp.dir = fast_normalize(inter - spot);
 	id2 = intersect_all(&tmp, shape, num_shapes, &t);
 	if (id2 != id)
 		return (1);
@@ -382,12 +378,11 @@ int get_shadow(float4 inter, float4 spot, __global t_sphere *shape, uint num_sha
 
 }
 
-static float4 raytrace(t_ray *ray, __global t_sphere *shape, uint num_shapes)
+static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 {
 	float4 		color;
 	float		t1;
 	uint		i;
-	t_sphere	obj;
 	t_ray tmp;
 	float4		norm;
 	float4		inter;
@@ -399,19 +394,18 @@ static float4 raytrace(t_ray *ray, __global t_sphere *shape, uint num_shapes)
 	t1 = -1.0f;
 	color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
 	id = intersect_all(ray, shape, num_shapes, &t1);
-	obj = shape[id];
 	if (t1 > 0.0f)
 	{
 		inter = get_intersection(ray, t1);
-		norm = get_normal(obj, inter, t1, *ray);
-		color = get_color(obj, spot, norm, inter, color, *ray);
+		norm = get_normal(shape[id], inter, t1, *ray);
+		color = get_color(shape[id], spot, norm, inter, color, *ray);
 		if (get_shadow(inter, spot, shape, num_shapes, id))
-				color = shadow_color(obj);
-		if (obj.type.x == 2)
+				color = shadow_color(shape[id]);
+		if (shape[id].type.x == 2)
 		{
 			tmp.origin = get_intersection(ray, t1 - 0.001f);
 			tmp.dir = ray->dir - 2.0f * (dot(norm, ray->dir)) * norm;
-			color = (color + 0.2f * reflect(&tmp, shape, num_shapes)); // 00.1 = coef reflt
+			color = (color + 0.2f * reflect(&tmp, shape, num_shapes));
 			clamp_color(color);
 		}
 	}
@@ -434,20 +428,32 @@ static	float4	get_dir(float4 dir, float4 down, float4 right,
 	vp_down = (yamnt - (float)0.5f) * down;
 	vp_right = (xamnt - (float)0.5f) * right;
 	ray.dir = (vp_right + vp_down) + dir;
-	ray.dir = normalize(ray.dir);
+	ray.dir = fast_normalize(ray.dir);
 	return (ray.dir);
 }
-__kernel void generate_ray(__global float4* data, uint height, uint width,
+
+__kernel void generate_ray(__global uchar4* data, uint height, uint width,
 							__global t_ray* cam,
-							__global t_sphere *shape, uint num_shapes)
+							__constant t_sphere *shape, uint num_shapes)
 {
 	t_ray r;
 	float4 color;
+	uchar4 c;
 	float w = (float)width;
 	float h = (float)height;
-	float global_id = (float)get_global_id(0);
+	float id;
+	float x;
+	float y;
+
+	id = (float)get_global_id(0);
+	y = id / width;
+	x = fmod(id, width);
 	r.origin = (float4)(cam->origin.x, cam->origin.y, cam->origin.z, 0.0f);
-	r.dir = get_dir(cam->dir, cam->down, cam->right, fmod(global_id, w), global_id / w, w, h, cam->ratio);
+	r.dir = get_dir(cam->dir, cam->down, cam->right, x, y, w, h, cam->ratio);
 	color = raytrace(&r, shape, num_shapes);
-	data[get_global_id(0)] = color;
+	c.x = (uchar)((int)(color.x) & 0xFF);
+	c.y = (uchar)((int)(color.y) & 0xFF);
+	c.z = (uchar)((int)(color.z) & 0xFF);
+	c.z = (uchar)color.z;
+	data[get_global_id(0)] = c;
 }
