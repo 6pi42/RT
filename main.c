@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/16 15:02:35 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/04/16 15:47:58 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,8 @@ int		main(int argc, char **argv)
 	t_shape		*shape;
 	t_ray		cam;
 
-	(void)argc;
+	if (argc != 2)
+		return (1);
 	map.scene.nb_shape = get_nb_shape(argv[1]);
 	shape = parse(argv[1]);
 
