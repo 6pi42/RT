@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: amathias <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/26 14:24:02 by amathias          #+#    #+#              #
-#    Updated: 2015/12/20 16:47:40 by amathias         ###   ########.fr        #
+#    Updated: 2016/04/15 13:57:12 by emontagn         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -87,17 +87,17 @@ CFLAGS = -Wall -Werror -Wextra
 
 all: $(NAME)
 
-$(NAME): $(OBJ_NAME) 
-	$(AR) $(NAME) $(OBJ_NAME)
-	$(RAN) $(NAME)
+$(NAME): $(OBJ_NAME)
+	@$(AR) $(NAME) $(OBJ_NAME)
+	@$(RAN) $(NAME)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -o $@ -c $< 
+	@$(CC) $(CFLAGS) -o $@ -c $<
 
 clean:
-	$(RM) $(OBJ_NAME)
+	@$(RM) $(OBJ_NAME)
 
 fclean: clean
-	$(RM) $(NAME)
+	@$(RM) $(NAME)
 
 re: fclean all

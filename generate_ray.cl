@@ -48,6 +48,8 @@ static float diffuse_lighting(float4 spot, float4 norm, float4 inter)
 	float	angle;
 
 	light = fast_normalize(spot - inter);
+	light = spot - inter;
+	light = fast_normalize(light);
 	angle = fmax(0.0f, dot(light, norm));;
 	return (angle);
 }
@@ -64,6 +66,19 @@ static float	spec_lighting(float4 spot, float4 norm, float4 inter, t_ray ray)
 	halfvec = fast_normalize(eye + light);
 	coef = pow(fmax(0.0f, dot(halfvec, norm)), 42.0f);
 	return (coef);
+	eye = ray.origin - inter;
+	eye = fast_normalize(eye);
+	light = spot - inter;
+	light = fast_normalize(light);
+	if (dot(light, norm) > 0.0f)
+	{
+		halfvec = eye + light;
+		halfvec = fast_normalize(halfvec);
+		coef = fmax(0.0f, dot(halfvec, norm));
+		coef = pow(coef, 42.0f);
+		return (coef);
+	}
+	return (0.0f);
 }
 
 static float intersect_sph(t_ray *ray, t_sphere sph)
@@ -254,18 +269,18 @@ static uint intersect_all(t_ray *ray,
 	float	tmp;
 
 	i = 0;
-	j = -1.0f;
+	j = -1;
 	while (i < num_shapes)
 	{
-		if (shape[i].type.x == 1.0)
+		if (shape[i].type.x == 1.0f)
 			tmp = intersect_sph(ray, shape[i]);
-		if (shape[i].type.x == 2.0)
+		if (shape[i].type.x == 2.0f)
 			tmp = intersect_plan(ray, shape[i]);
-		if (shape[i].type.x == 3.0)
+		if (shape[i].type.x == 3.0f)
 			tmp = intersect_cyl(ray, shape[i]);
-		if (shape[i].type.x == 4.0)
+		if (shape[i].type.x == 4.0f)
 			tmp = intersect_cone(ray, shape[i]);
-		if (shape[i].type.x == 5.0)
+		if (shape[i].type.x == 5.0f)
 			tmp = intersect_ellips(ray, shape[i]);
 		if (tmp != -1.0f && (*t1 == -1.0f || tmp < *t1))
 		{
@@ -318,7 +333,7 @@ static	float4	reflect(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 	float4		spot;
 	uint id;
 
-	spot = (float4)(-100.0f, 100.0f, 0.0f, 0.0f);
+	spot = (float4)(500.0f, 200.0f, 0.0f, 0.0f);
 	t1 = -1.0f;
 	color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
 	id = intersect_all(ray, shape, num_shapes, &t1);
@@ -357,7 +372,7 @@ static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 	float4		spot;
 	uint id;
 
-	spot = (float4)(-100.0f, 100.0f, 0.0f, 0.0f);
+	spot = (float4)(-50.0f, 100.0f, 0.0f, 0.0f);
 	i = 0;
 	t1 = -1.0f;
 	color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
@@ -397,31 +412,40 @@ static	float4	get_dir(float4 dir, float4 down, float4 right,
 	return (ray.dir);
 }
 
-__kernel void generate_ray(__global char* data, uint height, uint width,
+__kernel void generate_ray(__global char* data, float height, float width,
 							__global t_ray* cam,
 							__constant t_sphere *shape, uint num_shapes,
 							__constant t_img *img)
 {
 	t_ray r;
 	float4 color;
-	float w = (float)width;
-	float h = (float)height;
+	float w = width;
+	float h = height;
 	float id;
 	float x;
 	float y;
-	int   xi = (int)get_global_id(0) % (int)width;
-	int   yi = (int)get_global_id(0) / (int)width;
-
-	id = (float)get_global_id(0);
+/*
+	int   xi = get_global_id(0) % (int)width;
+	int   yi = get_global_id(0) / (int)width;
+*/
+	id = get_global_id(0);
 	y = id / width;
 	x = fmod(id, width);
 	r.origin = (float4)(cam->origin.x, cam->origin.y, cam->origin.z, 0.0f);
 	r.dir = get_dir(cam->dir, cam->down, cam->right, x, y, w, h, cam->ratio);
 	color = raytrace(&r, shape, num_shapes);
+/*
 	data[(yi * img->size_line) + (xi * 32) / 8] =
 			(uchar)((int)(color.z) & 0xFF);
 	data[(yi * img->size_line) + (xi * 32) / 8 + 1] =
 			(uchar)((int)(color.y) & 0xFF);
 	data[(yi * img->size_line) + (xi * 32) / 8 + 2] =
+			(uchar)((int)(color.x) & 0xFF);
+*/
+	data[(int)y * img->size_line + ((int)x * img->bpp) / 8] =
+			(uchar)((int)(color.z) & 0xFF);
+	data[(int)y * img->size_line + ((int)x * img->bpp) / 8 + 1] =
+			(uchar)((int)(color.y) & 0xFF);
+	data[(int)y * img->size_line + ((int)x * img->bpp) / 8 + 2] =
 			(uchar)((int)(color.x) & 0xFF);
 }

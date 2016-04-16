@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_cam.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/04 01:07:27 by apaget            #+#    #+#             */
-/*   Updated: 2016/04/07 13:54:26 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/16 14:23:26 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,12 @@ void	vector_from_angle(t_cam *cam)
 	up.x = 0;
 	up.y = 1;
 	up.z = 0;
-	if (cam->phi > 89)
-		cam->phi = 89;
-	if (cam->phi < -89)
-		cam->phi = -89;
-	if (cam->theta < -89)
-		cam->theta = -89;
+	if (cam->phi > 89.0f)
+		cam->phi = 89.0f;
+	if (cam->phi < -89.0f)
+		cam->phi = -89.0f;
+	if (cam->theta < -89.0f)
+		cam->theta = -89.0f;
 	tmp = cos((cam->phi * M_PI) / 180.f);
 	cam->forward.x =  tmp * sin((cam->theta * M_PI) / 180.f);
 	cam->forward.y = sin((cam->phi * M_PI) / 180.f);
@@ -39,7 +39,7 @@ void	vector_from_angle(t_cam *cam)
 
 void	update_cam(t_cam *cam, t_key *key)
 {
-	cam->speed = 4.05;
+	cam->speed = 4.05f;
 
 	if (key->up)
 		cam->pos = add_vec(cam->pos, scale_vec(cam->speed, cam->forward));
