@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/15 14:03:01 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/16 14:29:03 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,11 +64,11 @@ typedef struct	s_img
 
 typedef struct	s_cam
 {
-	double		speed;
-	double		sensitivity;
-	double		theta;
-	double		aspect_ratio;
-	double		phi;
+	float		speed;
+	float		sensitivity;
+	float		theta;
+	float		aspect_ratio;
+	float		phi;
 	cl_float4	pos;
 	cl_float4	dir;
 	cl_float4	target;
@@ -88,14 +88,10 @@ typedef struct	s_key
 	int			right;
 	int			mleft;
 	int			mright;
-	int			num_8;
-	int			num_4;
-	int			num_2;
-	int			num_6;
 	int			mx;
 	int			my;
-	double		theta;
-	double		phi;
+	float		theta;
+	float		phi;
 }				t_key;
 
 typedef struct	s_env
@@ -117,8 +113,8 @@ typedef struct	s_map
 	t_key		key;
 	t_fps		fps;
 	t_scene		scene;
-	int			height;
-	int			width;
+	float		height;
+	float		width;
 }				t_map;
 
 typedef struct	s_prog
@@ -150,4 +146,20 @@ void	vector_from_angle(t_cam *cam);
 void	update_cam(t_cam *cam, t_key *key);
 void	update(t_map *map);
 int		motion_notify(int x, int y, t_map *map);
+
+int		ft_strsearch(char *str1, char *str2);
+t_shape	*parse(char *file);
+double	atoi_double(char *line);
+void	get_sphere(int fd, t_shape *shape);
+void	get_plane(int fd, t_shape *shape);
+void	get_ellipsoid(int fd, t_shape *shape);
+void	get_cylinder(int fd, t_shape *shape);
+void	get_cone(int fd, t_shape *shape);
+cl_float4	get_position(char *line);
+cl_float4	get_vector(char *line);
+cl_float4	get_rgb(char *line);
+cl_float4	get_radius(char *line);
+int		get_number(char *file, char *shape_name);
+int		get_nb_shape(char *file);
+
 #endif

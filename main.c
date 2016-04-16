@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/15 15:13:17 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/16 15:02:35 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	init_cam(t_map *map)
 {
 	cl_float4 tmp;
+
 	tmp.x = 0;
 	tmp.y = 1;
 	tmp.z = 0;
@@ -71,15 +72,10 @@ void	update(t_map *map)
 	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END,
 			sizeof(time_end), &time_end, NULL);
 	total_time = time_end - time_start;
-	//printf("\nExecution time = %0.3f ms\n",
-	//		(total_time / 1000000.0));
+	printf("\nExecution time = %0.3f ms\n",
+			(total_time / 1000000.0));
 	ft_memcpy(map->img.data, ptr,
 			map->width * map->height * (sizeof(char) * 4));
-	/*while (i < map->width * map->height)
-	{
-		draw_pixel_to_image(map, i % map->width, i / map->width, ptr[i]);
-		i++;
-	} */
 }
 
 void	raytracer(t_map *map)
@@ -120,147 +116,42 @@ void	draw(t_map *map)
 	gettimeofday(&map->fps.end, NULL);
 	update(map);
 	mlx_put_image_to_window(map->mlx, map->win, map->img.img, 0, 0);
-	//mlx_destroy_image(map->mlx, map->img.img);
 	timersub(&map->fps.end, &map->fps.start, &sub);
 	if (sub.tv_sec >= 1.0)
 	{
-		printf("fps: %f\n", map->fps.frames);
-		map->fps.frames = 0;		
+		printf ("\033[32;1m\nfps: %.3f\n\033[0m", map->fps.frames);
+		map->fps.frames = 0;
 		gettimeofday(&map->fps.start, NULL);
 	}
-
 }
 
 void	vec_normalize(cl_float4 *vec)
 {
-	double tmp;
+	float tmp;
 
-	tmp = 1.0 / sqrt((vec->x * vec->x + vec->y * vec->y + vec->z * vec->z));
+	tmp = 1.0f / sqrt((vec->x * vec->x + vec->y * vec->y + vec->z * vec->z));
 	vec->x *= tmp;
 	vec->y *= tmp;
 	vec->z *= tmp;
-
 }
-int		main(void)
+
+int		main(int argc, char **argv)
 {
 	t_map		map;
 	t_prog		prog;
 	t_shape		*shape;
 	t_ray		cam;
 
-	map.scene.nb_shape = 7;
-	shape = (t_shape*)malloc(sizeof(t_shape) * map.scene.nb_shape);
-	shape[0].pos.x = 20.0;
-	shape[0].pos.y = 20.0;
-	shape[0].pos.z = 20.0;
-	shape[0].pos.w = 0.0;
-	shape[0].color.x = 255;
-	shape[0].color.y = 255;
-	shape[0].color.z = 0;
-	shape[0].color.w = 0;
-	shape[0].radius.x = 25.0;
-	shape[0].type.x = 1;
+	(void)argc;
+	map.scene.nb_shape = get_nb_shape(argv[1]);
+	shape = parse(argv[1]);
 
-	shape[1].pos.x = 60.0;
-	shape[1].pos.y = 20.0;
-	shape[1].pos.z = 60.0;
-	shape[1].pos.w = 4.0;
-	shape[1].color.x = 0;
-	shape[1].color.y = 0;
-	shape[1].color.z = 255;
-	shape[1].color.w = 0;
-	shape[1].radius.x = 35.0;
-	shape[1].type.x = 1;
+	map.width = 1080.0f;
+	map.height = 720.0f;
 
-
-	shape[2].pos.x = 40.0;
-	shape[2].pos.y = -50.0;
-	shape[2].pos.z = 20.0;
-	shape[2].pos.w = 0.0;
-	shape[2].color.x = 128;
-	shape[2].color.y = 128;
-	shape[2].color.z = 0;
-	shape[2].color.w = 0;
-	shape[2].radius.x = 0.0;
-	shape[2].radius.y = 1.0;
-	shape[2].radius.z = 0.0;
-	shape[2].radius.w = 0.0;
-	shape[2].type.x = 2;
-
-	shape[3].pos.x = 40.0;
-	shape[3].pos.y = 0.0;
-	shape[3].pos.z = -190;
-	shape[3].pos.w = 0.0;
-	shape[3].color.x = 0;
-	shape[3].color.y = 255;
-	shape[3].color.z = 0;
-	shape[3].color.w = 0;
-	shape[3].radius.x = 0.0;
-	shape[3].radius.y = 0.0;
-	shape[3].radius.z = 1.0;
-	shape[3].radius.w = 0.0;
-	shape[3].type.x = 2;
-
-	shape[4].pos.x = 300.0;
-	shape[4].pos.y = 40.0;
-	shape[4].pos.z = 0.0;
-	shape[4].pos.w = 0.0;
-	shape[4].color.x = 0;
-	shape[4].color.y = 255;
-	shape[4].color.z = 255;
-	shape[4].color.w = 0;
-	shape[4].radius.x = 15.0;
-	shape[4].type.x = 3;
-	shape[4].axis.x = -0.5;
-	shape[4].axis.y = 1.0;
-	shape[4].axis.z = 0.0;
-	shape[4].axis.w = 0.0;
-	vec_normalize(&(shape[4].axis));
-
-	shape[5].pos.x = -50.0;
-	shape[5].pos.y = 20.0;
-	shape[5].pos.z = 0.0;
-	shape[5].pos.w = 0.0;
-	shape[5].color.x = 255;
-	shape[5].color.y = 0;
-	shape[5].color.z = 255;
-	shape[5].color.w = 0;
-	shape[5].radius.x = 0.5;
-	shape[5].type.x = 4;
-	shape[5].axis.x = 1.0;
-	shape[5].axis.y = 1.0;
-	shape[5].axis.z = 0.0;
-	shape[5].axis.w = 0.0;
-	vec_normalize(&(shape[5].axis));
-
-	shape[6].pos.x = -100.0;
-	shape[6].pos.y = 50.0;
-	shape[6].pos.z = 80.0;
-	shape[6].pos.w = 0.0;
-	shape[6].color.x = 255;
-	shape[6].color.y = 255;
-	shape[6].color.z = 255;
-	shape[6].color.w = 0;
-	shape[6].radius.x = 15.0;
-	shape[6].radius.y = 40.0;
-	shape[6].radius.z = 10.0;
-	shape[6].type.x = 5;
-	shape[6].axis.x = 0.0;
-	shape[6].axis.y = 0.0;
-	shape[6].axis.z = 0.0;
-	shape[6].axis.w = 0.0;
-
-	map.width = 900;
-	map.height = 720;
-
-	map.free_cam.dir.x = -1;
-	map.free_cam.dir.y = -1;
-	map.free_cam.dir.z = -1;
-	map.free_cam.pos.x = 100;
-	map.free_cam.pos.y = 100;
-	map.free_cam.pos.z = 200;
-	map.free_cam.old_mouse_pos.x = map.width / 2;
-	map.free_cam.old_mouse_pos.y = map.height / 2;
+	map.free_cam.pos.x = 0;
+	map.free_cam.pos.y = 50;
+	map.free_cam.pos.z = 500;
 	map.scene.shape = shape;
 	map.scene.cam = &cam;
 	map.mlx = mlx_init();
@@ -269,7 +160,6 @@ int		main(void)
 	map.img.img = mlx_new_image(map.mlx, map.width, map.height);
 	map.img.data = mlx_get_data_addr(map.img.img, &(map.img.bpp),
 			&(map.img.size_line), &(map.img.endian));
-	printf("bpp: %d, size_line: %d\n", map.img.bpp, map.img.size_line);
 	prog = get_prog("generate_ray.cl");
 	ocl_init(&map.env, prog);
 	raytracer(&map);

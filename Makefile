@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: amathias <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/04/06 18:22:38 by apaget           ###   ########.fr        #
+#    Updated: 2016/04/15 13:57:49 by emontagn         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,12 +19,15 @@ SRC =	main.c			\
 		vec_calc2.c		\
 		free_cam.c		\
 		move.c			\
+		parser.c		\
+		get_shape.c		\
+		get_tools.c		\
 
 OBJ = $(SRC:.c=.o)
 NAME = rt
 CC = gcc
 RM = rm -f
-CFLAGS = -Wall -Werror -Wextra 
+CFLAGS = -Wall -Werror -Wextra -O3
 
 LIB_PATH = ./libft/ /usr/local/lib/
 LIB_NAME = -lft -lmlx -framework OpenCL -framework OpenGL -framework AppKit
@@ -37,23 +40,24 @@ INC = $(addprefix -I,$(INC_PATH))
 all: lib $(NAME)
 
 lib:
-	make -C ./libft
+	@make -C ./libft
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(LFLAGS) $(OBJ) -o $@
+	@$(CC) $(CFLAGS) $(LFLAGS) $(OBJ) -o $@
+	@ echo "$(NAME): \033[36mcreating\033[0m  binary"
 
 %.o: %.c
-	$(CC) $(INC) -o $@ -c $^ $(CFLAGS)
-
-debug: 
-	$(CC) $(CFLAGS) $(LFLAGS) -I./libft/ -L./libft/ -lft -g $(SRC) -o $(NAME)
+	@$(CC) $(INC) -o $@ -c $^ $(CFLAGS)
+	@ echo "$(NAME): \033[34mcompiling\033[0m $<"
 
 clean:
-	$(RM) $(OBJ)
-	make clean -C ./libft
+	@$(RM) $(OBJ)
+	@make clean -C ./libft
+	@ echo "$(NAME): \033[33mremoving\033[0m  objects"
 
 fclean: clean
-	$(RM) $(NAME)
-	make fclean -C ./libft
+	@$(RM) $(NAME)
+	@make fclean -C ./libft
+	@ echo "$(NAME): \033[33mremoving\033[0m  binary"
 
 re: fclean all
