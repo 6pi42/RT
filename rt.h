@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/16 14:29:03 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/04/17 10:15:28 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ int		motion_notify(int x, int y, t_map *map);
 
 int		ft_strsearch(char *str1, char *str2);
 t_shape	*parse(char *file);
-double	atoi_double(char *line);
+float	atoi_double(char *line);
 void	get_sphere(int fd, t_shape *shape);
 void	get_plane(int fd, t_shape *shape);
 void	get_ellipsoid(int fd, t_shape *shape);

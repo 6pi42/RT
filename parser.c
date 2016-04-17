@@ -6,27 +6,27 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:54:18 by emontagn          #+#    #+#             */
-/*   Updated: 2016/04/16 14:36:56 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/04/17 10:15:00 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt.h"
 
-double	atoi_double(char *line)
+float	atoi_double(char *line)
 {
-	double	integer;
-	double	decimal;
-	double	sign;
+	float	integer;
+	float	decimal;
+	float	sign;
 
-	sign = 1.0;
+	sign = 1.0f;
 	integer = (double)ft_atoi(line);
 	if (ft_strchr(line, '-'))
-		sign = -1.0;
+		sign = -1.0f;
 	integer = fabs(integer);
 	line = ft_strchr(line, '.') + 1;
 	decimal = (double)ft_atoi(line);
-	while (decimal >= 1.0)
-		decimal /= 10.0;
+	while (decimal >= 1.0f)
+		decimal /= 10.0f;
 	return (sign * (integer + decimal));
 }
 
