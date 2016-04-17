@@ -361,6 +361,35 @@ int get_shadow(float4 inter, float4 spot, __constant t_sphere *shape,
 
 }
 
+static float4	get_value(int i, int x, int y)
+{
+	float4 vec;
+
+	if (i == 3)
+		vec.x = x + 1.00f;
+	else if (i == 6 || i == 7)
+		vec.x = x + 0.75f;
+	else if (i == 1 || i == 2)
+		vec.x = x + 0.50f;
+	else if (i == 4 || i == 5)
+		vec.x = x + 0.25f;
+	else
+		vec.x = x;
+	if (i == 2)
+		vec.y = y + 1.00f;
+	else if (i == 5 || i == 7)
+		vec.y = y + 0.75f;
+	else if (i == 0 || i == 3)
+		vec.y = y + 0.50f;
+	else if (i == 4 || i == 6)
+		vec.y = y + 0.25f;
+	else
+		vec.y = y;
+	vec.z = 0.0f;
+	vec.w = 0.0f;
+	return (vec);
+}
+
 static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 {
 	float4 		color;
@@ -419,8 +448,6 @@ __kernel void generate_ray(__global char* data, float height, float width,
 {
 	t_ray r;
 	float4 color;
-	float w = width;
-	float h = height;
 	float id;
 	float x;
 	float y;
@@ -432,7 +459,8 @@ __kernel void generate_ray(__global char* data, float height, float width,
 	y = id / width;
 	x = fmod(id, width);
 	r.origin = (float4)(cam->origin.x, cam->origin.y, cam->origin.z, 0.0f);
-	r.dir = get_dir(cam->dir, cam->down, cam->right, x, y, w, h, cam->ratio);
+	r.dir =
+	get_dir(cam->dir, cam->down, cam->right, x, y, width, height, cam->ratio);
 	color = raytrace(&r, shape, num_shapes);
 /*
 	data[(yi * img->size_line) + (xi * 32) / 8] =
