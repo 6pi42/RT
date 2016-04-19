@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:54:18 by emontagn          #+#    #+#             */
-/*   Updated: 2016/04/17 10:15:00 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/04/18 17:14:27 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,13 @@ int		get_nb_shape(char *file)
 	return (shape_nb);
 }
 
-void	parsing(t_shape *shape, char *line, int fd)
+void	parsing(t_shape *shape, t_map *map, char *line, int fd)
 {
-	if (ft_strsearch(line, "PLANE") != -1)
+	if (ft_strsearch(line, "MULTI_SAMPLING") != -1)
+		get_multi_sampling(fd, map);
+	else if (ft_strsearch(line, "WINDOW") != -1)
+		get_window(fd, map);
+	else if (ft_strsearch(line, "PLANE") != -1)
 		get_plane(fd, shape);
 	else if (ft_strsearch(line, "SPHERE") != -1)
 		get_sphere(fd, shape);
@@ -97,7 +101,7 @@ void	parsing(t_shape *shape, char *line, int fd)
 	free(line);
 }
 
-t_shape	*parse(char *file)
+t_shape	*parse(t_map *map, char *file)
 {
 	char	*line;
 	int		ret;
@@ -109,7 +113,7 @@ t_shape	*parse(char *file)
 	if ((fd = open(file, O_RDONLY)) == -1)
 		printf("error\n");
 	while ((ret = get_next_line(fd, &line)) > 0)
-		parsing(shape, line, fd);
+		parsing(shape, map, line, fd);
 	if (ret == -1)
 		printf("error\n");
 	close(fd);

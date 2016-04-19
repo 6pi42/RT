@@ -1,36 +1,45 @@
-SPHERE
-	rad: 25.0
-	rgb: 255.0 0.0 0.0
-	pos: -100.0 50.0 20.0
+SCENE
+	WINDOW
+		width: 1080.0
+		height: 720.0
 
-SPHERE
-	rad: 25.0
-	rgb: 255.0 0.0 0.0
-	pos: 130.0 110.0 40.0
+	MULTI_SAMPLING
+		power: 0
 
-PLANE
-	rgb: 128.0 128.0 0.0
-	pos: 0.0 0.0 0.0
-	nor: 0.0 1.0 0.0
+SHAPES
+	SPHERE
+		rad: 25.0
+		rgb: 255.0 0.0 0.0
+		pos: -100.0 50.0 20.0
 
-PLANE
-	rgb: 190.0 190.0 0.0
-	pos: 0.0 0.0 -200.0
-	nor: 0.0 0.0 1.0
+	SPHERE
+		rad: 25.0
+		rgb: 255.0 0.0 0.0
+		pos: 130.0 110.0 40.0
 
-CYLINDER
-	rad: 10.0
-	rgb: 0.0 255.0 255.0
-	pos: 0.0 35.0 0.0
-	dir: 0.0 0.0 -1.0
+	PLANE
+		rgb: 128.0 128.0 0.0
+		pos: 0.0 0.0 0.0
+		nor: 0.0 1.0 0.0
 
-CONE
-	agl: 0.3
-	rgb: 0.0 255.0 0.0
-	pos: 250.0 150.0 0.0
-	dir: 0.0 1.0 0.0
+	PLANE
+		rgb: 190.0 190.0 0.0
+		pos: 0.0 0.0 -200.0
+		nor: 0.0 0.0 1.0
 
-ELLIPSOID
-	rad: 20.0 40.0 30.0
-	rgb: 50.0 0.0 50.0
-	pos: 0.0 110.0 -80.0
+	CYLINDER
+		rad: 10.0
+		rgb: 0.0 255.0 255.0
+		pos: 0.0 35.0 0.0
+		dir: 0.0 0.0 -1.0
+
+	CONE
+		agl: 0.3
+		rgb: 0.0 255.0 0.0
+		pos: 250.0 150.0 0.0
+		dir: 0.0 1.0 0.0
+
+	ELLIPSOID
+		rad: 20.0 40.0 30.0
+		rgb: 50.0 0.0 50.0
+		pos: 0.0 110.0 -80.0

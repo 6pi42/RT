@@ -6,7 +6,7 @@
 #    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/04/15 13:57:49 by emontagn         ###   ########.fr        #
+#    Updated: 2016/04/18 16:16:51 by emontagn         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,7 @@ SRC =	main.c			\
 		move.c			\
 		parser.c		\
 		get_shape.c		\
+		get_scene.c		\
 		get_tools.c		\
 
 OBJ = $(SRC:.c=.o)
