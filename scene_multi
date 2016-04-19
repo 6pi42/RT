@@ -1,0 +1,24 @@
+SCENE
+	MULTI_SAMPLING
+		power: OFF
+		intensity: 2
+
+	WINDOW
+		width: 1080.0
+		height: 720.0
+
+SHAPES
+	SPHERE
+		rad: 25.0
+		rgb: 255.0 0.0 0.0
+		pos: -100.0 50.0 20.0
+
+	PLANE
+		rgb: 128.0 128.0 0.0
+		pos: 0.0 0.0 0.0
+		nor: 0.0 1.0 0.0
+
+	PLANE
+		rgb: 190.0 190.0 0.0
+		pos: 0.0 0.0 -200.0
+		nor: 0.0 0.0 1.0

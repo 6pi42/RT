@@ -23,6 +23,7 @@ typedef struct s_sphere
 	float4		radius;
 	float4		color;
 	float4		axis;
+	short		multi;
 }				t_sphere;
 
 typedef struct	s_ray
@@ -385,8 +386,6 @@ static float4	get_value(int i, int x, int y)
 		vec.y = y + 0.25f;
 	else
 		vec.y = y;
-	vec.z = 0.0f;
-	vec.w = 0.0f;
 	return (vec);
 }
 
@@ -441,39 +440,61 @@ static	float4	get_dir(float4 dir, float4 down, float4 right,
 	return (ray.dir);
 }
 
+static float4 moy_rgb(float4 *color, short len)
+{
+	short i = 0;
+	float4 tmp;
+	tmp = (0.0f, 0.0f, 0.0f, 0.0f);
+	while (i < len)
+	{
+		tmp.x += color[i].x;
+		tmp.y += color[i].y;
+		tmp.z += color[i].z;
+		i++;
+	}
+	tmp /= (float)i;
+	return (tmp);
+}
+
 __kernel void generate_ray(__global char* data, float height, float width,
 							__global t_ray* cam,
 							__constant t_sphere *shape, uint num_shapes,
-							__constant t_img *img)
+							__constant t_img *img, const uint multi)
 {
 	t_ray r;
+	float4 colors[8];
 	float4 color;
 	float id;
 	float x;
 	float y;
-/*
-	int   xi = get_global_id(0) % (int)width;
-	int   yi = get_global_id(0) / (int)width;
-*/
+	int	i;
+
+	i = 0;
 	id = get_global_id(0);
 	y = id / width;
 	x = fmod(id, width);
 	r.origin = (float4)(cam->origin.x, cam->origin.y, cam->origin.z, 0.0f);
-	r.dir =
-	get_dir(cam->dir, cam->down, cam->right, x, y, width, height, cam->ratio);
-	color = raytrace(&r, shape, num_shapes);
-/*
-	data[(yi * img->size_line) + (xi * 32) / 8] =
-			(uchar)((int)(color.z) & 0xFF);
-	data[(yi * img->size_line) + (xi * 32) / 8 + 1] =
-			(uchar)((int)(color.y) & 0xFF);
-	data[(yi * img->size_line) + (xi * 32) / 8 + 2] =
-			(uchar)((int)(color.x) & 0xFF);
-*/
+	if (multi)
+	{
+		while (i < multi)
+		{
+			r.dir = get_dir(cam->dir, cam->down, cam->right, get_value(i, x, y).x,
+				get_value(i, x, y).y, width, height, cam->ratio);
+			colors[i] = raytrace(&r, shape, num_shapes);
+			i++;
+		}
+		color = moy_rgb(colors, multi);
+	}
+	else
+	{
+		r.dir = get_dir(cam->dir, cam->down, cam->right, x,
+		y, width, height, cam->ratio);
+		color = raytrace(&r, shape, num_shapes);
+	}
 	data[(int)y * img->size_line + ((int)x * img->bpp) / 8] =
-			(uchar)((int)(color.z) & 0xFF);
+		(uchar)((int)(color.z) & 0xFF);
 	data[(int)y * img->size_line + ((int)x * img->bpp) / 8 + 1] =
-			(uchar)((int)(color.y) & 0xFF);
+		(uchar)((int)(color.y) & 0xFF);
 	data[(int)y * img->size_line + ((int)x * img->bpp) / 8 + 2] =
-			(uchar)((int)(color.x) & 0xFF);
+		(uchar)((int)(color.x) & 0xFF);
 }

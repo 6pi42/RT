@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/16 15:47:58 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/04/19 13:38:37 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,7 @@ void	update(t_map *map)
 	cl_ulong time_start;
 	cl_ulong time_end;
 	double total_time;
-	int i;
 
-	i = 0;
 	env = map->env;
 	work_size = map->width * map->height;
 	init_cam(map);
@@ -105,6 +103,7 @@ void	raytracer(t_map *map)
 	err |= clSetKernelArg(env.kernel, 4, sizeof(cl_mem), &mem_shape);
 	err |= clSetKernelArg(env.kernel, 5, sizeof(cl_uint),&map->scene.nb_shape);
 	err |= clSetKernelArg(env.kernel, 6, sizeof(cl_mem),&mem_img);
+	err |= clSetKernelArg(env.kernel, 7, sizeof(cl_uint), &map->multi_sampling);
 	if (err < 0)
 		ft_putstr("Failed to create kernel argument");
 }
@@ -145,10 +144,7 @@ int		main(int argc, char **argv)
 	if (argc != 2)
 		return (1);
 	map.scene.nb_shape = get_nb_shape(argv[1]);
-	shape = parse(argv[1]);
-
-	map.width = 1080.0f;
-	map.height = 720.0f;
+	shape = parse(&map, argv[1]);
 
 	map.free_cam.pos.x = 0;
 	map.free_cam.pos.y = 50;
