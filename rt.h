@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/16 14:29:03 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/04/18 15:43:12 by cboyer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ typedef struct	s_map
 	t_scene		scene;
 	float		height;
 	float		width;
+	int		*tex;
 }				t_map;
 
 typedef struct	s_prog
@@ -123,43 +124,44 @@ typedef struct	s_prog
 	size_t		len;
 }				t_prog;
 
-void	draw(t_map *map);
-void	ocl_init(t_env *env, t_prog prog);
-t_prog	get_prog(char *file_name);
-int		key_hook(int keycode, t_map *map);
-int		loop_hook(t_map *map);
-void	move(t_map *map);
-void	rotate(t_map *map);
-void	init_key(t_map *map);
-int		key_press(int keycode, t_map *map);
-cl_float4	sub_vec(cl_float4 v1, cl_float4 v2);
-cl_float4	add_vec(cl_float4 v1, cl_float4 v2);
-cl_float4	mult_vec(cl_float4 v1, cl_float4 v2);
-cl_float4	cross_vec(cl_float4 v1, cl_float4 v2);
-double	len_vec(cl_float4 v1);
-cl_float4	scale_vec(double fact, cl_float4 v1);
-void	normalize_vec(cl_float4 *v1);
-double	docl_float4(cl_float4 v1, cl_float4 v2);
-double	dis_point(cl_float4 pt1, cl_float4 pt2);
-cl_float4	neg_vec(cl_float4 vec);
-void	vector_from_angle(t_cam *cam);
-void	update_cam(t_cam *cam, t_key *key);
-void	update(t_map *map);
-int		motion_notify(int x, int y, t_map *map);
+void			draw(t_map *map);
+void			ocl_init(t_env *env, t_prog prog);
+t_prog			get_prog(char *file_name);
+int				key_hook(int keycode, t_map *map);
+int				loop_hook(t_map *map);
+void			move(t_map *map);
+void			rotate(t_map *map);
+void			init_key(t_map *map);
+int				key_press(int keycode, t_map *map);
+cl_float4		sub_vec(cl_float4 v1, cl_float4 v2);
+cl_float4		add_vec(cl_float4 v1, cl_float4 v2);
+cl_float4		mult_vec(cl_float4 v1, cl_float4 v2);
+cl_float4		cross_vec(cl_float4 v1, cl_float4 v2);
+double			len_vec(cl_float4 v1);
+cl_float4		scale_vec(double fact, cl_float4 v1);
+void			normalize_vec(cl_float4 *v1);
+double			docl_float4(cl_float4 v1, cl_float4 v2);
+double			dis_point(cl_float4 pt1, cl_float4 pt2);
+cl_float4		neg_vec(cl_float4 vec);
+void			vector_from_angle(t_cam *cam);
+void			update_cam(t_cam *cam, t_key *key);
+void			update(t_map *map);
+int				motion_notify(int x, int y, t_map *map);
 
-int		ft_strsearch(char *str1, char *str2);
-t_shape	*parse(char *file);
-double	atoi_double(char *line);
-void	get_sphere(int fd, t_shape *shape);
-void	get_plane(int fd, t_shape *shape);
-void	get_ellipsoid(int fd, t_shape *shape);
-void	get_cylinder(int fd, t_shape *shape);
-void	get_cone(int fd, t_shape *shape);
-cl_float4	get_position(char *line);
-cl_float4	get_vector(char *line);
-cl_float4	get_rgb(char *line);
-cl_float4	get_radius(char *line);
-int		get_number(char *file, char *shape_name);
-int		get_nb_shape(char *file);
+int				ft_strsearch(char *str1, char *str2);
+t_shape			*parse(char *file);
+double			atoi_double(char *line);
+void			get_sphere(int fd, t_shape *shape);
+void			get_plane(int fd, t_shape *shape);
+void			get_ellipsoid(int fd, t_shape *shape);
+void			get_cylinder(int fd, t_shape *shape);
+void			get_cone(int fd, t_shape *shape);
+cl_float4		get_position(char *line);
+cl_float4		get_vector(char *line);
+cl_float4		get_rgb(char *line);
+cl_float4		get_radius(char *line);
+int				get_number(char *file, char *shape_name);
+int				get_nb_shape(char *file);
+int				*get_texture(char *file_name, int sizel, int sizeh);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/16 15:47:58 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/04/18 17:21:24 by cboyer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ cl_mem output;
 cl_mem mem_camera;
 cl_mem mem_shape;
 cl_mem mem_img;
+cl_mem mem_tex;
 
 void	update(t_map *map)
 {
@@ -91,6 +92,9 @@ void	raytracer(t_map *map)
 	mem_shape = clCreateBuffer(env.context, CL_MEM_READ_ONLY
 		| CL_MEM_COPY_HOST_PTR, map->scene.nb_shape * sizeof(t_shape),
 		map->scene.shape, &err);
+	mem_tex = clCreateBuffer(env.context, CL_MEM_READ_ONLY
+		| CL_MEM_COPY_HOST_PTR, sizeof(int) * map->tex[0] * map->tex[1],
+		map->tex, &err);
 	mem_camera = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
 			sizeof(t_ray), NULL, &err);
 	mem_img = clCreateBuffer(env.context, CL_MEM_READ_ONLY
@@ -105,6 +109,7 @@ void	raytracer(t_map *map)
 	err |= clSetKernelArg(env.kernel, 4, sizeof(cl_mem), &mem_shape);
 	err |= clSetKernelArg(env.kernel, 5, sizeof(cl_uint),&map->scene.nb_shape);
 	err |= clSetKernelArg(env.kernel, 6, sizeof(cl_mem),&mem_img);
+	err |= clSetKernelArg(env.kernel, 7, sizeof(cl_mem), &mem_tex);
 	if (err < 0)
 		ft_putstr("Failed to create kernel argument");
 }
@@ -155,6 +160,7 @@ int		main(int argc, char **argv)
 	map.free_cam.pos.z = 500;
 	map.scene.shape = shape;
 	map.scene.cam = &cam;
+	map.tex = get_texture("greystone.cboyer", 64, 64);
 	map.mlx = mlx_init();
 	init_key(&map);
 	map.win = mlx_new_window(map.mlx, map.width, map.height, "RT IN RT");

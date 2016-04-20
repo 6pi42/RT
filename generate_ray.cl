@@ -88,7 +88,7 @@ static float intersect_sph(t_ray *ray, t_sphere sph)
 	float b = 2.0f * (dot(ray->dir, x));
 	float c = (dot(x, x)) - (sph.radius.x * sph.radius.x);
 	float d = (b * b) - (4.0f * a * c);
-	if (d < 0.0f)
+	if (d < 0.0f || a == 0.0f || b == 0.0f || c == 0.0f)
 		return (-1.0f);
 	d = sqrt(d);
 	float t1 = (-b + d) / (2.0f * a);
@@ -117,7 +117,7 @@ static float intersect_cyl(t_ray *ray, t_sphere cyl)
 	float c = dot(x, x) - (dot(x, cyl.axis) * dot(x, cyl.axis)) -
 		cyl.radius.x * cyl.radius.x;
 	float d = (b * b) - (4.0f * a * c);
-	if (d < 0.0f)
+	if (d < 0.0f || a == 0.0f || b == 0.0f || c == 0.0f)
 		return (-1.0f);
 	d = sqrt(d);
 	float t1 = (-b + d) / (2.0f * a);
@@ -150,19 +150,11 @@ static float intersect_ellips(t_ray *ray, t_sphere e)
 	if (t1 <= 0.0f && t2 <= 0.0f)
 		return (-1.0f);
 	e.radius.w = (t1 <= 0.0f || t2 <= 0.0f);
-	float t = 0.0f;
-	if (t1 <= 0.0f)
-		t = t2;
-	else
-	{
-		if (t2 <= 0.0f)
-			t = t1;
-		else
-			t = (t1 < t2) ? t1 : t2;
-	}
-	if (t < 0.0f)
+	if (t2 >= 0.0f && t2 < t1)
+		t1 = t2;
+	if (t1 < 0.0f)
 		return (-1.0f);
-	return (t);
+	return (t1);
 }
 
 static float intersect_cone(t_ray *ray, t_sphere cyl)
@@ -173,11 +165,11 @@ static float intersect_cone(t_ray *ray, t_sphere cyl)
 	float k = (1.0f + cyl.radius.x * cyl.radius.x);
 	float a = dot(ray->dir, ray->dir) - k * dir_axis *
 		dir_axis;
-	float b = 2.0f * (dot(ray->dir, x) - k * dir_axis *
-		x_axis);
+	float b = 2.0f * ((dot(ray->dir, x) - k * dir_axis *
+		x_axis));
 	float c = dot(x, x) - k * (x_axis * x_axis);
 	float d = (b * b) - (4.0f * a * c);
-	if (d < 0.0f)
+	if (d < 0.0f || a == 0.0f || b == 0.0f || c == 0.0f)
 		return (-1.0f);
 	d = sqrt(d);
 	float t1 = (-b + d) / (2.0f * a);
@@ -185,6 +177,8 @@ static float intersect_cone(t_ray *ray, t_sphere cyl)
 	if (t2 >= 0.0f && t2 < t1)
 		t1 = t2;
 	if (t1 < 0.0f)
+		return (-1.0f);
+	if (t1 != t1)
 		return (-1.0f);
 	return (t1);
 }
@@ -306,25 +300,23 @@ static float4 get_color(t_sphere obj, float4 spot, float4 norm,
 	mat.ks = 0.8f;
 	lightcolor = (float4)(255.0f, 255.0f, 255.0f, 255.0f);
 	spec = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
-	ambient = (obj.color * mat.ka);
+	ambient = (color * mat.ka);
 	if (obj.type.x != 2.0f)
 		spec = lightcolor * (spec_lighting(spot, norm, inter, ray) * mat.ks);
-	diffuse = obj.color* (diffuse_lighting(spot, norm, inter) * mat.kd);
+	diffuse = color * (diffuse_lighting(spot, norm, inter) * mat.kd);
 	color = ambient + spec + diffuse;
 	color = clamp_color(color);
 	return (color);
 }
 
-float4 shadow_color(t_sphere obj)
+static float4 shadow_color(float4 color)
 {
-	float4 color;
-
-	color = obj.color;
 	color *= 0.2f;
 	return (color);
 }
 
-static	float4	reflect(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
+static	float4	reflect(t_ray *ray, __constant t_sphere *shape, uint num_shapes,
+		__constant int *tex)
 {
 	float4 		color;
 	float		t1;
@@ -339,14 +331,34 @@ static	float4	reflect(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 	id = intersect_all(ray, shape, num_shapes, &t1);
 	if (t1 > 0.0f)
 	{
+		color = shape[id].color;
 		inter = get_intersection(ray, t1);
+		if (id == 3)
+		{
+
+			int n = (abs((int)inter.y) % tex[0]) * tex[1] + (int)(abs((int)inter.x) % 64) + (int)2;
+			if (n < tex[0] * tex[1])
+			{
+				color.x = (float)((tex[n] & 0xFF0000) >> 16);
+				color.y = (float)((tex[n] & 0xFF00) >> 8);
+				color.z = (float)((tex[n] & 0xFF));
+			}
+		}
+		if (id == 4 || id == 5)
+		{
+			int jump = ((int)inter.x / (int)shape[id].pos.x + (int)inter.y / (int)shape[id].pos.y) % 2;
+			if (jump)
+				color = (float4)(255.0f, 255.0f, 255.0f, 0.0f);
+			else
+				color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
+		}
 		norm = get_normal(shape[id], inter, t1, *ray);
 		color = get_color(shape[id], spot, norm, inter, color, *ray);
 	}
 	return (color);
 }
 
-int get_shadow(float4 inter, float4 spot, __constant t_sphere *shape,
+static int get_shadow(float4 inter, float4 spot, __constant t_sphere *shape,
 					uint num_shapes, uint id)
 {
 	t_ray tmp;
@@ -361,7 +373,8 @@ int get_shadow(float4 inter, float4 spot, __constant t_sphere *shape,
 
 }
 
-static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
+static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes,
+		__constant int *tex)
 {
 	float4 		color;
 	float		t1;
@@ -375,18 +388,38 @@ static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 	spot = (float4)(-50.0f, 100.0f, 0.0f, 0.0f);
 	i = 0;
 	t1 = -1.0f;
-	color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
 	id = intersect_all(ray, shape, num_shapes, &t1);
+	color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
 	if (t1 > 0.0f)
 	{
+		color = shape[id].color;
 		inter = get_intersection(ray, t1);
 		norm = get_normal(shape[id], inter, t1, *ray);
+		if (id == 3)
+		{
+			int n = (abs((int)inter.y) % tex[0]) * tex[1] + (int)(abs((int)inter.x) % 64) + (int)2;
+			if (n < tex[0] * tex[1])
+			{
+				color.x = (float)((tex[n] & 0xFF0000) >> 16);
+				color.y = (float)((tex[n] & 0xFF00) >> 8);
+				color.z = (float)((tex[n] & 0xFF));
+			}
+		}
+		if (id == 4 || id == 5)
+		{
+			int jump = ((int)inter.x / (int)shape[id].pos.x + (int)inter.y / (int)shape[id].pos.y) % 2;
+			if (jump)
+				color = (float4)(255.0f, 255.0f, 255.0f, 0.0f);
+			else
+				color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
+		}
 		color = get_color(shape[id], spot, norm, inter, color, *ray);
 		if (get_shadow(inter, spot, shape, num_shapes, id))
-				color = shadow_color(shape[id]);
+				color = shadow_color(color);
 		tmp.origin = get_intersection(ray, t1 - 0.001f);
 		tmp.dir = ray->dir - 2.0f * (dot(norm, ray->dir)) * norm;
-		color = (color + 0.2f * reflect(&tmp, shape, num_shapes));
+		color = (color + 0.2f * reflect(&tmp, shape, num_shapes, tex));
+
 		color = clamp_color(color);
 	}
 	return (color);
@@ -412,18 +445,37 @@ static	float4	get_dir(float4 dir, float4 down, float4 right,
 	return (ray.dir);
 }
 
+static	float4	moy_rgb(float4 *color, uint len)
+{
+	uint i = 0;
+	float4 tmp;
+
+	tmp = (float4)(0.0f,0.0f,0.0f,0.0f);
+	while (i < len)
+	{
+		tmp.x += color[i].x;
+		tmp.z += color[i].z;
+		tmp.y += color[i].y;
+		i++;
+	}
+	tmp = tmp / (float)i;
+	return (tmp);
+}
+
 __kernel void generate_ray(__global char* data, float height, float width,
 							__global t_ray* cam,
 							__constant t_sphere *shape, uint num_shapes,
-							__constant t_img *img)
+							__constant t_img *img, __constant int *tex)
 {
 	t_ray r;
-	float4 color;
+	float4 color[4];
+	float4 tmp;
 	float w = width;
 	float h = height;
 	float id;
 	float x;
 	float y;
+
 /*
 	int   xi = get_global_id(0) % (int)width;
 	int   yi = get_global_id(0) / (int)width;
@@ -433,7 +485,14 @@ __kernel void generate_ray(__global char* data, float height, float width,
 	x = fmod(id, width);
 	r.origin = (float4)(cam->origin.x, cam->origin.y, cam->origin.z, 0.0f);
 	r.dir = get_dir(cam->dir, cam->down, cam->right, x, y, w, h, cam->ratio);
-	color = raytrace(&r, shape, num_shapes);
+	color[0] = raytrace(&r, shape, num_shapes, tex);
+	//r.dir = get_dir(cam->dir, cam->down, cam->right, x + 0.5, y, w, h, cam->ratio);
+	//color[1] = raytrace(&r, shape, num_shapes);
+	//r.dir = get_dir(cam->dir, cam->down, cam->right, x, y + 0.5, w, h, cam->ratio);
+	//color[2] = raytrace(&r, shape, num_shapes);
+	//r.dir = get_dir(cam->dir, cam->down, cam->right, x + 0.5, y + 0.5, w, h, cam->ratio);
+	//color[3] = raytrace(&r, shape, num_shapes);
+	tmp = moy_rgb(color, 1);
 /*
 	data[(yi * img->size_line) + (xi * 32) / 8] =
 			(uchar)((int)(color.z) & 0xFF);
@@ -443,9 +502,9 @@ __kernel void generate_ray(__global char* data, float height, float width,
 			(uchar)((int)(color.x) & 0xFF);
 */
 	data[(int)y * img->size_line + ((int)x * img->bpp) / 8] =
-			(uchar)((int)(color.z) & 0xFF);
+			(uchar)((int)(tmp.z) & 0xFF);
 	data[(int)y * img->size_line + ((int)x * img->bpp) / 8 + 1] =
-			(uchar)((int)(color.y) & 0xFF);
+			(uchar)((int)(tmp.y) & 0xFF);
 	data[(int)y * img->size_line + ((int)x * img->bpp) / 8 + 2] =
-			(uchar)((int)(color.x) & 0xFF);
+			(uchar)((int)(tmp.x) & 0xFF);
 }

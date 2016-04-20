@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
+#    By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/04/15 13:57:49 by emontagn         ###   ########.fr        #
+#    Updated: 2016/04/17 15:20:19 by cboyer           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,6 +22,7 @@ SRC =	main.c			\
 		parser.c		\
 		get_shape.c		\
 		get_tools.c		\
+		ppmreader.c		\
 
 OBJ = $(SRC:.c=.o)
 NAME = rt
