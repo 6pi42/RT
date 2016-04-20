@@ -159,18 +159,18 @@ static float intersect_cone(t_ray *ray, t_sphere cyl)
 	float k = (1.0f + cyl.radius.x * cyl.radius.x);
 	float a = dot(ray->dir, ray->dir) - k * dot(ray->dir, cyl.axis) *
 		dot(ray->dir, cyl.axis);
-	float b = 2.0f * (dot(ray->dir, ray->origin - cyl.pos) - k * (dot(ray->dir, cyl.axis) *
-		dot(ray->origin - cyl.pos, cyl.axis)));
+	float b = 2.0f * (dot(ray->dir, ray->origin - cyl.pos) - k
+			* (dot(ray->dir, cyl.axis) * dot(ray->origin - cyl.pos, cyl.axis)));
 	float c = dot(ray->origin - cyl.pos, ray->origin - cyl.pos) -
 		k * (dot(ray->origin - cyl.pos, cyl.axis) *
-		dot(ray->origin - cyl.pos, cyl.axis)) -
-		cyl.radius.x * cyl.radius.x;
+		dot(ray->origin - cyl.pos, cyl.axis)) - cyl.radius.x * cyl.radius.x;
 	float d = (b * b) - (4.0f * a * c);
 	if (d >= 0.0f)
 	{
 		float t1 = (-b + sqrt(d)) / (2.0f * a);
 		float t2 = (-b - sqrt(d)) / (2.0f * a);
-		if (t2 >= 0.0f && t2 < t1)
+		
+				if (t2 >= 0.0f && t2 < t1)
 			t1 = t2;
 		if (t1 < 0.0f)
 			return (-1.0f);
@@ -253,7 +253,7 @@ static float4 get_normal(t_sphere obj, float4 inter, float t1, t_ray ray)
 }
 
 static t_sphere intersect_all(t_ray *ray,
-		__global t_sphere *shape, uint num_shapes,
+		__constant t_sphere *shape, uint num_shapes,
 									float *t1)
 {
 	uint	i;
@@ -264,15 +264,15 @@ static t_sphere intersect_all(t_ray *ray,
 	i = 0;
 	while (i < num_shapes)
 	{
-		if (shape[i].type.x == 1.0)
+		if (shape[i].type.x == 1.0f)
 			tmp = intersect_sph(ray, shape[i]);
-		if (shape[i].type.x == 2.0)
+		if (shape[i].type.x == 2.0f)
 			tmp = intersect_plan(ray, shape[i]);
-		if (shape[i].type.x == 3.0)
+		if (shape[i].type.x == 3.0f)
 			tmp = intersect_cyl(ray, shape[i]);
-		if (shape[i].type.x == 4.0)
+		if (shape[i].type.x == 4.0f)
 			tmp = intersect_cone(ray, shape[i]);
-		if (shape[i].type.x == 5.0)
+		if (shape[i].type.x == 5.0f)
 			tmp = intersect_ellips(ray, shape[i]);
 		if (tmp != -1.0f && (*t1 == -1.0f || tmp < *t1))
 		{
@@ -283,7 +283,7 @@ static t_sphere intersect_all(t_ray *ray,
 	}
 	if (*t1 != -1.0f)
 		obj = cpy_struct(shape[j]);
-	return (obj);
+	return (shape[i]);
 }
 
 static float4 get_color(t_sphere obj, float4 spot, float4 norm,
@@ -309,7 +309,7 @@ static float4 get_color(t_sphere obj, float4 spot, float4 norm,
 	return (color);
 }
 
-static	float4	reflect(t_ray *ray, __global t_sphere *shape, uint num_shapes)
+static	float4	reflect(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 {
 	float4 		color;
 	float		t1;
@@ -331,7 +331,7 @@ static	float4	reflect(t_ray *ray, __global t_sphere *shape, uint num_shapes)
 	return (color);
 }
 
-static float4 raytrace(t_ray *ray, __global t_sphere *shape, uint num_shapes)
+static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 {
 	float4 		color;
 	float		t1;
@@ -352,13 +352,15 @@ static float4 raytrace(t_ray *ray, __global t_sphere *shape, uint num_shapes)
 		inter = get_intersection(ray, t1);
 		norm = get_normal(obj, inter, t1, *ray);
 		color = get_color(obj, spot, norm, inter, color, *ray);
-		if (obj.type.x == 2)
+		/*if (obj.type.x == 2)
 		{
-			tmp.origin = get_intersection(ray, t1 - 0.001);
+			tmp.origin = get_intersection(ray, t1 - 0.001f);
 			tmp.dir = ray->dir - 2 * (dot(norm, ray->dir)) * norm;
-			color = (color + (float4)0.3 * clamp_color(reflect(&tmp, shape, num_shapes))); // 00.1 = coef reflt
+			tmp.dir = normalize(tmp.dir);
+			color = color * 0.5f + (0.4f * reflect(&tmp, shape, num_shapes));
+			// 00.1 = coef reflt
 			clamp_color(color);
-		}
+		} */
 	}
 	return (color);
 }
@@ -373,28 +375,32 @@ static	float4	get_dir(float4 dir, float4 down, float4 right,
 	float xamnt;
 	float yamnt;
 
-	xamnt = (float)(((float)x + 0.5) / (float)width) * (float)aspect_ratio
-		- (((float)(width - height) / (float)height) / 2.0);
-	yamnt = (float)((height - y) + 0.5) / height;
-	vp_down = (yamnt - (float)0.5) * down;
-	vp_right = (xamnt - (float)0.5) * right;
+	xamnt = (float)(((float)x + 0.5f) / (float)width) * (float)aspect_ratio
+		- (((float)(width - height) / (float)height) / 2.0f);
+	yamnt = (float)((height - y) + 0.5f) / height;
+	vp_down = (yamnt - (float)0.5f) * down;
+	vp_right = (xamnt - (float)0.5f) * right;
 	ray.dir = (vp_right + vp_down) + dir;
 	ray.dir = normalize(ray.dir);
 	return (ray.dir);
 }
-__kernel void generate_ray(__global float4* data, uint height, uint width,
-							__global t_ray* cam,
-							__global t_sphere *shape, uint num_shapes)
+__kernel void generate_ray(__global uchar4* data, uint height, uint width,
+							__constant t_ray* cam,
+							__constant t_sphere *shape, uint num_shapes)
 {
 	t_ray r;
 	//t_ray tmp;
 	float4 color;
-	float rad = M_PI / 180.0f;
+	uchar4 out;
 	float w = (float)width;
 	float h = (float)height;
 	float global_id = (float)get_global_id(0);
 	r.origin = (float4)(cam->origin.x, cam->origin.y, cam->origin.z, 0.0f);
 	r.dir = get_dir(cam->dir, cam->down, cam->right, fmod(global_id, w), global_id / w, w, h, cam->ratio);
 	color = raytrace(&r, shape, num_shapes);
-	data[get_global_id(0)] = color;
+	out.x = (uchar)((int)(color.x) & 0xFF);
+	out.y = (uchar)((int)(color.y) & 0xFF);
+	out.z = (uchar)((int)(color.z) & 0xFF);
+	//barrier(CLK_GLOBAL_MEM_FENCE);
+	data[get_global_id(0)] = out;
 }

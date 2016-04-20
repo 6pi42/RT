@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/07 13:52:36 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/19 16:32:47 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,16 @@
 # include <mlx.h>
 # include <math.h>
 # include <fcntl.h>
-# include <time.h>
+# include <sys/time.h>
 # include <unistd.h>
 # include "libft.h"
 #include <stdio.h>
 
 typedef struct	s_fps
 {
-	double		frames;
-	clock_t		start;
-	clock_t		end;
+	double			frames;
+	struct timeval	start;
+	struct timeval	end;
 }				t_fps;
 
 typedef struct	s_shape
@@ -36,6 +36,12 @@ typedef struct	s_shape
 	cl_float4	color;
 	cl_float4	axis;
 }				t_shape;
+
+typedef	struct	s_ray2
+{
+	cl_float4	origin;
+	cl_float4	dir;
+}				t_ray2;
 
 typedef struct	s_ray
 {
@@ -104,7 +110,9 @@ typedef struct	s_env
 	cl_context			context;
 	cl_command_queue	cmds;
 	cl_program			program;
-	cl_kernel			kernel;
+	cl_kernel			get_ray;
+	cl_kernel			get_inter;
+	cl_kernel			get_shading;
 }				t_env;
 
 typedef struct	s_map
@@ -123,6 +131,7 @@ typedef struct	s_map
 
 typedef struct	s_prog
 {
+	char		*file_name;
 	char		*buffer;
 	size_t		len;
 }				t_prog;

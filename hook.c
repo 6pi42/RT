@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/02 15:34:48 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/06 19:13:20 by apaget           ###   ########.fr       */
+/*   Updated: 2016/04/08 16:14:29 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,5 @@ int		key_hook(int keycode, t_map *map)
 		map->key.num_2 = 0;
 	if (keycode == 88)
 		map->key.num_6 = 0;
-
 	return (0);
 }

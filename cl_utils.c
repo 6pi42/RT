@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:22:57 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/02 14:42:32 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/19 16:20:07 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,15 @@ void	ocl_init(t_env *env, t_prog prog)
 		ft_putstr("Error: Failed to create a device group\n");	
 	if (!(env->context = clCreateContext(NULL, 1, &env->id, NULL, NULL, &err)))
 		ft_putstr("Error: Failed to create a compute context\n");
-	if (!(env->cmds = clCreateCommandQueue(env->context, env->id, 0, &err)))
+	if (!(env->cmds = clCreateCommandQueue(env->context, env->id,
+					CL_QUEUE_PROFILING_ENABLE, &err)))
 		ft_putstr("Error: Failed to create a command commands\n");
 	if (!(env->program = clCreateProgramWithSource(env->context, 1,
 					(const char**)&prog.buffer, NULL, &err)))
 		ft_putstr("Error: Failed to create program\n");
 	if ((err =
-		clBuildProgram(env->program, 0, NULL, NULL, NULL, NULL)) != CL_SUCCESS)
+		clBuildProgram(env->program, 0, NULL, "-cl-fast-relaxed-math",
+			NULL, NULL)) != CL_SUCCESS)
 		ft_putstr("Error: Failed to build program executable\n");
 	if (err < 0)
 	{
@@ -45,9 +47,15 @@ void	ocl_init(t_env *env, t_prog prog)
 		free(prog_log);
 		exit(0);
 	}
-	if (!(env->kernel = clCreateKernel(env->program, "generate_ray", &err)))
+	if (!(env->get_ray = clCreateKernel(env->program, "get_ray", &err)))
 		ft_putstr("Error: Failed to create kernel\n");
-	
+	if (!(env->get_inter =
+				clCreateKernel(env->program, "get_intersection", &err)))
+		ft_putstr("Error: Failed to create kernel\n");
+	if (!(env->get_shading =
+				clCreateKernel(env->program, "get_shading", &err)))
+		ft_putstr("Error: Failed to create kernel\n");
+	free(prog.buffer);
 }
 
 t_prog	get_prog(char *file_name)
@@ -58,6 +66,7 @@ t_prog	get_prog(char *file_name)
 	char	*back;
 	int		fd;	
 
+	prog.file_name = file_name;
 	prog.len = -1;
 	buffer = (char*)malloc(sizeof(char) + 1);
 	buffer[0] = '\0';
