@@ -362,33 +362,6 @@ int get_shadow(float4 inter, float4 spot, __constant t_sphere *shape,
 
 }
 
-static float4	get_value(int i, int x, int y)
-{
-	float4 vec;
-
-	if (i == 3)
-		vec.x = x + 1.00f;
-	else if (i == 6 || i == 7)
-		vec.x = x + 0.75f;
-	else if (i == 1 || i == 2)
-		vec.x = x + 0.50f;
-	else if (i == 4 || i == 5)
-		vec.x = x + 0.25f;
-	else
-		vec.x = x;
-	if (i == 2)
-		vec.y = y + 1.00f;
-	else if (i == 5 || i == 7)
-		vec.y = y + 0.75f;
-	else if (i == 0 || i == 3)
-		vec.y = y + 0.50f;
-	else if (i == 4 || i == 6)
-		vec.y = y + 0.25f;
-	else
-		vec.y = y;
-	return (vec);
-}
-
 static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 {
 	float4 		color;
@@ -440,6 +413,33 @@ static	float4	get_dir(float4 dir, float4 down, float4 right,
 	return (ray.dir);
 }
 
+static float4	get_value(int i, int x, int y)
+{
+	float4 vec;
+
+	if (i == 3)
+		vec.x = x + 1.00f;
+	else if (i == 6 || i == 7)
+		vec.x = x + 0.75f;
+	else if (i == 1 || i == 2)
+		vec.x = x + 0.50f;
+	else if (i == 4 || i == 5)
+		vec.x = x + 0.25f;
+	else
+		vec.x = x;
+	if (i == 2)
+		vec.y = y + 1.00f;
+	else if (i == 5 || i == 7)
+		vec.y = y + 0.75f;
+	else if (i == 0 || i == 3)
+		vec.y = y + 0.50f;
+	else if (i == 4 || i == 6)
+		vec.y = y + 0.25f;
+	else
+		vec.y = y;
+	return (vec);
+}
+
 static float4 moy_rgb(float4 *color, short len)
 {
 	short i = 0;
@@ -459,15 +459,14 @@ static float4 moy_rgb(float4 *color, short len)
 __kernel void generate_ray(__global char* data, float height, float width,
 							__global t_ray* cam,
 							__constant t_sphere *shape, uint num_shapes,
-							__constant t_img *img, const uint multi)
+							__constant t_img *img, const short multi)
 {
 	t_ray r;
-	float4 colors[8];
-	float4 color;
+	float4 color[2];
 	float id;
 	float x;
 	float y;
-	int	i;
+	short	i;
 
 	i = 0;
 	id = get_global_id(0);
@@ -478,23 +477,23 @@ __kernel void generate_ray(__global char* data, float height, float width,
 	{
 		while (i < multi)
 		{
-			r.dir = get_dir(cam->dir, cam->down, cam->right, get_value(i, x, y).x,
-				get_value(i, x, y).y, width, height, cam->ratio);
-			colors[i] = raytrace(&r, shape, num_shapes);
+			r.dir = get_dir(cam->dir, cam->down, cam->right, get_value((int)i, x, y).x,
+				get_value((int)i, x, y).y, width, height, cam->ratio);
+			color[i] = raytrace(&r, shape, num_shapes);
 			i++;
 		}
-		color = moy_rgb(colors, multi);
+		color[0] = moy_rgb(color, multi);
 	}
 	else
 	{
 		r.dir = get_dir(cam->dir, cam->down, cam->right, x,
 		y, width, height, cam->ratio);
-		color = raytrace(&r, shape, num_shapes);
+		color[0] = raytrace(&r, shape, num_shapes);
 	}
 	data[(int)y * img->size_line + ((int)x * img->bpp) / 8] =
-		(uchar)((int)(color.z) & 0xFF);
+		(uchar)((int)(color[0].z) & 0xFF);
 	data[(int)y * img->size_line + ((int)x * img->bpp) / 8 + 1] =
-		(uchar)((int)(color.y) & 0xFF);
+		(uchar)((int)(color[0].y) & 0xFF);
 	data[(int)y * img->size_line + ((int)x * img->bpp) / 8 + 2] =
-		(uchar)((int)(color.x) & 0xFF);
+		(uchar)((int)(color[0].x) & 0xFF);
 }
