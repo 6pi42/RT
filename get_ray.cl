@@ -34,14 +34,9 @@ static float diffuse(float4 spot, float4 norm, float4 inter)
 	float4 light;
 	float d_intensity;
 
-	//printf("spot: %f %f %f %f\n", spot.x, spot.y, spot.z, spot.w);
-	//printf("norm: %f %f %f %f\n", norm.x, norm.y, norm.z, norm.w);
-	//printf("inter: %f %f %f %f\n", inter.x, inter.y, inter.z, inter.w);
 	light = spot - inter;
 	light = fast_normalize(light);
 	d_intensity = fmax(0.0f, dot(light, norm));
-	if(d_intensity != 0.0f)
-		printf("d: %f\n", d_intensity);
 	return (d_intensity);
 }
 
@@ -59,6 +54,7 @@ static float specular(float4 spot, float4 norm, float4 inter, t_ray ray)
 	s_intensity = pow(s_intensity, 42.0f);
 	return (s_intensity);
 }
+
 
 static float4 get_color(t_shape obj, float4 spot, float4 norm,
 								float4 inter, float4 color, t_ray ray)
@@ -80,9 +76,9 @@ static float4 get_color(t_shape obj, float4 spot, float4 norm,
 	spec = lightcolor * (specular(spot, norm, inter, ray) * mat.ks);
 	dif = c * (diffuse(spot, norm, inter) * mat.kd);
 	color = ambient + spec + dif;
-	//color.x = color.x > 0xFF ? 0xFF : color.x;
-	//color.y = color.y > 0xFF ? 0xFF : color.y;
-	//color.z = color.z > 0xFF ? 0xFF : color.z;
+	color.x = color.x > 0xFF ? 0xFF : color.x;
+	color.y = color.y > 0xFF ? 0xFF : color.y;
+	color.z = color.z > 0xFF ? 0xFF : color.z;
 	return (color);
 }
 
@@ -101,36 +97,30 @@ static float4 get_normal(t_shape obj, float4 inter, t_ray ray)
 	return (norm);
 }
 
-__kernel void get_shading(__global uchar4 *out,
+__kernel void get_shading(__global float4 *out,
 							const uint h, const uint w,
-							__global float2 *inter,
+							__global float3 *inter,
 							__global float4 *rays, const float4 origin,
 							__global t_shape *shape, int nb_shape)
 {
 	t_ray r;
 	uint global_addr = get_global_id(0);
 	float4 normal;
-	float2 i;
+	float3 i;
 	float4 inter_pos;
-	uchar4 c = (uchar4)(0, 0, 0, 0);
 	t_shape s;
 
-	float4 spot = (float4)(-100.0f, 100.0f, 0.0f, 0.0f);
+	float4 spot = (float4)(100.0f, 100.0f, 0.0f, 0.0f);
 	i = inter[global_addr];
 	r.dir = rays[global_addr]; //TODO: Replace by ID index
 	r.origin = origin;
 	inter_pos = r.origin + (r.dir * i.y);
 	inter_pos.w = 0.0f;
-	if (i.x != -1.0f)
-	{
 	s = shape[(int)i.x];
 	normal = get_normal(s, inter_pos, r);
 	float4 color = get_color(s, spot, normal, inter_pos, s.color, r);
-	c.x = (uchar)((int)(color.x) & 0xFF);
-	c.y = (uchar)((int)(color.y) & 0xFF);
-	c.z = (uchar)((int)(color.z) & 0xFF);
-	}
-	out[global_addr] = c;
+	color.w = i.z;
+	out[global_addr] = color;
 }
 
 static float intersect_sph(t_ray ray, t_shape sph)
@@ -173,19 +163,20 @@ static int iter(t_ray ray, __global t_shape *shape, int nb, float *t)
 	return (id);
 }
 
-static float2	raytrace(t_ray ray, __global t_shape *shape, int nb)
+static float3	raytrace(uint id, t_ray ray, __global t_shape *shape, int nb)
 {
-	float2	out;
+	float3	out;
 	float	t;
 
 	t = -1.0f;
 	out.x = (int)iter(ray, shape, nb, &t);
 	out.y = t;
+	out.z = (float)id;
 	//remove useless cell from out
 	return (out);
 }
 
-__kernel void	get_intersection(__global float2* out,
+__kernel void	get_intersection(__global float3* out,
 								const uint h, const uint w,
 								__global float4 *ray, const float4 origin,
 								__global t_shape* shape, int nb_shape)
@@ -196,7 +187,7 @@ __kernel void	get_intersection(__global float2* out,
 	global_addr = get_global_id(0);
 	r.origin = origin;
 	r.dir = ray[global_addr];
-	out[get_global_id(0)] = raytrace(r, shape, nb_shape);
+	out[global_addr] = raytrace(global_addr, r, shape, nb_shape);
 }
 
 
