@@ -82,6 +82,27 @@ static float	spec_lighting(float4 spot, float4 norm, float4 inter, t_ray ray)
 	return (0.0f);
 }
 
+static float4 get_texture(t_sphere shape, float4 inter)
+{
+    float4 color;
+	int jump;
+
+	jump = ((int)shape.pos.x / (int)inter.x + (int)shape.pos.y /
+	(int)inter.y) % (int)2;
+    if (shape.type.x == 1.0f || shape.type.x == 5.0f)
+    {
+        if (jump)
+            color = shape.color;
+        else
+        {
+            color.x = shape.color.y;
+            color.y = shape.color.z;
+            color.z = shape.color.x;
+        }
+    }
+    return (color);
+}
+
 static float intersect_sph(t_ray *ray, t_sphere sph)
 {
 	float4 x = ray->origin - sph.pos;
@@ -293,8 +314,8 @@ static uint intersect_all(t_ray *ray,
 	return (j);
 }
 
-static float4 get_color(t_sphere obj, float4 spot, float4 norm,
-								 float4 inter, float4 color, t_ray ray)
+static float4 get_color(float4 color, float4 spot, float4 norm,
+								 float4 inter, t_ray ray, uint id)
 {
 	float4 ambient;
 	float4 diffuse;
@@ -307,20 +328,17 @@ static float4 get_color(t_sphere obj, float4 spot, float4 norm,
 	mat.ks = 0.8f;
 	lightcolor = (float4)(255.0f, 255.0f, 255.0f, 255.0f);
 	spec = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
-	ambient = (obj.color * mat.ka);
-	if (obj.type.x != 2.0f)
+	ambient = (color * mat.ka);
+	if (id != (uint)2)
 		spec = lightcolor * (spec_lighting(spot, norm, inter, ray) * mat.ks);
-	diffuse = obj.color* (diffuse_lighting(spot, norm, inter) * mat.kd);
+	diffuse = color * (diffuse_lighting(spot, norm, inter) * mat.kd);
 	color = ambient + spec + diffuse;
 	color = clamp_color(color);
 	return (color);
 }
 
-float4 shadow_color(t_sphere obj)
+static float4 shadow_color(float4 color)
 {
-	float4 color;
-
-	color = obj.color;
 	color *= 0.2f;
 	return (color);
 }
@@ -340,14 +358,17 @@ static	float4	reflect(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 	id = intersect_all(ray, shape, num_shapes, &t1);
 	if (t1 > 0.0f)
 	{
+		color = shape[id].color;
 		inter = get_intersection(ray, t1);
+		if (shape[id].type.y)
+			color = get_texture(shape[id], inter);
 		norm = get_normal(shape[id], inter, t1, *ray);
-		color = get_color(shape[id], spot, norm, inter, color, *ray);
+		color = get_color(color, spot, norm, inter, *ray, id);
 	}
 	return (color);
 }
 
-int get_shadow(float4 inter, float4 spot, __constant t_sphere *shape,
+static int get_shadow(float4 inter, float4 spot, __constant t_sphere *shape,
 					uint num_shapes, uint id)
 {
 	t_ray tmp;
@@ -380,11 +401,14 @@ static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 	id = intersect_all(ray, shape, num_shapes, &t1);
 	if (t1 > 0.0f)
 	{
+		color = shape[id].color;
 		inter = get_intersection(ray, t1);
 		norm = get_normal(shape[id], inter, t1, *ray);
-		color = get_color(shape[id], spot, norm, inter, color, *ray);
+		if (shape[id].type.y)
+			color = get_texture(shape[id], inter);
+		color = get_color(color, spot, norm, inter, *ray, id);
 		if (get_shadow(inter, spot, shape, num_shapes, id))
-				color = shadow_color(shape[id]);
+				color = shadow_color(color);
 		tmp.origin = get_intersection(ray, t1 - 0.001f);
 		tmp.dir = ray->dir - 2.0f * (dot(norm, ray->dir)) * norm;
 		color = (color + 0.2f * reflect(&tmp, shape, num_shapes));
