@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/19 16:32:47 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/23 11:57:34 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ typedef struct	s_env
 	cl_kernel			get_ray;
 	cl_kernel			get_inter;
 	cl_kernel			get_shading;
+	cl_kernel			get_secondary;
 }				t_env;
 
 typedef struct	s_map

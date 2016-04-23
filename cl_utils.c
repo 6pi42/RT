@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:22:57 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/19 16:20:07 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/23 15:12:20 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,9 @@ void	ocl_init(t_env *env, t_prog prog)
 		ft_putstr("Error: Failed to create kernel\n");
 	if (!(env->get_shading =
 				clCreateKernel(env->program, "get_shading", &err)))
+		ft_putstr("Error: Failed to create kernel\n");
+	if (!(env->get_secondary =
+				clCreateKernel(env->program, "get_secondary", &err)))
 		ft_putstr("Error: Failed to create kernel\n");
 	free(prog.buffer);
 }

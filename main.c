@@ -6,7 +6,7 @@
 /*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/21 16:11:51 by amathias         ###   ########.fr       */
+/*   Updated: 2016/04/23 16:25:35 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,44 @@ void	draw_pixel_to_image(t_map *map, int x, int y, cl_float4 c)
 cl_mem output;
 cl_mem mem_camera;
 cl_mem mem_shape;
+
 cl_mem inter_output;
 cl_mem inter_ray;
 cl_mem inter_shape;
+
 cl_mem shade_output;
 cl_mem shade_inter;
 cl_mem shade_ray;
+
+cl_mem secondary_output;
+cl_mem secondary_ray;
+cl_mem secondary_inter;
+
+void	ocl_init_secondary(t_map *map)
+{
+	int		err;
+	t_env	env;
+
+	env = map->env;
+	secondary_inter = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
+			map->width * map->height * sizeof(cl_float3), NULL, &err);
+	secondary_ray = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
+			map->width * map->height * sizeof(cl_float4), NULL, &err);	
+	secondary_output = clCreateBuffer(env.context, CL_MEM_WRITE_ONLY,
+			map->width * map->height * sizeof(t_ray2), NULL, &err);
+	err = clSetKernelArg(env.get_secondary, 0, sizeof(cl_mem),
+			&secondary_output);
+	err |= clSetKernelArg(env.get_secondary, 1, sizeof(cl_mem),
+			&secondary_inter);
+	err |= clSetKernelArg(env.get_secondary, 2, sizeof(cl_mem),
+			&secondary_ray);
+	err |= clSetKernelArg(env.get_secondary, 3, sizeof(cl_float4),
+			&map->scene.cam->origin);
+	if (err < 0)
+		ft_putstr("Failed to create kernel argument");
+
+}
+
 
 void	ocl_init_shading(t_map *map)
 {
@@ -55,14 +87,12 @@ void	ocl_init_shading(t_map *map)
 	shade_output = clCreateBuffer(env.context, CL_MEM_WRITE_ONLY,
 			map->width * map->height * sizeof(cl_float4), NULL, &err);
 	err = clSetKernelArg(env.get_shading, 0, sizeof(cl_mem), &shade_output);
-	err |= clSetKernelArg(env.get_shading, 1, sizeof(cl_uint), &map->height);
-	err |= clSetKernelArg(env.get_shading, 2, sizeof(cl_uint), &map->width);
-	err |= clSetKernelArg(env.get_shading, 3, sizeof(cl_mem), &shade_inter);
-	err |= clSetKernelArg(env.get_shading, 4, sizeof(cl_mem), &shade_ray);
-	err |= clSetKernelArg(env.get_shading, 5, sizeof(cl_float4),
+	err |= clSetKernelArg(env.get_shading, 1, sizeof(cl_mem), &shade_inter);
+	err |= clSetKernelArg(env.get_shading, 2, sizeof(cl_mem), &shade_ray);
+	err |= clSetKernelArg(env.get_shading, 3, sizeof(cl_float4),
 			&map->scene.cam->origin);
-	err |= clSetKernelArg(env.get_shading, 6, sizeof(cl_mem), &inter_shape);
-	err |= clSetKernelArg(env.get_shading, 7, sizeof(cl_int),
+	err |= clSetKernelArg(env.get_shading, 4, sizeof(cl_mem), &inter_shape);
+	err |= clSetKernelArg(env.get_shading, 5, sizeof(cl_int),
 			&map->scene.nb_shape);
 	if (err < 0)
 		ft_putstr("Failed to create kernel argument");
@@ -131,9 +161,65 @@ size_t compact_inter(cl_float3 *inter, cl_float4 *ray, size_t work_size)
 		}
 		i++;
 	}
-	printf("j: %lu\n", j);
+	printf("\nj: %lu  |",j);
 	return (j);
 }
+
+size_t get_work_size(size_t work_size)
+{
+	if (work_size % 32)
+		work_size = (work_size + (32 - (work_size % 32)));
+	return (work_size);
+}
+
+cl_float4 *ocl_get_secondary(t_map *map, cl_float4 *ray,
+					cl_float3 *inter, size_t work_size, size_t *shading_size)
+{
+	t_env env;
+	int err;
+	cl_float4 *ptr;
+	cl_event event;
+	cl_ulong time_start;
+	cl_ulong time_end;
+	size_t array_size;
+	size_t local_size;
+	double total_time;
+
+	ptr = NULL;
+	env = map->env;
+	err = clSetKernelArg(env.get_secondary, 3, sizeof(cl_float4),
+			&map->scene.cam->origin);
+	if (err < 0)
+		printf("Failed to create kernel argument");
+	array_size = compact_inter(inter, ray, work_size);
+	*shading_size = array_size;
+	if (array_size)
+	{
+		clFinish(env.cmds);
+		ptr = (cl_float4*)malloc(sizeof(cl_float4) * array_size);
+		clEnqueueWriteBuffer(env.cmds, secondary_ray, CL_TRUE, 0,
+			array_size * sizeof(cl_float4), ray, 0, NULL, NULL);
+		clEnqueueWriteBuffer(env.cmds, secondary_inter, CL_TRUE, 0,
+			array_size * sizeof(cl_float3), inter, 0, NULL, NULL);
+		local_size = get_work_size(array_size);
+		clEnqueueNDRangeKernel(env.cmds, env.get_secondary, 1, NULL,
+			&local_size, NULL, 0, NULL, &event);
+		clEnqueueReadBuffer(env.cmds, secondary_output,
+			CL_TRUE, 0, array_size * sizeof(t_ray2),
+			ptr, 0, NULL, NULL);
+		clWaitForEvents(1 , &event);
+		clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START,
+			sizeof(time_start),	&time_start, NULL);
+		clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END,
+			sizeof(time_end),
+		&time_end, NULL);
+		total_time = time_end - time_start;
+		printf("kernel secondary: %0.3f ms\n", (total_time / 1000000.0));
+	}
+	return (ptr);
+
+}
+
 
 cl_float4 *ocl_get_shading(t_map *map, cl_float4 *ray,
 					cl_float3 *inter, size_t work_size, size_t *shading_size)
@@ -145,27 +231,30 @@ cl_float4 *ocl_get_shading(t_map *map, cl_float4 *ray,
 	cl_ulong time_start;
 	cl_ulong time_end;
 	size_t array_size;
+	size_t local_size;
 	double total_time;
 
+	ptr = NULL;
 	env = map->env;
-	err = clSetKernelArg(env.get_shading, 5, sizeof(cl_float4),
+	err = clSetKernelArg(env.get_shading, 3, sizeof(cl_float4),
 			&map->scene.cam->origin);
 	if (err < 0)
 		printf("Failed to create kernel argument");
-	ptr = (cl_float4*)malloc(sizeof(cl_float4) * work_size);
-	clFinish(env.cmds);
 	array_size = compact_inter(inter, ray, work_size);
 	*shading_size = array_size;
 	if (array_size)
 	{
+		clFinish(env.cmds);
+		ptr = (cl_float4*)malloc(sizeof(cl_float4) * array_size);
 		clEnqueueWriteBuffer(env.cmds, shade_ray, CL_TRUE, 0,
 			array_size * sizeof(cl_float4), ray, 0, NULL, NULL);
 		clEnqueueWriteBuffer(env.cmds, shade_inter, CL_TRUE, 0,
 			array_size * sizeof(cl_float3), inter, 0, NULL, NULL);
+		local_size = get_work_size(array_size);
 		clEnqueueNDRangeKernel(env.cmds, env.get_shading, 1, NULL,
-			&array_size, NULL, 0, NULL, &event);
+			&local_size, NULL, 0, NULL, &event);
 		clEnqueueReadBuffer(env.cmds, shade_output,
-			CL_TRUE, 0, work_size * sizeof(cl_float4),
+			CL_TRUE, 0, array_size * sizeof(cl_float4),
 			ptr, 0, NULL, NULL);
 		clWaitForEvents(1 , &event);
 		clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START,
@@ -174,7 +263,7 @@ cl_float4 *ocl_get_shading(t_map *map, cl_float4 *ray,
 			sizeof(time_end),
 		&time_end, NULL);
 		total_time = time_end - time_start;
-		printf("\nkernel shading: %0.3f ms\n", (total_time / 1000000.0) );
+		printf("kernel shading: %0.3f ms\n", (total_time / 1000000.0) );
 	}
 	return (ptr);
 

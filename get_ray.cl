@@ -29,6 +29,27 @@ typedef struct	s_cam
 	float		ratio;
 }				t_cam;
 
+__kernel void get_secondary(__global t_ray *out, __global float3 *inter,
+							__global float4 *rays, const float4 origin)
+{
+	t_ray r;
+	t_ray o;
+	uint global_addr = get_global_id(0);
+	float3 i;
+	float4 inter_pos;
+
+	float4 spot = (float4)(100.0f, 100.0f, 0.0f, 0.0f);
+	i = inter[global_addr];
+	r.dir = rays[global_addr];
+	r.origin = origin;
+	inter_pos = r.origin + (r.dir * i.y);
+	inter_pos.w = 0.0f;
+	o.dir = fast_normalize(inter_pos - spot);
+	o.dir.w = i.x;
+	o.origin = inter_pos;
+	out[global_addr] = o;
+}
+
 static float diffuse(float4 spot, float4 norm, float4 inter)
 {
 	float4 light;
@@ -76,9 +97,7 @@ static float4 get_color(t_shape obj, float4 spot, float4 norm,
 	spec = lightcolor * (specular(spot, norm, inter, ray) * mat.ks);
 	dif = c * (diffuse(spot, norm, inter) * mat.kd);
 	color = ambient + spec + dif;
-	color.x = color.x > 0xFF ? 0xFF : color.x;
-	color.y = color.y > 0xFF ? 0xFF : color.y;
-	color.z = color.z > 0xFF ? 0xFF : color.z;
+	color = color > 0xFF ? 0xFF : color;
 	return (color);
 }
 
@@ -98,7 +117,6 @@ static float4 get_normal(t_shape obj, float4 inter, t_ray ray)
 }
 
 __kernel void get_shading(__global float4 *out,
-							const uint h, const uint w,
 							__global float3 *inter,
 							__global float4 *rays, const float4 origin,
 							__global t_shape *shape, int nb_shape)
@@ -110,12 +128,15 @@ __kernel void get_shading(__global float4 *out,
 	float4 inter_pos;
 	t_shape s;
 
+	if (global_addr == 0)
+		printf("local_size %lu ", get_local_size(0));
 	float4 spot = (float4)(100.0f, 100.0f, 0.0f, 0.0f);
 	i = inter[global_addr];
-	r.dir = rays[global_addr]; //TODO: Replace by ID index
+	r.dir = rays[global_addr];
 	r.origin = origin;
 	inter_pos = r.origin + (r.dir * i.y);
 	inter_pos.w = 0.0f;
+	s.pos = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
 	s = shape[(int)i.x];
 	normal = get_normal(s, inter_pos, r);
 	float4 color = get_color(s, spot, normal, inter_pos, s.color, r);
@@ -140,6 +161,7 @@ static float intersect_sph(t_ray ray, t_shape sph)
 		return (-1.0f);
 	return (t1);
 }
+
 static int iter(t_ray ray, __global t_shape *shape, int nb, float *t)
 {
 	int i;
