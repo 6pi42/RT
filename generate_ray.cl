@@ -82,15 +82,51 @@ static float	spec_lighting(float4 spot, float4 norm, float4 inter, t_ray ray)
 	return (0.0f);
 }
 
-static float4 get_texture(t_sphere shape, float4 inter)
+static float4 get_texture(t_sphere shape, float4 inter, float4 norm)
 {
     float4 color;
-	int jump;
 
-	jump = ((int)shape.pos.x / (int)inter.x + (int)shape.pos.y /
-	(int)inter.y) % (int)2;
-    if (shape.type.x == 1.0f || shape.type.x == 5.0f)
+    color = shape.color;
+    if (shape.type.x == 1.0f)
     {
+        int jump = ((int)shape.pos.x / (int)inter.x + (int)shape.pos.y / (int)inter.y) % (int)2;
+        if (jump)
+            color = shape.color;
+        else
+        {
+            color.x = shape.color.y;
+            color.y = shape.color.z;
+            color.z = shape.color.x;
+        }
+    }
+    else if (shape.type.x == 5.0f)
+    {
+        int jump = ((int)shape.pos.y / (int)inter.y) % (int)2;
+        if (jump)
+            color = shape.color;
+        else
+        {
+            color.x = shape.color.y;
+            color.y = shape.color.z;
+            color.z = shape.color.x;
+        }
+    }
+    else if (shape.type.x == 2.0f)
+    {
+        int jump = ((int)inter.x + (int)inter.y + (int)inter.z) % (int)2;
+        if (jump)
+            color = shape.color;
+        else
+        {
+            color.x = shape.color.y;
+            color.y = shape.color.z;
+            color.z = shape.color.x;
+        }
+    }
+    else
+    {
+        int jump = ((int)norm.x / (int)inter.x +
+            (int)norm.y / (int)inter.y + (int)norm.z / (int)inter.z) % (int)2;
         if (jump)
             color = shape.color;
         else
@@ -361,7 +397,7 @@ static	float4	reflect(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 		color = shape[id].color;
 		inter = get_intersection(ray, t1);
 		if (shape[id].type.y)
-			color = get_texture(shape[id], inter);
+			color = get_texture(shape[id], inter, norm);
 		norm = get_normal(shape[id], inter, t1, *ray);
 		color = get_color(color, spot, norm, inter, *ray, id);
 	}
@@ -405,7 +441,7 @@ static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 		inter = get_intersection(ray, t1);
 		norm = get_normal(shape[id], inter, t1, *ray);
 		if (shape[id].type.y)
-			color = get_texture(shape[id], inter);
+			color = get_texture(shape[id], inter, norm);
 		color = get_color(color, spot, norm, inter, *ray, id);
 		if (get_shadow(inter, spot, shape, num_shapes, id))
 				color = shadow_color(color);
