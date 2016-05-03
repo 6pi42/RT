@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/19 13:44:34 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/05/03 14:05:50 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,5 +164,8 @@ int		get_number(char *file, char *shape_name);
 int		get_nb_shape(char *file);
 void	get_window(int fd, t_map *map);
 void	get_multi_sampling(int fd, t_map *map);
+void	get_triangle(int fd, t_shape *shape);
+void	get_cube(int fd, t_shape *shape);
+void	get_cercle(int fd, t_shape *shape);
 
 #endif

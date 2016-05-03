@@ -139,6 +139,95 @@ static float4 get_texture(t_sphere shape, float4 inter, float4 norm)
     return (color);
 }
 
+static void swap(float *a, float *b)
+{
+	float tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
+
+static float intersect_cube(t_ray *ray, t_sphere obj)
+{
+	float tmin = (obj.radius.x - ray->origin.x) / ray->dir.x;
+	float tmax = (obj.pos.x - ray->origin.x) / ray->dir.x;
+	if (tmin > tmax)
+		swap(&tmin, &tmax);
+	float tymin = (obj.radius.y - ray->origin.y) / ray->dir.y;
+	float tymax = (obj.pos.y - ray->origin.y) / ray->dir.y;
+	if (tymin > tymax)
+		swap(&tymin, &tymax);
+	if ((tmin > tymax) || (tymin > tmax))
+		return -1;
+	tmin = fmax(tymin, tmin);
+	tmax = fmin(tymax, tmax);
+	float tzmin = (obj.radius.z - ray->origin.z) / ray->dir.z;
+	float tzmax = (obj.pos.z - ray->origin.z) / ray->dir.z;
+	if (tzmin > tzmax)
+		swap(&tzmin, &tzmax);
+	if ((tmin > tzmax) || (tzmin > tmax) || tmin <= 0)
+		return -1;
+	tmin = fmin(tzmin, tmin);
+	return (tmin);
+}
+
+
+static float intersect_disque(t_ray *ray, t_sphere obj)
+{
+	float4 diff;
+	float4 pt;
+	float t1 = -(dot(obj.radius, ray->origin - obj.pos) / dot(obj.radius, ray->dir));
+	if (t1 < 0)
+		return -1;
+	pt = ray->origin + t1 * ray->dir;
+	diff = pt - obj.pos;
+	if (sqrt(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z) <= obj.axis.x)
+		return t1;
+	return -1;
+}
+
+static float intersect_plan_eq(t_ray *ray, t_sphere obj)
+{
+	float t1, t2, t3;
+
+	t1 = -ray->origin.x / (ray->dir.x - 5);
+	if (t1 < 0)
+		return (-1);
+	return (t1);
+	return (-1);
+}
+
+static float intersect_triangle(t_ray *ray, t_sphere obj)
+{
+	float4 pt1, pt2, pt3; // 3 vertex
+	float4 e1, e2; // 2 edge (autour de pt1)
+	float4 P, Q, T;
+	
+	float det, inv_det, u, v, t;
+
+	pt1 = obj.pos;
+	pt2 = obj.radius;
+	pt3 = obj.axis;
+	e1 = pt2 - pt1;
+	e2 = pt3 - pt1;
+	P = cross(ray->dir, e2);
+	det = dot(e1, P);
+	if (det > -0.00001 && det < 0.00001)
+		return (-1);
+	inv_det = 1 / det;
+	T = ray->origin - pt1;
+	u = dot(T, P) * inv_det;
+	if (u < 0.0f || u > 1.0f)
+		return (-1);
+	Q = cross(T, e1);
+	v = dot(ray->dir, Q) * inv_det;
+	if (v < 0.0f || u + v > 1.0f)
+		return (-1);
+	t = dot(e2, Q) * inv_det;
+	if (t > 0.00001)
+		return (t);
+	return -1;
+}
+
 static float intersect_sph(t_ray *ray, t_sphere sph)
 {
 	float4 x = ray->origin - sph.pos;
@@ -251,6 +340,7 @@ static	float4 get_intersection(t_ray *ray, float t1)
 {
 	float4 inter;
 	inter = ray->origin + (ray->dir * t1);
+	inter.w = 0.0f;
 	return (inter);
 }
 
@@ -300,6 +390,17 @@ static float4 get_normal_cyl(t_sphere cyl, float4 inter, float t, t_ray ray)
 	norm = (ray.dir * t) + (ray.origin - cyl.pos) - (cyl.axis * m);
 	return (norm);
 }
+static float4 get_normal_cube(t_sphere cyl, float4 inter)
+{
+	float4 norm;
+	norm.x = 1;
+	norm.y = 0;
+	norm.z = 0;
+	norm.w = 0;
+	return (norm);
+}
+
+
 
 static float4 get_normal(t_sphere obj, float4 inter, float t1, t_ray ray)
 {
@@ -315,6 +416,10 @@ static float4 get_normal(t_sphere obj, float4 inter, float t1, t_ray ray)
 		norm = get_normal_cone(obj, ray, t1);
 	if (obj.type.x == 5.0f)
 		norm = get_normal_ellips(obj, inter);
+	if (obj.type.x == 6.0f)
+		norm = get_normal_cube(obj, inter);
+	if (obj.type.x == 7.0f)
+		norm = get_normal_plan(obj);
 	norm = fast_normalize(norm);
 	return (norm);
 }
@@ -340,6 +445,14 @@ static uint intersect_all(t_ray *ray,
 			tmp = intersect_cone(ray, shape[i]);
 		if (shape[i].type.x == 5.0f)
 			tmp = intersect_ellips(ray, shape[i]);
+		if (shape[i].type.x == 6.0)
+			tmp = intersect_cube(ray, shape[i]);
+		if (shape[i].type.x == 7.0)
+			tmp = intersect_disque(ray, shape[i]);
+		if (shape[i].type.x == 8.0)
+			tmp = intersect_triangle(ray, shape[i]);
+		if (shape[i].type.x == 99.0)
+			tmp = intersect_plan_eq(ray, shape[i]);
 		if (tmp != -1.0f && (*t1 == -1.0f || tmp < *t1))
 		{
 			*t1 = tmp;

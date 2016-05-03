@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/18 16:16:11 by emontagn          #+#    #+#             */
-/*   Updated: 2016/04/19 13:32:32 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/05/03 14:28:43 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,12 @@ void	get_window(int fd, t_map *map)
 		else if ((j = ft_strsearch(line, "height: ")) != -1)
 			map->height = atoi_double(ft_strchr(line, ' ') + 1);
 		else
-			printf("error\n");
+			printf("error win\n");
 		free(line);
 		i++;
 	}
 	if (ret == -1)
-		printf("error\n");
+		printf("error win\n");
 }
 
 void	get_multi_sampling(int fd, t_map *map)
@@ -48,10 +48,10 @@ void	get_multi_sampling(int fd, t_map *map)
 		if ((j = ft_strsearch(line, "power: ")) != -1)
 			map->multi_sampling = ft_atoi(ft_strchr(line, ' ') + 1);
 		else
-			printf("error\n");
+			printf("error sample\n");
 		free(line);
 		i++;
 	}
 	if (ret == -1)
-		printf("error\n");
+		printf("error sample\n");
 }
