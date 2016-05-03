@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:52:38 by emontagn          #+#    #+#             */
-/*   Updated: 2016/04/21 13:42:20 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/05/03 14:35:59 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,5 +157,88 @@ void	get_cylinder(int fd, t_shape *shape)
 	}
 	if (ret == -1)
 		printf("error\n");
+	nb++;
+}
+
+void	get_triangle(int fd, t_shape *shape)
+{
+	short		i;
+	short		j;
+	short		ret;
+	char		*line;
+
+	i = -1;
+	while ((ret = get_next_line(fd, &line)) > 0 && ++i != 4)
+	{
+		shape[nb].type.x = 8.0f;
+		if ((j = ft_strsearch(line, "pt1: ")) != -1)
+			shape[nb].radius = get_vector(line + j);
+		else if ((j = ft_strsearch(line, "rgb: ")) != -1)
+			shape[nb].color = get_rgb(line + j);
+		else if ((j = ft_strsearch(line, "pt2: ")) != -1)
+			shape[nb].pos = get_vector(line + j);
+		else if ((j = ft_strsearch(line, "pt3: ")) != -1)
+			shape[nb].axis = get_vector(line + j);
+		else
+			printf("error tri\n");
+		free(line);
+	}
+	if (ret == -1)
+		printf("error tri\n");
+	nb++;
+}
+
+void	get_cube(int fd, t_shape *shape)
+{
+	short		i;
+	short		j;
+	short		ret;
+	char		*line;
+
+	i = -1;
+	while ((ret = get_next_line(fd, &line)) > 0 && ++i != 3)
+	{
+		shape[nb].type.x = 6.0f;
+		if ((j = ft_strsearch(line, "pt1: ")) != -1)
+			shape[nb].pos = get_vector(line + j);
+		else if ((j = ft_strsearch(line, "rgb: ")) != -1)
+			shape[nb].color = get_rgb(line + j);
+		else if ((j = ft_strsearch(line, "pt2: ")) != -1)
+			shape[nb].radius = get_vector(line + j);
+		else
+			printf("error cube\n");
+		free(line);
+	}
+	if (ret == -1)
+		printf("error cune\n");
+	nb++;
+}
+
+
+void	get_cercle(int fd, t_shape *shape)
+{
+	short		i;
+	short		j;
+	short		ret;
+	char		*line;
+
+	i = -1;
+	while ((ret = get_next_line(fd, &line)) > 0 && ++i != 4)
+	{
+		shape[nb].type.x = 7.0f;
+		if ((j = ft_strsearch(line, "pos: ")) != -1)
+			shape[nb].pos = get_position(line + j);
+		else if ((j = ft_strsearch(line, "rgb: ")) != -1)
+			shape[nb].color = get_rgb(line + j);
+		else if ((j = ft_strsearch(line, "dir: ")) != -1)
+			shape[nb].radius = get_vector(line + j);
+		else if ((j = ft_strsearch(line, "rad: ")) != -1)
+			shape[nb].axis = get_radius(line + j);
+		else
+			printf(" fatal error %d \n",i);
+		free(line);
+	}
+	if (ret == -1)
+		printf("error ewfw\n");
 	nb++;
 }
