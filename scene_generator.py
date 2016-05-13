@@ -56,7 +56,7 @@ sampvar.set(samplst[0])
 samp = OptionMenu(root, sampvar, *samplst)
 samp.grid(row = 1, column = 2,pady = 5, padx = 5)
 
-shapelst = ['Plan','Sphere','Cylindre','Cone']
+shapelst = ['Plan','Sphere','Cylindre','Cone','Ellipsoid','Triangle','Cercle','Cube']
 var = list()
 var.append(StringVar())
 var[0].set(shapelst[0])
