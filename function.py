@@ -8,11 +8,10 @@ elif os.name == 'nt':
 	from tkinter import *
 	from tkinter.colorchooser import *
 
-def get_object(index, entryx, entryy, entryz, tex, var, color, shapes):
+def get_object(index, entryx, entryy, entryz, tex, var, shapes, red, blue, green, norx, nory, norz, rad):
 	pos = (entryx.get(), entryy.get(), entryz.get())
-	print tex.get()
-	shapes[index] = Shape(var, pos, color, tex.get(), 20)
-	print(shapes[index].pos[0])
+	rgb = (red, blue, green)
+	shapes[index] = Shape(var, pos, rgb, tex.get(), 20)
 
 def add_shape(drop, root, var, shapelst, edit, color, shapes):
 	var.append(StringVar())
@@ -22,7 +21,7 @@ def add_shape(drop, root, var, shapelst, edit, color, shapes):
 	edit.append(Button(root, text="edit",
 		command= lambda a=len(edit):edit_shape(a, shapelst, var, color, shapes)))
 	edit[len(edit) - 1].grid(row=len(drop) + 4, column=1, padx=5, pady=5)
-	color.append((0, 0, 0))
+	color.append(Triple(0,0,0))
 	shapes.append(-1)
 
 def less_shape(drop, root, var, shapelst, edit, color, shapes):
@@ -35,19 +34,10 @@ def less_shape(drop, root, var, shapelst, edit, color, shapes):
 		color.pop()
 		shapes.pop()
 
-def getColor(color, index):
-	print(index)
-	tmp = askcolor()
-	print(color[index])
-	print(tmp[0][0])
-	print(tmp[0][1])
-	print(tmp[0][2])
-
 
 def edit_shape(index, shapelst, var, color, shapes):
 	child = Toplevel()
-	#namel = Label(child, text=shapelst[var[index]])
-	#namel.grid(row=0, column=0, padx=5, pady=5)
+	child.title('Object:' + str(var[index].get()))
 	posl = Label(child, text="Pos: (x, y, z)")
 	posl.grid(row=1, column=0, padx=5, pady=5)
 	entryx = Entry(child, width=5)
@@ -59,16 +49,57 @@ def edit_shape(index, shapelst, var, color, shapes):
 	color = (0, 0, 0)
 	rgb = Button(child,text='Select Color', command= lambda a=index:getColor(color, a))
 	rgb.grid(row=2, column=0, padx=5, pady=5)
-	#rgbl = Label(child, text="RGB: (R, G, B)")
-	#rgbl.grid(row=2, column=0, padx=5, pady=5)
-	#entryr = Entry(child)
-	#entryr.grid(row=2, column=1, padx=5, pady=5)
-	#entryg = Entry(child)
-	#entryg.grid(row=2, column=2, padx=5, pady=5)
-	#entryb = Entry(child)
-	#entryb.grid(row=2, column=3, padx=5, pady=5)
+	rgbl = Label(child, text="RGB: (R, G, B)")
+	rgbl.grid(row=2, column=0, padx=5, pady=5)
+	entryr = Entry(child, width=5)
+	entryr.grid(row=2, column=1, padx=5, pady=5)
+	entryg = Entry(child, width=5)
+	entryg.grid(row=2, column=2, padx=5, pady=5)
+	entryb = Entry(child, width=5)
+	entryb.grid(row=2, column=3, padx=5, pady=5)
 	var1 = IntVar()
 	tex = Checkbutton(child, text="chess board", variable=var1)
-	tex.grid(row=3, column=0, padx=5, pady=5)
-	ok = Button(child, text="OK", command= lambda a=index, b=entryx, c=entryy, d=entryz, e=var1: get_object(a,b,c,d,e,color[a], var[a], shapes))
-	ok.grid(row=4, column=3, padx=5, pady=5)
+	tex.grid(row=6, column=0, padx=5, pady=5)
+	if (var[index].get() == "Plane"):
+		lnorm = Label(child, text="normale (x, y, z)")
+		lnorm.grid(row=3, column=0, padx=5, pady=5)
+		normx =  Entry(child, width=5)
+		normx.grid(row=3, column=1, padx=5, pady=5)
+		normy =  Entry(child, width=5)
+		normy.grid(row=3, column=2, padx=5, pady=5)
+		normz =  Entry(child, width=5)
+		normz.grid(row=3, column=3, padx=5, pady=5)
+		ok = Button(child, text="OK", command= lambda a=index:
+				get_object(a,entryx,entryy,entryz,var1,var[a], shapes, entryr,
+					entryg, entryb, normx, normy, normz, None))
+		ok.grid(row=4, column=3, padx=5, pady=5)
+	elif (var[index].get() == "Cone" or var[index].get() == "Cylinder"):
+		if (var[index].get() == "Cone"):
+			text = "K:"
+		else:
+			text= "Radius:"
+		kl = Label(child, text=text)
+		kl.grid(row=4, column=0, padx=5, pady=5)
+		kentry = Entry(child, width=5)
+		kentry.grid(row=4, column=1, padx=5, pady=5)
+		dirl = Label(child, text="Dir: (x, y, z)")
+		dirl.grid(row=3, column=0, padx=5, pady=5)
+		dirx = Entry(child, width=5)
+		dirx.grid(row=3, column=1, padx=5, pady=5)
+		diry = Entry(child, width=5)
+		diry.grid(row=3, column=2, padx=5, pady=5)
+		dirz = Entry(child, width=5)
+		dirz.grid(row=3, column=3, padx=5, pady=5)
+		ok = Button(child, text="OK", command= lambda a=index:
+				get_object(a,entryx,entryy,entryz,var1,var[a], shapes, entryr,
+					entryg, entryb, dirx, diry, dirz, kentry))
+		ok.grid(row=6, column=3, padx=5, pady=5)
+	elif (var[index].get() == "Sphere"):
+		kl = Label(child, text="Radius")
+		kl.grid(row=4, column=0, padx=5, pady=5)
+		kentry = Entry(child, width=5)
+		kentry.grid(row=4, column=1, padx=5, pady=5)
+		ok = Button(child, text="OK", command= lambda a=index:
+				get_object(a,entryx,entryy,entryz,var1,var[a], shapes, entryr,
+					entryg, entryb, None, None, None, kentry))
+		ok.grid(row=6, column=3, padx=5, pady=5)
