@@ -5,6 +5,12 @@ class Shape:
 		self.rgb = rgb
 		self.tex = tex
 		self.rad = rad
+
+class Triple:
+	def __init__(self, x, y, z):
+		self.x = x
+		self.y = y
+		self.z = z
 """
 class Sphere(Shape):
 	def write(self, file_name):

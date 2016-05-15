@@ -44,7 +44,7 @@ drop.append(OptionMenu(root,var[0],*shapelst))
 drop[0].grid(row = 4, column=0, padx=5, pady=5)
 
 color = list()
-color.append((0, 0, 0))
+color.append(Triple(0,0,0))
 shapes = list()
 shapes.append(-1)
 edit = list()
