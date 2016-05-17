@@ -6,7 +6,7 @@
 #    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/04/18 16:16:51 by emontagn         ###   ########.fr        #
+#    Updated: 2016/05/17 15:03:46 by amathias         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,7 @@ SRC =	main.c			\
 		get_shape.c		\
 		get_scene.c		\
 		get_tools.c		\
+		bitmap_writer.c	\
 
 OBJ = $(SRC:.c=.o)
 NAME = rt
