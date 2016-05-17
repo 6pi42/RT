@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:54:18 by emontagn          #+#    #+#             */
-/*   Updated: 2016/05/03 14:27:59 by apaget           ###   ########.fr       */
+/*   Updated: 2016/05/15 15:23:06 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,8 @@ int		get_nb_shape(char *file)
 
 	shape_nb = get_number(file, "PLANE") + get_number(file, "SPHERE") +
 	get_number(file, "CONE") + get_number(file, "CYLINDER") +
-	get_number(file, "ELLIPSOID") + get_number(file, "TRIANGLE") + 
-	get_number(file, "CERCLE") + get_number(file, "CUBE") ;
+	get_number(file, "ELLIPSOID") + get_number(file, "TRIANGLE") +
+	get_number(file, "CERCLE") + get_number(file, "CUBE");
 	return (shape_nb);
 }
 
@@ -89,6 +89,8 @@ void	parsing(t_shape *shape, t_map *map, char *line, int fd)
 		get_multi_sampling(fd, map);
 	else if (ft_strsearch(line, "WINDOW") != -1)
 		get_window(fd, map);
+	else if (ft_strsearch(line, "SPOTLIGHT") != -1)
+		get_spotlight(fd, map);
 	else if (ft_strsearch(line, "PLANE") != -1)
 		get_plane(fd, shape);
 	else if (ft_strsearch(line, "SPHERE") != -1)
