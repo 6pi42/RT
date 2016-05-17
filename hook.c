@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/02 15:34:48 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/16 14:23:47 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/05/17 15:15:42 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ int		key_press(int keycode, t_map *map)
 		map->key.right = 1;
 	if (keycode == 2)
 		map->key.left = 1;
+	if (keycode == 257)
+		write_bitmap(map);
 	return (0);
 }
 
