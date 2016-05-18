@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/21 13:42:29 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/05/15 15:21:48 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ void	raytracer(t_map *map)
 
 	i = 0;
 	env = map->env;
+	map->spot.x = 1.0f;
 	work_size = map->width * map->height;
 	mem_shape = clCreateBuffer(env.context, CL_MEM_READ_ONLY
 		| CL_MEM_COPY_HOST_PTR, map->scene.nb_shape * sizeof(t_shape),
@@ -101,9 +102,10 @@ void	raytracer(t_map *map)
 	err |= clSetKernelArg(env.kernel, 2, sizeof(cl_float), &map->width);
 	err |= clSetKernelArg(env.kernel, 3, sizeof(cl_mem), &mem_camera);
 	err |= clSetKernelArg(env.kernel, 4, sizeof(cl_mem), &mem_shape);
-	err |= clSetKernelArg(env.kernel, 5, sizeof(cl_uint),&map->scene.nb_shape);
-	err |= clSetKernelArg(env.kernel, 6, sizeof(cl_mem),&mem_img);
+	err |= clSetKernelArg(env.kernel, 5, sizeof(cl_uint), &map->scene.nb_shape);
+	err |= clSetKernelArg(env.kernel, 6, sizeof(cl_mem), &mem_img);
 	err |= clSetKernelArg(env.kernel, 7, sizeof(cl_short), &map->multi_sampling);
+	err |= clSetKernelArg(env.kernel, 8, sizeof(cl_float4), &map->spot);
 	if (err < 0)
 		ft_putstr("Failed to create kernel argument");
 }
