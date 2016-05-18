@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/03 14:05:50 by apaget           ###   ########.fr       */
+/*   Updated: 2016/05/17 15:18:22 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,7 @@ typedef struct	s_map
 	void		*mlx;
 	void		*win;
 	unsigned int multi_sampling;
+	cl_float4	spot;
 	t_env		env;
 	t_cam		free_cam;
 	t_img		img;
@@ -147,6 +148,7 @@ void	vector_from_angle(t_cam *cam);
 void	update_cam(t_cam *cam, t_key *key);
 void	update(t_map *map);
 int		motion_notify(int x, int y, t_map *map);
+void	write_bitmap(t_map *map);
 
 int		ft_strsearch(char *str1, char *str2);
 t_shape	*parse(t_map *map, char *file);
@@ -163,6 +165,7 @@ cl_float4	get_radius(char *line);
 int		get_number(char *file, char *shape_name);
 int		get_nb_shape(char *file);
 void	get_window(int fd, t_map *map);
+void	get_spotlight(int fd, t_map *map);
 void	get_multi_sampling(int fd, t_map *map);
 void	get_triangle(int fd, t_shape *shape);
 void	get_cube(int fd, t_shape *shape);

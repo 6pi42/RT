@@ -201,7 +201,7 @@ static float intersect_triangle(t_ray *ray, t_sphere obj)
 	float4 pt1, pt2, pt3; // 3 vertex
 	float4 e1, e2; // 2 edge (autour de pt1)
 	float4 P, Q, T;
-	
+
 	float det, inv_det, u, v, t;
 
 	pt1 = obj.pos;
@@ -532,18 +532,16 @@ static int get_shadow(float4 inter, float4 spot, __constant t_sphere *shape,
 
 }
 
-static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
+static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes, float4 spot)
 {
 	float4 		color;
 	float		t1;
 	uint		i;
-	t_ray tmp;
+	t_ray 		tmp;
 	float4		norm;
 	float4		inter;
-	float4		spot;
 	uint id;
 
-	spot = (float4)(-50.0f, 100.0f, 0.0f, 0.0f);
 	i = 0;
 	t1 = -1.0f;
 	color = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
@@ -553,13 +551,15 @@ static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes)
 		color = shape[id].color;
 		inter = get_intersection(ray, t1);
 		norm = get_normal(shape[id], inter, t1, *ray);
+		inter = inter + ray->dir * 0.01f;
 		if (shape[id].type.y)
 			color = get_texture(shape[id], inter, norm);
-		color = get_color(color, spot, norm, inter, *ray, id);
 		if (get_shadow(inter, spot, shape, num_shapes, id))
 				color = shadow_color(color);
-		tmp.origin = get_intersection(ray, t1 - 0.001f);
-		tmp.dir = ray->dir - 2.0f * (dot(norm, ray->dir)) * norm;
+		else	
+			color = get_color(color, spot, norm, inter, *ray, id);
+		tmp.dir = ray->dir - 2.0f * norm * dot(ray->dir, norm);
+		tmp.origin = get_intersection(ray, t1) + tmp.dir * 0.1f;
 		color = (color + 0.2f * reflect(&tmp, shape, num_shapes));
 		color = clamp_color(color);
 	}
@@ -632,7 +632,7 @@ static float4 moy_rgb(float4 *color, short len)
 __kernel void generate_ray(__global char* data, float height, float width,
 							__global t_ray* cam,
 							__constant t_sphere *shape, uint num_shapes,
-							__constant t_img *img, const short multi)
+							__constant t_img *img, const short multi, float4 spot)
 {
 	t_ray r;
 	float4 color[2];
@@ -652,7 +652,7 @@ __kernel void generate_ray(__global char* data, float height, float width,
 		{
 			r.dir = get_dir(cam->dir, cam->down, cam->right, get_value((int)i, x, y).x,
 				get_value((int)i, x, y).y, width, height, cam->ratio);
-			color[i] = raytrace(&r, shape, num_shapes);
+			color[i] = raytrace(&r, shape, num_shapes, spot);
 			i++;
 		}
 		color[0] = moy_rgb(color, multi);
@@ -661,7 +661,7 @@ __kernel void generate_ray(__global char* data, float height, float width,
 	{
 		r.dir = get_dir(cam->dir, cam->down, cam->right, x,
 		y, width, height, cam->ratio);
-		color[0] = raytrace(&r, shape, num_shapes);
+		color[0] = raytrace(&r, shape, num_shapes, spot);
 	}
 	data[(int)y * img->size_line + ((int)x * img->bpp) / 8] =
 		(uchar)((int)(color[0].z) & 0xFF);
