@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cboyer <cboyer@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/23 11:57:34 by amathias         ###   ########.fr       */
+/*   Updated: 2016/05/18 17:58:55 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,19 @@
 # include <unistd.h>
 # include "libft.h"
 #include <stdio.h>
+
+typedef	struct	s_ray
+{
+	cl_float4	origin;
+	cl_float4	ray;
+}				t_ray;
+
+typedef struct	s_clbuf
+{
+	cl_mem		output;
+	cl_mem		ray;
+	cl_mem		shape;
+}				t_clbuf;
 
 typedef struct	s_fps
 {
@@ -35,46 +48,48 @@ typedef struct	s_shape
 	cl_float4	radius;
 	cl_float4	color;
 	cl_float4	axis;
+	short		multi;
 }				t_shape;
 
-typedef	struct	s_ray2
-{
-	cl_float4	origin;
-	cl_float4	dir;
-}				t_ray2;
-
-typedef struct	s_ray
+typedef struct	s_camera
 {
 	cl_float4	origin;
 	cl_float4	ray;
 	cl_float4	down;
 	cl_float4	right;
 	cl_float	ratio;
-}				t_ray;
+}				t_camera;
 
 typedef struct	s_scene
 {
-	t_ray		*cam;
+	t_camera	*cam;
 	int 		nb_shape;
 	t_shape 	*shape;
 }				t_scene;
 
 typedef struct	s_img
 {
-	void		*img;
-	char		*data;
 	int			bpp;
 	int			size_line;
 	int			endian;
+	void		*img;
+	char		*data;
 }				t_img;
+
+typedef struct	s_inter
+{
+	int			id;
+	float		dist;
+	cl_float4	normal;
+}				t_inter;
 
 typedef struct	s_cam
 {
-	double		speed;
-	double		sensitivity;
-	double		theta;
-	double		aspect_ratio;
-	double		phi;
+	float		speed;
+	float		sensitivity;
+	float		theta;
+	float		aspect_ratio;
+	float		phi;
 	cl_float4	pos;
 	cl_float4	dir;
 	cl_float4	target;
@@ -85,7 +100,6 @@ typedef struct	s_cam
 	cl_int2		old_mouse_pos;
 }				t_cam;
 
-
 typedef struct	s_key
 {
 	int			up;
@@ -94,14 +108,10 @@ typedef struct	s_key
 	int			right;
 	int			mleft;
 	int			mright;
-	int			num_8;
-	int			num_4;
-	int			num_2;
-	int			num_6;
 	int			mx;
 	int			my;
-	double		theta;
-	double		phi;
+	float		theta;
+	float		phi;
 }				t_key;
 
 typedef struct	s_env
@@ -110,29 +120,28 @@ typedef struct	s_env
 	cl_context			context;
 	cl_command_queue	cmds;
 	cl_program			program;
-	cl_kernel			get_ray;
-	cl_kernel			get_inter;
-	cl_kernel			get_shading;
-	cl_kernel			get_secondary;
+	cl_kernel			kernel;
+	t_clbuf				clbuf;
 }				t_env;
 
 typedef struct	s_map
 {
 	void		*mlx;
 	void		*win;
+	unsigned int multi_sampling;
+	cl_float4	spot;
 	t_env		env;
 	t_cam		free_cam;
 	t_img		img;
 	t_key		key;
 	t_fps		fps;
 	t_scene		scene;
-	int			height;
-	int			width;
+	float		height;
+	float		width;
 }				t_map;
 
 typedef struct	s_prog
 {
-	char		*file_name;
 	char		*buffer;
 	size_t		len;
 }				t_prog;
@@ -158,6 +167,31 @@ double	dis_point(cl_float4 pt1, cl_float4 pt2);
 cl_float4	neg_vec(cl_float4 vec);
 void	vector_from_angle(t_cam *cam);
 void	update_cam(t_cam *cam, t_key *key);
-void	update(t_map *map);
+void	init_cam(t_map *map);
+void	init_inter(t_map *map);
+t_inter	*get_inter(t_map *map, size_t work_size, t_ray *ray);
 int		motion_notify(int x, int y, t_map *map);
+void	write_bitmap(t_map *map);
+
+int		ft_strsearch(char *str1, char *str2);
+t_shape	*parse(t_map *map, char *file);
+float	atoi_double(char *line);
+void	get_sphere(int fd, t_shape *shape);
+void	get_plane(int fd, t_shape *shape);
+void	get_ellipsoid(int fd, t_shape *shape);
+void	get_cylinder(int fd, t_shape *shape);
+void	get_cone(int fd, t_shape *shape);
+cl_float4	get_position(char *line);
+cl_float4	get_vector(char *line);
+cl_float4	get_rgb(char *line);
+cl_float4	get_radius(char *line);
+int		get_number(char *file, char *shape_name);
+int		get_nb_shape(char *file);
+void	get_window(int fd, t_map *map);
+void	get_spotlight(int fd, t_map *map);
+void	get_multi_sampling(int fd, t_map *map);
+void	get_triangle(int fd, t_shape *shape);
+void	get_cube(int fd, t_shape *shape);
+void	get_cercle(int fd, t_shape *shape);
+
 #endif

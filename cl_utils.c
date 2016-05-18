@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:22:57 by amathias          #+#    #+#             */
-/*   Updated: 2016/04/23 15:12:20 by amathias         ###   ########.fr       */
+/*   Updated: 2016/05/18 17:09:01 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,7 @@ void	ocl_init(t_env *env, t_prog prog)
 					(const char**)&prog.buffer, NULL, &err)))
 		ft_putstr("Error: Failed to create program\n");
 	if ((err =
-		clBuildProgram(env->program, 0, NULL, "-cl-fast-relaxed-math",
-			NULL, NULL)) != CL_SUCCESS)
+		clBuildProgram(env->program, 0, NULL, "-cl-fast-relaxed-math", NULL, NULL)) != CL_SUCCESS)
 		ft_putstr("Error: Failed to build program executable\n");
 	if (err < 0)
 	{
@@ -47,18 +46,9 @@ void	ocl_init(t_env *env, t_prog prog)
 		free(prog_log);
 		exit(0);
 	}
-	if (!(env->get_ray = clCreateKernel(env->program, "get_ray", &err)))
+	if (!(env->kernel = clCreateKernel(env->program, "intersect", &err)))
 		ft_putstr("Error: Failed to create kernel\n");
-	if (!(env->get_inter =
-				clCreateKernel(env->program, "get_intersection", &err)))
-		ft_putstr("Error: Failed to create kernel\n");
-	if (!(env->get_shading =
-				clCreateKernel(env->program, "get_shading", &err)))
-		ft_putstr("Error: Failed to create kernel\n");
-	if (!(env->get_secondary =
-				clCreateKernel(env->program, "get_secondary", &err)))
-		ft_putstr("Error: Failed to create kernel\n");
-	free(prog.buffer);
+	
 }
 
 t_prog	get_prog(char *file_name)
@@ -69,7 +59,6 @@ t_prog	get_prog(char *file_name)
 	char	*back;
 	int		fd;	
 
-	prog.file_name = file_name;
 	prog.len = -1;
 	buffer = (char*)malloc(sizeof(char) + 1);
 	buffer[0] = '\0';
