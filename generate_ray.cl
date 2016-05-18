@@ -551,13 +551,15 @@ static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes, 
 		color = shape[id].color;
 		inter = get_intersection(ray, t1);
 		norm = get_normal(shape[id], inter, t1, *ray);
+		inter = inter + ray->dir * 0.01f;
 		if (shape[id].type.y)
 			color = get_texture(shape[id], inter, norm);
-		color = get_color(color, spot, norm, inter, *ray, id);
 		if (get_shadow(inter, spot, shape, num_shapes, id))
 				color = shadow_color(color);
-		tmp.origin = get_intersection(ray, t1 - 0.001f);
-		tmp.dir = ray->dir - 2.0f * (dot(norm, ray->dir)) * norm;
+		else	
+			color = get_color(color, spot, norm, inter, *ray, id);
+		tmp.dir = ray->dir - 2.0f * norm * dot(ray->dir, norm);
+		tmp.origin = get_intersection(ray, t1) + tmp.dir * 0.1f;
 		color = (color + 0.2f * reflect(&tmp, shape, num_shapes));
 		color = clamp_color(color);
 	}
