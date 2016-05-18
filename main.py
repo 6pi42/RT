@@ -17,8 +17,7 @@ title = Entry(root, width=10)
 title.grid(row=0, column=0, padx = 5, pady = 5)
 title.insert(0, "Scene Name")
 
-valid = Button(root, text="OK")
-valid.grid(row=0, column = 2, padx=5, pady=5)
+
 
 widthl = Entry(root, width=5)
 widthl.grid(row=1, column=0, padx = 5, pady = 5)
@@ -43,20 +42,21 @@ drop = list()
 drop.append(OptionMenu(root,var[0],*shapelst))
 drop[0].grid(row = 4, column=0, padx=5, pady=5)
 
-color = list()
-color.append(Triple(0,0,0))
 shapes = list()
 shapes.append(-1)
 edit = list()
-edit.append(Button(root, text="edit", command= lambda a=0:edit_shape(a, shapelst, var, color, shapes)))
+edit.append(Button(root, text="edit", command= lambda a=0:edit_shape(a, shapelst, var, shapes)))
 edit[0].grid(row=4, column=1, padx=5, pady=5)
 
 add_button = Button(root, text = "More shape",
-            command = lambda: add_shape(drop, root, var, shapelst, edit, color, shapes))
+            command = lambda: add_shape(drop, root, var, shapelst, edit, shapes))
 add_button.grid(row = 2, column=0, padx=5, pady=5)
 
 less_button = Button(root, text = "Less shape",
-            command = lambda: less_shape(drop, root, var, shapelst, edit, color, shapes))
+            command = lambda: less_shape(drop, root, var, shapelst, edit, shapes))
 less_button.grid(row = 2, column=1, padx=5, pady=5)
+
+valid = Button(root, text="OK", command=lambda: create_file(shapes, title, widthl, heightl, sampvar))
+valid.grid(row=0, column = 2, padx=5, pady=5)
 
 root.mainloop()
