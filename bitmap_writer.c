@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/10 10:04:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/13 11:20:09 by amathias         ###   ########.fr       */
+/*   Updated: 2016/05/18 14:53:21 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	write_bitmap(t_map *map)
 	int		work_size;
 
 	file_name = get_file_name("screenshot_", ".bmp");
-	if ((fd = open(file_name, O_WRONLY | O_APPEND | O_CREAT,
+	if ((fd = open(file_name, O_WRONLY | O_APPEND | O_TRUNC | O_CREAT,
 					S_IRUSR | S_IWUSR)) == -1)
 		return ;
 	free(file_name);
