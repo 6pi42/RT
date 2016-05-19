@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/18 17:14:53 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/18 17:58:45 by amathias         ###   ########.fr       */
+/*   Updated: 2016/05/19 14:53:22 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	init_inter(t_map *map)
 	err = clSetKernelArg(env.kernel, 0, sizeof(cl_mem), &map->env.clbuf.output);
 	err |= clSetKernelArg(env.kernel, 1, sizeof(cl_mem), &map->env.clbuf.ray);
 	err |= clSetKernelArg(env.kernel, 2, sizeof(cl_mem), &map->env.clbuf.shape);
-	err |= clSetKernelArg(env.kernel, 3, sizeof(cl_uint), &map->scene.nb_shape);
+	err |= clSetKernelArg(env.kernel, 3, sizeof(cl_int), &map->scene.nb_shape);
 	if (err < 0)
 		ft_putstr("Failed to create kernel argument");
 }
@@ -40,6 +40,7 @@ void	init_inter(t_map *map)
 t_inter	*get_inter(t_map *map, size_t work_size, t_ray *ray)
 {
 	t_env env;
+	t_inter *ptr;
 	cl_event event;
 	cl_ulong time_start;
 	cl_ulong time_end;
@@ -47,6 +48,7 @@ t_inter	*get_inter(t_map *map, size_t work_size, t_ray *ray)
 
 	env = map->env;
 	init_cam(map);
+	ptr = (t_inter*)malloc(sizeof(t_inter) * work_size);
 	map->scene.cam->ray = map->free_cam.dir;
 	map->scene.cam->origin = map->free_cam.pos;
 	map->scene.cam->down = map->free_cam.down;
@@ -56,9 +58,11 @@ t_inter	*get_inter(t_map *map, size_t work_size, t_ray *ray)
 			work_size * sizeof(t_ray), ray, 0, NULL, NULL);
 	clEnqueueNDRangeKernel(env.cmds, env.kernel, 1, NULL,
 			&work_size, NULL, 0, NULL, &event);
-	t_inter *ptr = (t_inter*)clEnqueueMapBuffer(env.cmds, map->env.clbuf.output,
-			CL_TRUE, CL_MAP_READ, 0,
-			work_size * sizeof(t_inter), 0, NULL, NULL, NULL);
+	clEnqueueReadBuffer(env.cmds, map->env.clbuf.output,
+			CL_TRUE, 0, work_size * sizeof(t_inter), ptr, 0, NULL, NULL);
+	//ptr = (t_inter*)clEnqueueMapBuffer(env.cmds,
+	 //	map->env.clbuf.output, CL_TRUE, CL_MAP_READ, 0,
+	//		work_size * sizeof(t_inter), 0, NULL, NULL, NULL);
 	//PROFILING
 	clWaitForEvents(1, &event);
 	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START,

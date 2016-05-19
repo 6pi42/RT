@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/18 17:58:55 by amathias         ###   ########.fr       */
+/*   Updated: 2016/05/19 14:32:22 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ typedef struct	s_scene
 	t_camera	*cam;
 	int 		nb_shape;
 	t_shape 	*shape;
+	cl_float4	*spot;
+	int			nb_spot;
 }				t_scene;
 
 typedef struct	s_img
@@ -146,6 +148,7 @@ typedef struct	s_prog
 	size_t		len;
 }				t_prog;
 
+void	draw_pixel_to_image(t_map *map, int x, int y, cl_float4 c);
 void	draw(t_map *map);
 void	ocl_init(t_env *env, t_prog prog);
 t_prog	get_prog(char *file_name);
@@ -168,8 +171,16 @@ cl_float4	neg_vec(cl_float4 vec);
 void	vector_from_angle(t_cam *cam);
 void	update_cam(t_cam *cam, t_key *key);
 void	init_cam(t_map *map);
+
+void	raytrace(t_map *map);
+
+t_ray	*get_primary(t_map *map);
+
 void	init_inter(t_map *map);
 t_inter	*get_inter(t_map *map, size_t work_size, t_ray *ray);
+
+int		*shadow(t_map *map, t_inter *inter, t_ray *primary);
+
 int		motion_notify(int x, int y, t_map *map);
 void	write_bitmap(t_map *map);
 

@@ -6,7 +6,7 @@
 #    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/05/18 17:39:29 by amathias         ###   ########.fr        #
+#    Updated: 2016/05/19 11:48:37 by amathias         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,9 @@ INC = /
 
 SRC =	main.c			\
 		get_inter.c		\
+		get_primary.c	\
+		raytrace.c		\
+		shadow.c		\
 		cl_utils.c		\
 		hook.c			\
 		vec_calc.c		\

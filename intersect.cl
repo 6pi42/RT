@@ -351,8 +351,12 @@ __kernel void intersect(__global t_inter *out, __global t_ray* ray,
 
 	global_addr = get_global_id(0);
 	r = ray[global_addr];
+	inter.dist = -1.0f;
 	inter.id = intersect_all(&r, shape, num_shapes, &inter.dist);
-	inter.normal = get_normal(shape[inter.id],
+	if (inter.id != -1)
+	{
+		inter.normal = get_normal(shape[inter.id],
 					get_intersection(&r, inter.dist), inter.dist, r);
+	}
 	out[global_addr] = inter;
 }
