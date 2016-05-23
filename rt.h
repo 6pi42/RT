@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/19 14:32:22 by amathias         ###   ########.fr       */
+/*   Updated: 2016/05/23 11:28:30 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,17 @@ typedef	struct	s_ray
 	cl_float4	origin;
 	cl_float4	ray;
 }				t_ray;
+
+
+typedef	struct	s_mat
+{
+	float		ka;
+	float		kd;
+	float		ks;
+	float		ktran;
+	float		kreflec;
+	float		krefrac;
+}				t_mat;
 
 typedef struct	s_clbuf
 {
@@ -67,6 +78,8 @@ typedef struct	s_scene
 	t_shape 	*shape;
 	cl_float4	*spot;
 	int			nb_spot;
+	t_mat		*mat;
+	int			nb_mat;
 }				t_scene;
 
 typedef struct	s_img

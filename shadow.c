@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 11:32:14 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/19 15:10:32 by amathias         ###   ########.fr       */
+/*   Updated: 2016/05/23 10:51:46 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,12 @@ t_ray		*get_shadow_ray(t_map *map, cl_float4 spot_pos,
 	{
 		if (inter[i].id != -1)
 		{
-			shadow[i].origin.x = ray->origin.x + (ray->ray.x * inter[i].dist);
-			shadow[i].origin.y = ray->origin.y + (ray->ray.y * inter[i].dist);
-			shadow[i].origin.z = ray->origin.z + (ray->ray.z * inter[i].dist);
+			shadow[i].origin.x = (ray[i].origin.x
+				+ (ray[i].ray.x * inter[i].dist)) + (ray[i].ray.x * 0.01f);
+			shadow[i].origin.y = (ray[i].origin.y
+				+ (ray[i].ray.y * inter[i].dist)) + (ray[i].ray.y * 0.01f);
+			shadow[i].origin.z = (ray[i].origin.z
+				+ (ray[i].ray.z * inter[i].dist)) + (ray[i].ray.z * 0.01f);
 			shadow[i].origin.w = 0.0f;
 			shadow[i].ray = get_shadow_dir(shadow[i].origin, spot_pos);
 		}

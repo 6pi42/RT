@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/19 14:30:03 by amathias         ###   ########.fr       */
+/*   Updated: 2016/05/23 11:19:04 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,22 +69,34 @@ int		main(int argc, char **argv)
 	t_shape		*shape;
 	t_camera	cam;
 	cl_float4	spot;
+	t_mat		mat;
 
 	if (argc != 2)
 		return (1);
 	map.scene.nb_shape = get_nb_shape(argv[1]);
 	shape = parse(&map, argv[1]);
+	//Add that to parsing
+	mat.ka = 0.2f;
+	mat.kd = 0.6f;
+	mat.ks = 0.8f;
+	mat.ktran = 0.0f;
+	mat.kreflec = 0.0f;
+	mat.krefrac	= 0.0f;
+	// Same	
 	spot.x = 50.0f;
 	spot.y = 200.0f;
-	spot.z = 0.0f;
+	spot.z = 10.0f;
 	spot.w = 0.0f;
-	map.free_cam.pos.x = 0;
-	map.free_cam.pos.y = 50;
-	map.free_cam.pos.z = 500;
+
+	map.free_cam.pos.x = 500.0f;
+	map.free_cam.pos.y = 200.0f;
+	map.free_cam.pos.z = 0.0f;
 	map.scene.shape = shape;
 	map.scene.cam = &cam;
 	map.scene.spot = &spot;
 	map.scene.nb_spot = 1;
+	map.scene.mat = &mat;
+	map.scene.nb_mat = 1;
 	map.mlx = mlx_init();
 	init_key(&map);
 	map.win = mlx_new_window(map.mlx, map.width, map.height, "RT");
