@@ -8,7 +8,7 @@ elif os.name == 'nt':
 	from tkinter import *
 	from tkinter.colorchooser import *
 
-def get_object(index, entryx, entryy, entryz, tex, var, shapes, red, blue, green, norx, nory, norz, rad, child):
+def get_object(index, entryx, entryy, entryz, tex, var, shapes, red, blue, green, norx, nory, norz, rad, child, pt3x, pt3y, pt3z):
 	pos = (entryx.get(), entryy.get(), entryz.get())
 	rgb = (red.get(), blue.get(), green.get())
 	stype = var.get()
@@ -22,14 +22,21 @@ def get_object(index, entryx, entryy, entryz, tex, var, shapes, red, blue, green
 		shapes[index] = Cylinder(stype, pos, rgb, tex.get(), axis, rad.get())
 	elif (stype == "Cone"):
 		axis = (norx.get(), nory.get(), norz.get())
-		shapes[index] = Cylinder(stype, pos, rgb, tex.get(), axis, rad.get())
+		shapes[index] = Cone(stype, pos, rgb, tex.get(), axis, rad.get())
 	elif (stype == "Ellipsoid"):
 		rad_axis = (norx.get(), nory.get(), norz.get())
 		shapes[index] = Ellipsoid(stype, pos, rgb, tex.get(), rad_axis)
 	elif (stype == "Cube"):
 		pt2 = (norx.get(), nory.get(), norz.get())
-		shapes[index] = Ellipsoid(stype, pos, pt2, rgb)
-
+		shapes[index] = Cube(pos, pt2, rgb)
+	elif (stype == "Triangle"):
+		pt2 = (norx.get(), nory.get(), norz.get())
+		pt3 = (pt3x.get(), pt3y.get(), pt3z.get())
+		shapes[index] = Triangle(pos, pt2, pt3, rgb)
+	elif (stype == "Cercle"):
+		dire = (norx.get(), nory.get(), norz.get())
+		rad = rad.get()
+		shapes[index] = Cercle(pos, dire, rgb, rad)
 	child.destroy()
 
 def add_shape(drop, root, var, shapelst, edit, shapes):
@@ -55,6 +62,10 @@ def less_shape(drop, root, var, shapelst, edit, shapes):
 def edit_shape(index, shapelst, var, shapes):
 	child = Toplevel()
 	child.title('Object:' + str(var[index].get()))
+	if (var[index].get() == "Cube" or var[index].get() == "Triangle"):
+		text = "Pt1: (x, y , z)"
+	else:
+		text = "Pos: (x, y, z)"
 	posl = Label(child, text="Pos: (x, y, z)")
 	posl.grid(row=1, column=0, padx=5, pady=5)
 	entryx = Entry(child, width=5)
@@ -64,8 +75,6 @@ def edit_shape(index, shapelst, var, shapes):
 	entryz = Entry(child, width = 5)
 	entryz.grid(row=1, column=3, padx=5, pady=5)
 	color = (0, 0, 0)
-	rgb = Button(child,text='Select Color', command= lambda a=index:getColor(color, a))
-	rgb.grid(row=2, column=0, padx=5, pady=5)
 	rgbl = Label(child, text="RGB: (R, G, B)")
 	rgbl.grid(row=2, column=0, padx=5, pady=5)
 	entryr = Entry(child, width=5)
@@ -88,7 +97,7 @@ def edit_shape(index, shapelst, var, shapes):
 		normz.grid(row=3, column=3, padx=5, pady=5)
 		ok = Button(child, text="OK", command= lambda a=index:
 				get_object(a,entryx,entryy,entryz,var1,var[a], shapes, entryr,
-					entryg, entryb, normx, normy, normz, None, child))
+					entryg, entryb, normx, normy, normz, None, child, None, None, None))
 		ok.grid(row=4, column=3, padx=5, pady=5)
 	elif (var[index].get() == "Cone" or var[index].get() == "Cylinder"):
 		if (var[index].get() == "Cone"):
@@ -111,7 +120,7 @@ def edit_shape(index, shapelst, var, shapes):
 		dirz.grid(row=3, column=3, padx=5, pady=5)
 		ok = Button(child, text="OK", command= lambda a=index:
 				get_object(a,entryx,entryy,entryz,var1,var[a], shapes, entryr,
-					entryg, entryb, dirx, diry, dirz, kentry, child))
+					entryg, entryb, dirx, diry, dirz, kentry, child, None, None, None))
 		ok.grid(row=6, column=3, padx=5, pady=5)
 	elif (var[index].get() == "Sphere"):
 		tex = Checkbutton(child, text="chess board", variable=var1)
@@ -122,7 +131,7 @@ def edit_shape(index, shapelst, var, shapes):
 		kentry.grid(row=4, column=1, padx=5, pady=5)
 		ok = Button(child, text="OK", command= lambda a=index:
 				get_object(a,entryx,entryy,entryz,var1,var[a], shapes, entryr,
-					entryg, entryb, None, None, None, kentry, child))
+					entryg, entryb, None, None, None, kentry, child, None, None, None))
 		ok.grid(row=6, column=3, padx=5, pady=5)
 	elif (var[index].get() == "Ellipsoid"):
 		tex = Checkbutton(child, text="chess board", variable=var1)
@@ -137,10 +146,9 @@ def edit_shape(index, shapelst, var, shapes):
 		dirz.grid(row=3, column=3, padx=5, pady=5)
 		ok = Button(child, text="OK", command= lambda a=index:
 			get_object(a,entryx,entryy,entryz,var1,var[a], shapes, entryr,
-				entryg, entryb, dirx, diry, dirz, None, child))
+				entryg, entryb, dirx, diry, dirz, None, child, None, None, None))
 		ok.grid(row=6, column=3, padx=5, pady=5)
 	elif (var[index].get() == "Cube"):
-		posl.text("Pt1: (x, y, z)")
 		dirl = Label(child, text="Pt2: (x, y, z)")
 		dirl.grid(row=3, column=0, padx=5, pady=5)
 		dirx = Entry(child, width=5)
@@ -151,8 +159,47 @@ def edit_shape(index, shapelst, var, shapes):
 		dirz.grid(row=3, column=3, padx=5, pady=5)
 		ok = Button(child, text="OK", command= lambda a=index:
 			get_object(a,entryx,entryy,entryz,var1,var[a], shapes, entryr,
-				entryg, entryb, dirx, diry, dirz, None, child))
+				entryg, entryb, dirx, diry, dirz, None, child, None, None, None))
 		ok.grid(row=6, column=3, padx=5, pady=5)
+	elif (var[index].get() == "Triangle"):
+		pt2l = Label(child, text="Pt2: (x, y, z)")
+		pt2l.grid(row=3, column=0, padx=5, pady=5)
+		pt2x = Entry(child, width=5)
+		pt2x.grid(row=3, column=1, padx=5, pady=5)
+		pt2y = Entry(child, width=5)
+		pt2y.grid(row=3, column=2, padx=5, pady=5)
+		pt2z = Entry(child, width=5)
+		pt2z.grid(row=3, column=3, padx=5, pady=5)
+		pt3l = Label(child, text="Pt2: (x, y, z)")
+		pt3l.grid(row=4, column=0, padx=5, pady=5)
+		pt3x = Entry(child, width=5)
+		pt3x.grid(row=4, column=1, padx=5, pady=5)
+		pt3y = Entry(child, width=5)
+		pt3y.grid(row=4, column=2, padx=5, pady=5)
+		pt3z = Entry(child, width=5)
+		pt3z.grid(row=4, column=3, padx=5, pady=5)
+		ok = Button(child, text="OK", command= lambda a=index: get_object(a, entryx,
+			entryy, entryz, var1, var[a], shapes, entryr, entryg, entryb,
+			pt2x, pt2y, pt2z, None, child, pt3x, pt3y, pt3z))
+		ok.grid(row=6, column=3, padx=5, pady=5)
+	elif (var[index].get() == "Cercle"):
+		dirl = Label(child, text="Dir: (x, y, z)")
+		dirl.grid(row=3, column=0, padx=5, pady=5)
+		dirx = Entry(child, width=5)
+		dirx.grid(row=3, column=1, padx=5, pady=5)
+		diry = Entry(child, width=5)
+		diry.grid(row=3, column=2, padx=5, pady=5)
+		dirz = Entry(child, width=5)
+		dirz.grid(row=3, column=3, padx=5, pady=5)
+		radl = Label(child, text="Radius:")
+		radl.grid(row=4, column=0, padx=5, pady=5)
+		rad = Entry(child, width=5)
+		rad.grid(row=4, column=1, padx=5, pady=5)
+		ok = Button(child, text="OK", command= lambda a=index: get_object(a, entryx,
+			entryy, entryz, var1, var[a], shapes, entryr, entryg, entryb,
+			dirx, diry, dirz, rad, child, None, None, None))
+		ok.grid(row=6, column=3, padx=5, pady=5)
+
 
 
 
