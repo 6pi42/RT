@@ -29,19 +29,19 @@ def get_object(index, entryx, entryy, entryz, tex, var, shapes, red, blue, green
 		shapes[index] = Ellipsoid(stype, pos, rgb, tex.get(), rad_axis)
 	elif (stype == "Cube"):
 		pt2 = (norx.get(), nory.get(), norz.get())
-		shapes[index] = Cube(pos, pt2, rgb)
+		shapes[index] = Cube(stype, pos, pt2, rgb)
 	elif (stype == "Triangle"):
 		pt2 = (norx.get(), nory.get(), norz.get())
 		pt3 = (pt3x.get(), pt3y.get(), pt3z.get())
-		shapes[index] = Triangle(pos, pt2, pt3, rgb)
+		shapes[index] = Triangle(stype, pos, pt2, pt3, rgb)
 	elif (stype == "Cercle"):
 		dire = (norx.get(), nory.get(), norz.get())
 		rad = rad.get()
-		shapes[index] = Cercle(pos, dire, rgb, rad)
+		shapes[index] = Cercle(stype, pos, dire, rgb, rad)
 	elif (stype == 'Spotlight'):
-		shapes[index] = Spotlight(pos)
-
-	child.destroy()
+		shapes[index] = Spotlight(stype, pos)
+	if (shapes[index] != None):
+		child.destroy()
 
 def add_shape(drop, root, var, shapelst, edit, shapes):
 	var.append(StringVar())
@@ -61,7 +61,6 @@ def less_shape(drop, root, var, shapelst, edit, shapes):
 		edit[len(edit) - 1].grid_forget()
 		edit.pop()
 		shapes.pop()
-
 
 def edit_shape(index, shapelst, var, shapes):
 	child = Toplevel()
@@ -209,10 +208,6 @@ def edit_shape(index, shapelst, var, shapes):
 			dirx, diry, dirz, rad, child, None, None, None))
 		ok.grid(row=6, column=3, padx=5, pady=5)
 
-
-
-
-
 def create_file(shapes, titlel, widthl, heightl, samplingl):
 	sampling = samplingl.get()
 	sampling = sampling[len(sampling) - 1]
@@ -225,24 +220,35 @@ def create_file(shapes, titlel, widthl, heightl, samplingl):
 		sampling = int(sampling)
 	except ValueError:
 		print "Height and Width must be integer"
-		exit()
+		return 0
 	if (os.path.isfile(title)):
 		print "file already exist"
-		exit()
+		return 0
 	fichier = open(str(title), "a")
 	fichier.write("SCENE\n\tWINDOW\n\t\twidth: " + str(width) + ".0\n\t\theight: " + str(height) +
 		".0\n\n\tMULTI_SAMPLING\n\t\tpower: " + str(sampling) + "\n\n")
+	j = 0
+	for i in shapes:
+		if (i.type == 'Spotlight'):
+			try:
+				i.write(fichier)
+			except:
+				print "error of writing: Object: " + str(j)
+				fichier.close()
+				os.remove(title)
+				return 0
+		j += 1
 	fichier.write("SHAPES\n")
 	j = 0
-
-	for i in shapes:
-		i.write(fichier)
 	for i in shapes:
 		try:
-			i.write(fichier)
-			j += 1
+			if (i.type != 'Spotlight'):
+				i.write(fichier)
+				j += 1
 		except:
 			print "error of writing: Object: " + str(j)
+			fichier.close()
+			os.remove(title)
 			return 0
 	fichier.close()
 	exit()
