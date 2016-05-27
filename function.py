@@ -10,9 +10,8 @@ elif os.name == 'nt':
 
 def get_object(index, entryx, entryy, entryz, tex, var, shapes, red, blue, green, norx, nory, norz, rad, child, pt3x, pt3y, pt3z):
 	pos = (entryx.get(), entryy.get(), entryz.get())
+	rgb = (red.get(), blue.get(), green.get())
 	stype = var.get()
-	if (stype != 'Spotlight'):
-		rgb = (red.get(), blue.get(), green.get())
 	if (stype == "Plane"):
 		nor = (norx.get(), nory.get(), norz.get())
 		shapes[index] = Plane(stype, pos, rgb, tex.get(), nor)
@@ -29,19 +28,16 @@ def get_object(index, entryx, entryy, entryz, tex, var, shapes, red, blue, green
 		shapes[index] = Ellipsoid(stype, pos, rgb, tex.get(), rad_axis)
 	elif (stype == "Cube"):
 		pt2 = (norx.get(), nory.get(), norz.get())
-		shapes[index] = Cube(stype, pos, pt2, rgb)
+		shapes[index] = Cube(pos, pt2, rgb)
 	elif (stype == "Triangle"):
 		pt2 = (norx.get(), nory.get(), norz.get())
 		pt3 = (pt3x.get(), pt3y.get(), pt3z.get())
-		shapes[index] = Triangle(stype, pos, pt2, pt3, rgb)
+		shapes[index] = Triangle(pos, pt2, pt3, rgb)
 	elif (stype == "Cercle"):
 		dire = (norx.get(), nory.get(), norz.get())
 		rad = rad.get()
-		shapes[index] = Cercle(stype, pos, dire, rgb, rad)
-	elif (stype == 'Spotlight'):
-		shapes[index] = Spotlight(stype, pos)
-	if (shapes[index] != None):
-		child.destroy()
+		shapes[index] = Cercle(pos, dire, rgb, rad)
+	child.destroy()
 
 def add_shape(drop, root, var, shapelst, edit, shapes):
 	var.append(StringVar())
@@ -62,6 +58,7 @@ def less_shape(drop, root, var, shapelst, edit, shapes):
 		edit.pop()
 		shapes.pop()
 
+
 def edit_shape(index, shapelst, var, shapes):
 	child = Toplevel()
 	child.title('Object:' + str(var[index].get()))
@@ -77,13 +74,7 @@ def edit_shape(index, shapelst, var, shapes):
 	entryy.grid(row=1, column=2, padx=5, pady=5)
 	entryz = Entry(child, width = 5)
 	entryz.grid(row=1, column=3, padx=5, pady=5)
-	var1 = IntVar()
-	if (var[index].get() == 'Spotlight'):
-		ok = Button(child, text="OK", command= lambda a=index:
-				get_object(a,entryx,entryy,entryz,var1,var[a], shapes, None,
-					None, None, None, None, None, None, child, None, None, None))
-		ok.grid(row=4, column=3, padx=5, pady=5)
-		return 1
+	color = (0, 0, 0)
 	rgbl = Label(child, text="RGB: (R, G, B)")
 	rgbl.grid(row=2, column=0, padx=5, pady=5)
 	entryr = Entry(child, width=5)
@@ -92,6 +83,7 @@ def edit_shape(index, shapelst, var, shapes):
 	entryg.grid(row=2, column=2, padx=5, pady=5)
 	entryb = Entry(child, width=5)
 	entryb.grid(row=2, column=3, padx=5, pady=5)
+	var1 = IntVar()
 	if (var[index].get() == "Plane"):
 		tex = Checkbutton(child, text="chess board", variable=var1)
 		tex.grid(row=6, column=0, padx=5, pady=5)
@@ -208,6 +200,10 @@ def edit_shape(index, shapelst, var, shapes):
 			dirx, diry, dirz, rad, child, None, None, None))
 		ok.grid(row=6, column=3, padx=5, pady=5)
 
+
+
+
+
 def create_file(shapes, titlel, widthl, heightl, samplingl):
 	sampling = samplingl.get()
 	sampling = sampling[len(sampling) - 1]
@@ -220,35 +216,19 @@ def create_file(shapes, titlel, widthl, heightl, samplingl):
 		sampling = int(sampling)
 	except ValueError:
 		print "Height and Width must be integer"
-		return 0
+		exit()
 	if (os.path.isfile(title)):
 		print "file already exist"
-		return 0
+		exit()
 	fichier = open(str(title), "a")
 	fichier.write("SCENE\n\tWINDOW\n\t\twidth: " + str(width) + ".0\n\t\theight: " + str(height) +
 		".0\n\n\tMULTI_SAMPLING\n\t\tpower: " + str(sampling) + "\n\n")
-	j = 0
-	for i in shapes:
-		if (i.type == 'Spotlight'):
-			try:
-				i.write(fichier)
-			except:
-				print "error of writing: Object: " + str(j)
-				fichier.close()
-				os.remove(title)
-				return 0
-		j += 1
 	fichier.write("SHAPES\n")
-	j = 0
 	for i in shapes:
 		try:
-			if (i.type != 'Spotlight'):
-				i.write(fichier)
-				j += 1
+			i.write(fichier)
 		except:
-			print "error of writing: Object: " + str(j)
-			fichier.close()
-			os.remove(title)
-			return 0
+			print "error of writing"
+			exit()
 	fichier.close()
 	exit()

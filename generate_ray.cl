@@ -556,7 +556,7 @@ static float4 raytrace(t_ray *ray, __constant t_sphere *shape, uint num_shapes, 
 			color = get_texture(shape[id], inter, norm);
 		if (get_shadow(inter, spot, shape, num_shapes, id))
 				color = shadow_color(color);
-		else	
+		else
 			color = get_color(color, spot, norm, inter, *ray, id);
 		tmp.dir = ray->dir - 2.0f * norm * dot(ray->dir, norm);
 		tmp.origin = get_intersection(ray, t1) + tmp.dir * 0.1f;
@@ -635,7 +635,7 @@ __kernel void generate_ray(__global char* data, float height, float width,
 							__constant t_img *img, const short multi, float4 spot)
 {
 	t_ray r;
-	float4 color[2];
+	float4 color[8];
 	float id;
 	float x;
 	float y;

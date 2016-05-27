@@ -17,6 +17,8 @@ title = Entry(root, width=10)
 title.grid(row=0, column=0, padx = 5, pady = 5)
 title.insert(0, "Scene Name")
 
+
+
 widthl = Entry(root, width=5)
 widthl.grid(row=1, column=0, padx = 5, pady = 5)
 widthl.insert(0, "Width")
@@ -31,7 +33,7 @@ sampvar.set(samplst[0])
 samp = OptionMenu(root, sampvar, *samplst)
 samp.grid(row = 1, column = 2,pady = 5, padx = 5)
 
-shapelst = ['Plane','Sphere','Cylinder','Cone','Ellipsoid','Triangle','Cercle','Cube', 'Spotlight']
+shapelst = ['Plane','Sphere','Cylinder','Cone','Ellipsoid','Triangle','Cercle','Cube']
 var = list()
 var.append(StringVar())
 var[0].set(shapelst[0])

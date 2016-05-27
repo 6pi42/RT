@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amathias <amathias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/15 15:21:48 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/05/27 15:51:16 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,8 @@ void	update(t_map *map)
 	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END,
 			sizeof(time_end), &time_end, NULL);
 	total_time = time_end - time_start;
-	printf("\nExecution time = %0.3f ms\n",
-			(total_time / 1000000.0));
+	//printf("\nExecution time = %0.3f ms\n",
+	//		(total_time / 1000000.0));
 	ft_memcpy(map->img.data, ptr,
 			map->width * map->height * (sizeof(char) * 4));
 }
@@ -120,7 +120,7 @@ void	draw(t_map *map)
 	timersub(&map->fps.end, &map->fps.start, &sub);
 	if (sub.tv_sec >= 1.0)
 	{
-		printf ("\033[32;1m\nfps: %.3f\n\033[0m", map->fps.frames);
+		//printf ("\033[32;1m\nfps: %.3f\n\033[0m", map->fps.frames);
 		map->fps.frames = 0;
 		gettimeofday(&map->fps.start, NULL);
 	}

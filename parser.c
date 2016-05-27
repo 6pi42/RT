@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:54:18 by emontagn          #+#    #+#             */
-/*   Updated: 2016/05/15 15:23:06 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/05/25 13:26:25 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int		get_number(char *file, char *shape_name)
 	int		fd;
 
 	if ((fd = open(file, O_RDONLY)) == -1)
-		printf("errorget num\n");
+		printf("error get number\n");
 	i = 0;
 	while ((ret = get_next_line(fd, &line)) > 0)
 	{
@@ -76,36 +76,36 @@ int		get_nb_shape(char *file)
 {
 	int		shape_nb;
 
-	shape_nb = get_number(file, "PLANE") + get_number(file, "SPHERE") +
-	get_number(file, "CONE") + get_number(file, "CYLINDER") +
-	get_number(file, "ELLIPSOID") + get_number(file, "TRIANGLE") +
-	get_number(file, "CERCLE") + get_number(file, "CUBE");
+	shape_nb = get_number(file, "Plane") + get_number(file, "Sphere") +
+	get_number(file, "Cone") + get_number(file, "Cylinder") +
+	get_number(file, "Ellipsoid") + get_number(file, "Triangle") +
+	get_number(file, "Cercle") + get_number(file, "Cube");
 	return (shape_nb);
 }
 
 void	parsing(t_shape *shape, t_map *map, char *line, int fd)
 {
-	if (ft_strsearch(line, "MULTI_SAMPLING") != -1)
+	if (ft_strsearch(line, "Multi Sampling") != -1)
 		get_multi_sampling(fd, map);
-	else if (ft_strsearch(line, "WINDOW") != -1)
+	else if (ft_strsearch(line, "Window") != -1)
 		get_window(fd, map);
-	else if (ft_strsearch(line, "SPOTLIGHT") != -1)
+	else if (ft_strsearch(line, "Spotlight") != -1)
 		get_spotlight(fd, map);
-	else if (ft_strsearch(line, "PLANE") != -1)
+	else if (ft_strsearch(line, "Plane") != -1)
 		get_plane(fd, shape);
-	else if (ft_strsearch(line, "SPHERE") != -1)
+	else if (ft_strsearch(line, "Sphere") != -1)
 		get_sphere(fd, shape);
-	else if (ft_strsearch(line, "ELLIPSOID") != -1)
+	else if (ft_strsearch(line, "Ellipsoid") != -1)
 		get_ellipsoid(fd, shape);
-	else if (ft_strsearch(line, "CONE") != -1)
+	else if (ft_strsearch(line, "Cone") != -1)
 		get_cone(fd, shape);
-	else if (ft_strsearch(line, "CYLINDER") != -1)
+	else if (ft_strsearch(line, "Cylinder") != -1)
 		get_cylinder(fd, shape);
-	else if (ft_strsearch(line, "CERCLE") != -1)
+	else if (ft_strsearch(line, "Cercle") != -1)
 		get_cercle(fd, shape);
-	else if (ft_strsearch(line, "CUBE") != -1)
+	else if (ft_strsearch(line, "Cube") != -1)
 		get_cube(fd, shape);
-	else if (ft_strsearch(line, "TRIANGLE") != -1)
+	else if (ft_strsearch(line, "Triangle") != -1)
 		get_triangle(fd, shape);
 	free(line);
 }
