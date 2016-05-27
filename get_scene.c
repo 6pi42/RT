@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/18 16:16:11 by emontagn          #+#    #+#             */
-/*   Updated: 2016/05/27 15:57:40 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/05/27 16:41:29 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,6 @@ void	get_window(int fd, t_map *map)
 			map->width = atoi(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "height: ")) != -1)
 			map->height = atoi(ft_strchr(line, ' ') + 1);
-		else
-			printf("error win\n");
 		free(line);
 		i++;
 	}
@@ -47,8 +45,6 @@ void	get_multi_sampling(int fd, t_map *map)
 	{
 		if ((j = ft_strsearch(line, "power: ")) != -1)
 			map->multi_sampling = atoi(ft_strchr(line, ' ') + 1);
-		else
-			printf("error sample\n");
 		free(line);
 		i++;
 	}
@@ -68,8 +64,6 @@ void	get_spotlight(int fd, t_map *map)
 	{
 		if ((j = ft_strsearch(line, "pos: ")) != -1)
 			map->spot = get_position(line + j);
-		else
-			printf("error sample\n");
 		free(line);
 		i++;
 	}
