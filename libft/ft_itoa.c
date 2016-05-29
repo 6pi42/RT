@@ -6,11 +6,12 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/27 17:11:09 by amathias          #+#    #+#             */
-/*   Updated: 2015/12/02 17:35:07 by amathias         ###   ########.fr       */
+/*   Updated: 2016/05/29 15:59:14 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#define ABS(x) x > 0 ? x : -x
 
 static int	ft_intlen(int n)
 {
