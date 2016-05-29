@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/24 15:04:52 by amathias          #+#    #+#             */
-/*   Updated: 2015/12/20 16:48:58 by amathias         ###   ########.fr       */
+/*   Updated: 2016/05/17 11:22:21 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
-# define ABS(x) x<0 ? -x : x
 # define BUFF_SIZE 32
 
 typedef	struct		s_list

@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/04 01:07:27 by apaget            #+#    #+#             */
-/*   Updated: 2016/04/16 14:23:26 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/05/25 17:47:56 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ void	vector_from_angle(t_cam *cam)
 		cam->phi = 89.0f;
 	if (cam->phi < -89.0f)
 		cam->phi = -89.0f;
-	if (cam->theta < -89.0f)
-		cam->theta = -89.0f;
 	tmp = cos((cam->phi * M_PI) / 180.f);
 	cam->forward.x =  tmp * sin((cam->theta * M_PI) / 180.f);
 	cam->forward.y = sin((cam->phi * M_PI) / 180.f);
@@ -37,7 +35,7 @@ void	vector_from_angle(t_cam *cam)
 	normalize_vec(&cam->dir);
 }
 
-void	update_cam(t_cam *cam, t_key *key)
+void	update_cam(t_cam *cam, t_key *key, t_map *map)
 {
 	cam->speed = 4.05f;
 
@@ -45,10 +43,11 @@ void	update_cam(t_cam *cam, t_key *key)
 		cam->pos = add_vec(cam->pos, scale_vec(cam->speed, cam->forward));
 	if (key->down)
 		cam->pos = sub_vec(cam->pos, scale_vec(cam->speed, cam->forward));
-	if (key->left)
+	if (key->mleft)
 		cam->pos = add_vec(cam->pos, scale_vec(cam->speed, cam->left));
-	if (key->right)
+	if (key->mright)
 		cam->pos = sub_vec(cam->pos, scale_vec(cam->speed, cam->left));
 	cam->target = add_vec(cam->pos, cam->forward);
 	vector_from_angle(cam);
+	draw(map);
 }

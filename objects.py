@@ -174,3 +174,16 @@ class Cercle():
 			fichier.write("\tCERCLE\n\t\trgb: " + str(float(self.rgb[0])) + " " + str(float(self.rgb[1])) + " " + str(float(self.rgb[2]))
 			+ "\n\t\tpos: " + str(float(self.pos[0])) + " " + str(float(self.pos[1])) + " " + str(float(self.pos[2])) + "\n\t\tdir: " +
 			str(float(self.dir[0])) + " " + str(float(self.dir[1])) + " " + str(float(self.dir[2])) + "\n\t\trad: " + str(float(self.rad)) + "\n")
+
+class Spotlight():
+	def __init__(self, pos):
+		self.pos = pos
+		try:
+			for i in range (0, 2):
+				float(self.pos[i])
+		except ValueError:
+			print "Error in the Spotlight specification"
+			exit()
+	def write(self, fichier):
+		fichier.write("\tSPOTLIGHT\n\t\tpos: " + str(float(self.pos[0])) + " " + str(float(self.pos[1]))
+		+ " " + str(float(self.pos[2])) + "\n")

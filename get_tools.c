@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:53:34 by emontagn          #+#    #+#             */
-/*   Updated: 2016/05/27 16:00:49 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/05/28 09:11:28 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ cl_float4	get_vector(char *line)
 		i++;
 	}
 	free(tab);
+	normalize_vec(&vector);
 	return (vector);
 }
 
@@ -85,7 +86,7 @@ cl_float4	get_radius(char *line)
 		i++;
 	if (i != 1)
 		printf("error\n");
-	radius.x = atoi(tab[0]);
+	radius.x = atoi_double(tab[0]);
 	radius.y = 0.0f;
 	radius.z = 0.0f;
 	radius.w = 0.0f;
@@ -114,9 +115,9 @@ cl_float4	get_rgb(char *line)
 		i++;
 	if (i != 3)
 		printf("error\n");
-	color.x = atoi(tab[0]);
-	color.y = atoi(tab[1]);
-	color.z = atoi(tab[2]);
+	color.x = atoi_double(tab[0]);
+	color.y = atoi_double(tab[1]);
+	color.z = atoi_double(tab[2]);
 	color.w = 0.0f;
 	i = 0;
 	while (tab[i])

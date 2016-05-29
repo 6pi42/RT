@@ -1,0 +1,5 @@
+- chargement de scene clean
+- generer l'id au clik pour selectionner lobj
+- faire clean les demi obj (decoupe) (fais mais ..)
+- integrer le nouveau parseur
+- integrer le nouveau kernel

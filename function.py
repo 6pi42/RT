@@ -10,8 +10,9 @@ elif os.name == 'nt':
 
 def get_object(index, entryx, entryy, entryz, tex, var, shapes, red, blue, green, norx, nory, norz, rad, child, pt3x, pt3y, pt3z):
 	pos = (entryx.get(), entryy.get(), entryz.get())
-	rgb = (red.get(), blue.get(), green.get())
 	stype = var.get()
+	if (stype != 'Spotlight'):
+		rgb = (red.get(), blue.get(), green.get())
 	if (stype == "Plane"):
 		nor = (norx.get(), nory.get(), norz.get())
 		shapes[index] = Plane(stype, pos, rgb, tex.get(), nor)
@@ -37,6 +38,9 @@ def get_object(index, entryx, entryy, entryz, tex, var, shapes, red, blue, green
 		dire = (norx.get(), nory.get(), norz.get())
 		rad = rad.get()
 		shapes[index] = Cercle(pos, dire, rgb, rad)
+	elif (stype == 'Spotlight'):
+		shapes[index] = Spotlight(pos)
+
 	child.destroy()
 
 def add_shape(drop, root, var, shapelst, edit, shapes):
@@ -74,7 +78,13 @@ def edit_shape(index, shapelst, var, shapes):
 	entryy.grid(row=1, column=2, padx=5, pady=5)
 	entryz = Entry(child, width = 5)
 	entryz.grid(row=1, column=3, padx=5, pady=5)
-	color = (0, 0, 0)
+	var1 = IntVar()
+	if (var[index].get() == 'Spotlight'):
+		ok = Button(child, text="OK", command= lambda a=index:
+				get_object(a,entryx,entryy,entryz,var1,var[a], shapes, None,
+					None, None, None, None, None, None, child, None, None, None))
+		ok.grid(row=4, column=3, padx=5, pady=5)
+		return 1
 	rgbl = Label(child, text="RGB: (R, G, B)")
 	rgbl.grid(row=2, column=0, padx=5, pady=5)
 	entryr = Entry(child, width=5)
@@ -83,7 +93,6 @@ def edit_shape(index, shapelst, var, shapes):
 	entryg.grid(row=2, column=2, padx=5, pady=5)
 	entryb = Entry(child, width=5)
 	entryb.grid(row=2, column=3, padx=5, pady=5)
-	var1 = IntVar()
 	if (var[index].get() == "Plane"):
 		tex = Checkbutton(child, text="chess board", variable=var1)
 		tex.grid(row=6, column=0, padx=5, pady=5)
@@ -224,11 +233,17 @@ def create_file(shapes, titlel, widthl, heightl, samplingl):
 	fichier.write("SCENE\n\tWINDOW\n\t\twidth: " + str(width) + ".0\n\t\theight: " + str(height) +
 		".0\n\n\tMULTI_SAMPLING\n\t\tpower: " + str(sampling) + "\n\n")
 	fichier.write("SHAPES\n")
+	j = 0
+
+	for i in shapes:
+		i.write(fichier)
 	for i in shapes:
 		try:
 			i.write(fichier)
+			j += 1
 		except:
-			print "error of writing"
-			exit()
+			print "error of writing: Object: " + str(j)
+			return 0
 	fichier.close()
+	print title
 	exit()

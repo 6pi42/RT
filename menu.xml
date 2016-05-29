@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <menu id="menubar">
+    <submenu>
+      <attribute name="label">File</attribute>
+      <section>
+        <item>
+          <attribute name="label">New</attribute>
+          <attribute name="action">app.new</attribute>
+        </item>
+        <item>
+          <attribute name="label">Quit</attribute>
+          <attribute name="action">app.quit</attribute>
+        </item>
+      </section>
+    </submenu>
+    <submenu>
+      <attribute name="label">Edit</attribute>
+      <section>
+        <item>
+          <attribute name="label">Copy</attribute>
+        </item>
+        <item>
+          <attribute name="label">Paste</attribute>
+        </item>
+      </section>
+    </submenu>
+    <submenu>
+      <attribute name="label">Choices</attribute>
+      <submenu>
+        <attribute name="label">Shapes</attribute>
+          <section>
+            <item>
+              <attribute name="label">Line</attribute>
+            </item>
+            <item>
+              <attribute name="label">Triangle</attribute>
+            </item>
+            <item>
+              <attribute name="label">Square</attribute>
+            </item>
+            <item>
+              <attribute name="label">Polygon</attribute>
+            </item>
+            <item>
+              <attribute name="label">Circle</attribute>
+            </item>
+          </section>
+      </submenu>
+      <section>
+        <item>
+          <attribute name="label">On</attribute>
+        </item>
+        <item>
+          <attribute name="label">Off</attribute>
+        </item>
+      </section>
+      <section>
+        <item>
+          <attribute name="label">Awesome</attribute>
+        </item>
+      </section>
+    </submenu>
+    <submenu>
+      <attribute name="label">Help</attribute>
+      <section>
+        <item>
+          <attribute name="label">About</attribute>
+        </item>
+      </section>
+    </submenu>
+  </menu>
+  <menu id="appmenu">
+    <section>
+      <item>
+        <attribute name="label">New</attribute>
+      </item>
+      <item>
+        <attribute name="label">Quit</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>
