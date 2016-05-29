@@ -6,25 +6,25 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 11:32:14 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/23 10:51:46 by amathias         ###   ########.fr       */
+/*   Updated: 2016/05/26 13:25:05 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt.h"
 
-cl_float4	get_shadow_dir(cl_float4 inter_pos, cl_float4 spot_pos)
+cl_float4	get_shadow_dir(cl_float4 inter_pos, t_spot spot)
 {
 	cl_float4	shadow_dir;
 
-	shadow_dir.x = inter_pos.x - spot_pos.x;
-	shadow_dir.y = inter_pos.y - spot_pos.y;
-	shadow_dir.z = inter_pos.z - spot_pos.z;
+	shadow_dir.x = inter_pos.x - spot.pos.x;
+	shadow_dir.y = inter_pos.y - spot.pos.y;
+	shadow_dir.z = inter_pos.z - spot.pos.z;
 	shadow_dir.w = 0.0f;
 	normalize_vec(&shadow_dir);
 	return (shadow_dir);
 }
 
-t_ray		*get_shadow_ray(t_map *map, cl_float4 spot_pos,
+t_ray		*get_shadow_ray(t_map *map, t_spot spot,
 									t_ray *ray, t_inter *inter)
 {
 	t_ray		*shadow;
@@ -43,7 +43,7 @@ t_ray		*get_shadow_ray(t_map *map, cl_float4 spot_pos,
 			shadow[i].origin.z = (ray[i].origin.z
 				+ (ray[i].ray.z * inter[i].dist)) + (ray[i].ray.z * 0.01f);
 			shadow[i].origin.w = 0.0f;
-			shadow[i].ray = get_shadow_dir(shadow[i].origin, spot_pos);
+			shadow[i].ray = get_shadow_dir(shadow[i].origin, spot);
 		}
 		i++;
 	}

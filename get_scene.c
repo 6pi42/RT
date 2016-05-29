@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/18 16:16:11 by emontagn          #+#    #+#             */
-/*   Updated: 2016/05/15 15:07:14 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/05/26 13:31:41 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	get_spotlight(int fd, t_map *map)
 	while ((ret = get_next_line(fd, &line)) > 0 && i != 1)
 	{
 		if ((j = ft_strsearch(line, "pos: ")) != -1)
-			map->spot = get_position(line + j);
+			map->scene.spot->pos = get_position(line + j);
 		else
 			printf("error sample\n");
 		free(line);

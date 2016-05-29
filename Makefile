@@ -6,7 +6,7 @@
 #    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/05/19 11:48:37 by amathias         ###   ########.fr        #
+#    Updated: 2016/05/29 14:13:10 by amathias         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,8 +15,11 @@ INC = /
 SRC =	main.c			\
 		get_inter.c		\
 		get_primary.c	\
+		mat_eval.c		\
+		shade.c			\
 		raytrace.c		\
 		shadow.c		\
+		inter_utils.c	\
 		cl_utils.c		\
 		hook.c			\
 		vec_calc.c		\
@@ -28,15 +31,16 @@ SRC =	main.c			\
 		get_scene.c		\
 		get_tools.c		\
 		bitmap_writer.c	\
+		color.c			\
 
 OBJ = $(SRC:.c=.o)
 NAME = rt
 CC = gcc
 RM = rm -f
-CFLAGS = -Wall -Werror -Wextra -O3
+CFLAGS = -Wall -Werror -Wextra -Ofast
 
 LIB_PATH = ./libft/ /usr/local/lib/
-LIB_NAME = -lft -lmlx -framework OpenCL -framework OpenGL -framework AppKit
+LIB_NAME = -lft -lmlx -framework OpenCL -framework OpenGL -framework AppKit -lpthread
 LIB = $(addprefix -L,$(LIB_PATH))
 LFLAGS = $(LIB) $(LIB_NAME)
 

@@ -5,7 +5,6 @@ typedef struct s_shape
 	float4		radius;
 	float4		color;
 	float4		axis;
-	short		multi;
 }				t_shape;
 
 typedef struct	s_inter
@@ -303,7 +302,7 @@ static float4 get_normal(t_shape obj, float4 inter, float t1, t_ray ray)
 }
 
 static int intersect_all(t_ray *ray,
-		__global t_shape *shape, uint num_shapes, float *t1)
+		__global t_shape *shape, int num_shapes, float *t1)
 {
 	int	i;
 	int	j;
@@ -311,7 +310,7 @@ static int intersect_all(t_ray *ray,
 
 	i = 0;
 	j = -1;
-	while (i < (int)num_shapes)
+	while (i < num_shapes)
 	{
 		if (shape[i].type.x == 1.0f)
 			tmp = intersect_sph(ray, shape[i]);
@@ -323,13 +322,13 @@ static int intersect_all(t_ray *ray,
 			tmp = intersect_cone(ray, shape[i]);
 		if (shape[i].type.x == 5.0f)
 			tmp = intersect_ellips(ray, shape[i]);
-		if (shape[i].type.x == 6.0)
+		if (shape[i].type.x == 6.0f)
 			tmp = intersect_cube(ray, shape[i]);
-		if (shape[i].type.x == 7.0)
+		if (shape[i].type.x == 7.0f)
 			tmp = intersect_disque(ray, shape[i]);
-		if (shape[i].type.x == 8.0)
+		if (shape[i].type.x == 8.0f)
 			tmp = intersect_triangle(ray, shape[i]);
-		if (shape[i].type.x == 99.0)
+		if (shape[i].type.x == 99.0f)
 			tmp = intersect_plan_eq(ray, shape[i]);
 		if (tmp != -1.0f && (*t1 == -1.0f || tmp < *t1))
 		{
@@ -342,21 +341,21 @@ static int intersect_all(t_ray *ray,
 }
 
 __kernel void intersect(__global t_inter *out, __global t_ray* ray,
-						__global t_shape *shape, uint num_shapes)
+						__global t_shape *shape, int num_shapes)
 {
 	t_ray	r;
+	t_shape sh;
 	t_inter	inter;
 	int		global_addr;
 	int		id;
 
 	global_addr = get_global_id(0);
+
 	r = ray[global_addr];
 	inter.dist = -1.0f;
 	inter.id = intersect_all(&r, shape, num_shapes, &inter.dist);
-	if (inter.id != -1)
-	{
-		inter.normal = get_normal(shape[inter.id],
-					get_intersection(&r, inter.dist), inter.dist, r);
-	}
+	sh = shape[inter.id];
+	inter.normal = get_normal(sh, get_intersection(&r, inter.dist),
+							inter.dist, r);
 	out[global_addr] = inter;
 }

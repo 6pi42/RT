@@ -6,13 +6,14 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/23 11:28:30 by amathias         ###   ########.fr       */
+/*   Updated: 2016/05/29 15:27:23 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RT_H
 # define RT_H
 # include <OpenCL/cl.h>
+# include <pthread.h>
 # include <mlx.h>
 # include <math.h>
 # include <fcntl.h>
@@ -27,6 +28,13 @@ typedef	struct	s_ray
 	cl_float4	ray;
 }				t_ray;
 
+typedef struct	s_spot
+{
+	int			type;
+	cl_float4	pos;
+	int			color;
+	float		intensity;
+}				t_spot;
 
 typedef	struct	s_mat
 {
@@ -59,7 +67,6 @@ typedef struct	s_shape
 	cl_float4	radius;
 	cl_float4	color;
 	cl_float4	axis;
-	short		multi;
 }				t_shape;
 
 typedef struct	s_camera
@@ -74,9 +81,10 @@ typedef struct	s_camera
 typedef struct	s_scene
 {
 	t_camera	*cam;
+	int			max_depth;
 	int 		nb_shape;
 	t_shape 	*shape;
-	cl_float4	*spot;
+	t_spot		*spot;
 	int			nb_spot;
 	t_mat		*mat;
 	int			nb_mat;
@@ -139,12 +147,19 @@ typedef struct	s_env
 	t_clbuf				clbuf;
 }				t_env;
 
+typedef	struct	s_utils
+{
+	t_inter		inter;
+	t_ray		ray;
+	cl_float4	inter_pos;
+}				t_utils;
+
 typedef struct	s_map
 {
 	void		*mlx;
 	void		*win;
 	unsigned int multi_sampling;
-	cl_float4	spot;
+	t_spot		current_spot;
 	t_env		env;
 	t_cam		free_cam;
 	t_img		img;
@@ -161,7 +176,14 @@ typedef struct	s_prog
 	size_t		len;
 }				t_prog;
 
-void	draw_pixel_to_image(t_map *map, int x, int y, cl_float4 c);
+typedef struct	s_args
+{
+	t_map		*map;
+	t_inter		*inter;
+	t_ray		*ray;
+}				t_args;
+
+void	draw_pixel_to_image(t_map *map, int x, int y, int c);
 void	draw(t_map *map);
 void	ocl_init(t_env *env, t_prog prog);
 t_prog	get_prog(char *file_name);
@@ -184,12 +206,16 @@ cl_float4	neg_vec(cl_float4 vec);
 void	vector_from_angle(t_cam *cam);
 void	update_cam(t_cam *cam, t_key *key);
 void	init_cam(t_map *map);
-
+int		color_mul(int color, float coef);
+int		color_add(int c1, int c2);
+cl_float4	get_inter_pos(t_ray ray, t_inter inter);
 void	raytrace(t_map *map);
+int		*shade(t_map *map, t_inter *inter, t_ray *ray);
+//void	shade(t_args *args);
 
 t_ray	*get_primary(t_map *map);
 
-void	init_inter(t_map *map);
+void	init_inter(t_map *map, size_t work_size);
 t_inter	*get_inter(t_map *map, size_t work_size, t_ray *ray);
 
 int		*shadow(t_map *map, t_inter *inter, t_ray *primary);

@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/23 11:19:04 by amathias         ###   ########.fr       */
+/*   Updated: 2016/05/27 15:08:31 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,20 @@ void	init_cam(t_map *map)
 	map->free_cam.down = cross_vec(map->free_cam.dir, map->free_cam.left);
 }
 
-void	draw_pixel_to_image(t_map *map, int x, int y, cl_float4 c)
+void	draw_pixel_to_image(t_map *map, int x, int y, int color)
 {
+	unsigned char red;
+	unsigned char green;
+	unsigned char blue;
+
+	red = ((color & 0xFF0000) >> 16);
+	green = ((color & 0xFF00) >> 8);
+	blue = (color & 0xFF);
 	if (x < 0 || x > map->width - 1 || y < 0 || y > map->height - 1)
 		return ;
-	map->img.data[y * map->img.size_line + (x * map->img.bpp) / 8] = c.s[2];
-	map->img.data[y * map->img.size_line + (x * map->img.bpp) / 8 + 1] = c.s[1];
-	map->img.data[y * map->img.size_line + (x * map->img.bpp) / 8 + 2] = c.s[0];
+	map->img.data[y * map->img.size_line + (x * map->img.bpp) / 8] = blue;
+	map->img.data[y * map->img.size_line + (x * map->img.bpp) / 8 + 1] = green;
+	map->img.data[y * map->img.size_line + (x * map->img.bpp) / 8 + 2] = red;
 }
 
 void	draw(t_map *map)
@@ -68,8 +75,8 @@ int		main(int argc, char **argv)
 	t_prog		prog;
 	t_shape		*shape;
 	t_camera	cam;
-	cl_float4	spot;
 	t_mat		mat;
+	t_spot		spot;
 
 	if (argc != 2)
 		return (1);
@@ -83,14 +90,18 @@ int		main(int argc, char **argv)
 	mat.kreflec = 0.0f;
 	mat.krefrac	= 0.0f;
 	// Same	
-	spot.x = 50.0f;
-	spot.y = 200.0f;
-	spot.z = 10.0f;
-	spot.w = 0.0f;
+	spot.type = 1;
+	spot.pos.x = 50.0f;
+	spot.pos.y = 200.0f;
+	spot.pos.z = 10.0f;
+	spot.pos.w = 0.0f;
+	spot.color = 0xFFFFFF;
+	spot.intensity = 42.0f;
 
 	map.free_cam.pos.x = 500.0f;
 	map.free_cam.pos.y = 200.0f;
 	map.free_cam.pos.z = 0.0f;
+	map.scene.max_depth = 3;
 	map.scene.shape = shape;
 	map.scene.cam = &cam;
 	map.scene.spot = &spot;
@@ -105,7 +116,7 @@ int		main(int argc, char **argv)
 			&(map.img.size_line), &(map.img.endian));
 	prog = get_prog("intersect.cl");
 	ocl_init(&map.env, prog);
-	init_inter(&map);
+	init_inter(&map, (size_t)(map.width * map.height));
 	gettimeofday(&map.fps.start, NULL);
 	draw(&map);
 	mlx_key_hook(map.win, key_hook, &map);
