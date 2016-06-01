@@ -8,6 +8,18 @@ elif os.name == 'nt':
 	from tkinter import *
 	from tkinter.colorchooser import *
 
+def center(window):
+	window.update_idletasks()
+	window.minsize(window.winfo_reqwidth(), window.winfo_reqheight())
+	width = window.winfo_width()
+	height = window.winfo_height()
+	x = window.winfo_screenwidth() // 2 - width // 2
+	y = window.winfo_screenheight() // 2 - height // 2
+	if x > 0 and y > 0:
+		window.geometry("{}x{}+{}+{}".format(width, height, x, y))
+	else:
+		raise Warning("The window is too large to be centered")
+
 def get_object(index, entryx, entryy, entryz, tex, var, shapes, red, blue, green, norx, nory, norz, rad, child, pt3x, pt3y, pt3z):
 	pos = (entryx.get(), entryy.get(), entryz.get())
 	stype = var.get()
@@ -64,6 +76,7 @@ def less_shape(drop, root, var, shapelst, edit, shapes):
 
 def edit_shape(index, shapelst, var, shapes):
 	child = Toplevel()
+	center(child)
 	child.title('Object:' + str(var[index].get()))
 	if (var[index].get() == "Cube" or var[index].get() == "Triangle"):
 		text = "Pt1: (x, y , z)"
@@ -207,6 +220,7 @@ def edit_shape(index, shapelst, var, shapes):
 			entryy, entryz, var1, var[a], shapes, entryr, entryg, entryb,
 			dirx, diry, dirz, rad, child, None, None, None))
 		ok.grid(row=6, column=3, padx=5, pady=5)
+	center(child)
 
 def create_file(shapes, titlel, widthl, heightl, samplingl):
 	sampling = samplingl.get()

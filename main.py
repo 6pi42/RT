@@ -10,6 +10,9 @@ elif os.name == 'nt':
 from function import *
 from objects import *
 
+
+
+
 root = Tk()
 root.title("Scene Generator")
 
