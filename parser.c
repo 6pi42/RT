@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:54:18 by emontagn          #+#    #+#             */
-/*   Updated: 2016/05/15 15:23:06 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/05/26 18:10:47 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,19 +78,19 @@ int		get_nb_shape(char *file)
 
 	shape_nb = get_number(file, "PLANE") + get_number(file, "SPHERE") +
 	get_number(file, "CONE") + get_number(file, "CYLINDER") +
-	get_number(file, "ELLIPSOID") + get_number(file, "TRIANGLE") +
-	get_number(file, "CERCLE") + get_number(file, "CUBE");
+	get_number(file, "ELLIPSOID") + get_number(file, "TRIANGLE") + 
+	get_number(file, "CERCLE") + get_number(file, "CUBE") ;
 	return (shape_nb);
 }
 
 void	parsing(t_shape *shape, t_map *map, char *line, int fd)
 {
+	static int id_lum = -1;
+
 	if (ft_strsearch(line, "MULTI_SAMPLING") != -1)
 		get_multi_sampling(fd, map);
 	else if (ft_strsearch(line, "WINDOW") != -1)
 		get_window(fd, map);
-	else if (ft_strsearch(line, "SPOTLIGHT") != -1)
-		get_spotlight(fd, map);
 	else if (ft_strsearch(line, "PLANE") != -1)
 		get_plane(fd, shape);
 	else if (ft_strsearch(line, "SPHERE") != -1)
@@ -107,6 +107,8 @@ void	parsing(t_shape *shape, t_map *map, char *line, int fd)
 		get_cube(fd, shape);
 	else if (ft_strsearch(line, "TRIANGLE") != -1)
 		get_triangle(fd, shape);
+	else if (ft_strsearch(line, "SPOT") != -1)
+		get_spot(fd, map->scene.spot, ++id_lum);
 	free(line);
 }
 
@@ -115,16 +117,19 @@ t_shape	*parse(t_map *map, char *file)
 	char	*line;
 	int		ret;
 	int		fd;
-	t_shape	*shape;
 
-	printf("NB OF SHAPES:%d\n", get_nb_shape(file));
-	shape = (t_shape*)malloc(sizeof(t_shape) * get_nb_shape(file));
+	map->scene.nb_spot = get_number(file, "SPOT");
+	map->scene.nb_shape = get_nb_shape(file);
+	map->scene.shape = (t_shape*)malloc(sizeof(t_shape) * map->scene.nb_shape);
+	map->scene.spot = (cl_float4*)malloc(sizeof(cl_float4) * map->scene.nb_spot);
+	printf("Shape :%d\n", map->scene.nb_shape);
+	printf("Spots :%d\n", map->scene.nb_spot);
 	if ((fd = open(file, O_RDONLY)) == -1)
 		printf("error open\n");
 	while ((ret = get_next_line(fd, &line)) > 0)
-		parsing(shape, map, line, fd);
+		parsing(map->scene.shape, map, line, fd);
 	if (ret == -1)
 		printf("error ret -1\n");
 	close(fd);
-	return (shape);
+	return (map->scene.shape);
 }

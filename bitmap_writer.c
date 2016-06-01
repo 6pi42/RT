@@ -3,14 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   bitmap_writer.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/05/10 10:04:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/18 14:53:21 by amathias         ###   ########.fr       */
+/*   Created: 2016/05/25 13:01:09 by apaget            #+#    #+#             */
+/*   Updated: 2016/05/25 17:47:43 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt.h"
+
+char	*load_from_gtk_image(t_map *map)
+{
+	GdkPixbuf *pix_buf;
+
+	pix_buf = gtk_image_get_pixbuf(GTK_IMAGE(map->render));
+	return ((char*)gdk_pixbuf_get_pixels(pix_buf));
+}
 
 char	*get_img(t_map *map, int work_size)
 {
@@ -19,24 +27,24 @@ char	*get_img(t_map *map, int work_size)
 	int		j;
 	int		index;
 	char	*tmp;
+	char	*pix_buf;
 
 	if ((tmp = (char*)malloc(work_size)) == NULL)
 		return (NULL);
-	i = (int)map->height - 1;
+	pix_buf = load_from_gtk_image(map);
+	i = (int)map->height;
 	k = 0;
-	while (i >= 0)
+	while (--i >= 0)
 	{
-		j = 0;
-		while (j < (int)map->width)
+		j = -1;
+		while (++j < (int)map->width)
 		{
-			index = i * map->img.size_line + (j * map->img.bpp) / 8;
-			tmp[k] = map->img.data[index];
-			tmp[k + 1] = map->img.data[index + 1];
-			tmp[k + 2] = map->img.data[index + 2];
+			index = i * map->width * 3 + (j * 3) ;
+			tmp[k] = pix_buf[index + 2];
+			tmp[k + 1] = pix_buf[index + 1];
+			tmp[k + 2] = pix_buf[index];
 			k += 3;
-			j++;
 		}
-		i--;
 	}
 	return (tmp);
 }
@@ -46,7 +54,7 @@ void	write_header(t_map *map, int fd, int zero, int work_size)
 	int value;
 
 	ft_putstr_fd("BM", fd);
-	value = 0x36 + (map->img.size_line * (int)map->height);
+	value = 0x36 + work_size;
 	write(fd, &value, 4);
 	write(fd, &zero, 4);
 	value = 0x36;

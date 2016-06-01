@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/02 15:34:48 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/17 15:15:42 by amathias         ###   ########.fr       */
+/*   Updated: 2016/05/29 15:00:56 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,63 +26,64 @@ void	init_key(t_map *map)
 	map->key.theta = 0.0f;
 }
 
-int		motion_notify(int x, int y, t_map *map)
+void		motion_notify(GtkWidget *widget, GdkEventMotion *event, t_map *map)
 {
-	map->free_cam.sensitivity = 0.3f;
-	map->free_cam.phi +=
-	(map->free_cam.old_mouse_pos.y - y) * map->free_cam.sensitivity;
-	map->free_cam.theta -=
-	(map->free_cam.old_mouse_pos.x - x) * map->free_cam.sensitivity;
-	map->free_cam.old_mouse_pos.y = y;
-	map->free_cam.old_mouse_pos.x = x;
-	vector_from_angle(&map->free_cam);
-	return (0);
-}
+	(void)widget;
 
-int		key_press(int keycode, t_map *map)
-{
-	if (keycode == 126)
-		map->key.mleft = 1;
-	if (keycode == 125)
-		map->key.mright = 1;
-	if (keycode == 13)
-		map->key.up = 1;
-	if (keycode == 1)
-		map->key.down = 1;
-	if (keycode == 0)
-		map->key.right = 1;
-	if (keycode == 2)
-		map->key.left = 1;
-	if (keycode == 257)
-		write_bitmap(map);
-	return (0);
-}
-
-int		loop_hook(t_map *map)
-{
-	draw(map);
-	update_cam(&map->free_cam, &map->key);
-	return (0);
-}
-
-int		key_hook(int keycode, t_map *map)
-{
-	if (keycode == 53)
+	if (!map->fix)
 	{
-		mlx_destroy_window(map->mlx, map->win);
-		exit(0);
+		map->free_cam.sensitivity = 1.0f;
+		map->free_cam.phi +=
+		(map->free_cam.old_mouse_pos.y - event->y) * map->free_cam.sensitivity;
+		map->free_cam.theta -=
+		(map->free_cam.old_mouse_pos.x - event->x) * map->free_cam.sensitivity;
+		map->free_cam.old_mouse_pos.y = event->y;
+		map->free_cam.old_mouse_pos.x = event->x;
+		vector_from_angle(&map->free_cam);
+		if (!map->key.mright &&!map->key.mleft && !map->key.up && !map->key.down)
+			draw(map);
 	}
-	if (keycode == 126)
+}
+
+void		redraw(GtkWidget *widget, GdkEvent *event, t_map *map)
+{
+	(void)widget;
+	(void)event;
+	draw(map);
+}
+
+int		key_press(GtkWidget *widget, GdkEventKey *event, t_map *map)
+{
+	(void)widget;
+	if (!map->fix)
+	{
+		if (event->keyval == 'a')
+			map->key.mright = 1;
+		if (event->keyval == 'd')
+			map->key.mleft = 1;
+		if (event->keyval == 'w')
+			map->key.up = 1;
+		if (event->keyval == 's')
+			map->key.down = 1;
+		update_cam(&map->free_cam, &map->key, map);
+	}
+	if (event->keyval == 32)
+		map->fix ^= 1;
+	if (event->keyval == 65307)
+		gtk_main_quit();
+	return (0);
+}
+
+int		key_release(GtkWidget *widget, GdkEventKey *event, t_map *map)
+{
+	(void)widget;
+	if (event->keyval == 'd')
 		map->key.mleft = 0;
-	if (keycode == 125)
+	if (event->keyval == 'a')
 		map->key.mright = 0;
-	if (keycode == 13)
+	if (event->keyval == 'w')
 		map->key.up = 0;
-	if (keycode == 1)
+	if (event->keyval == 's')
 		map->key.down = 0;
-	if (keycode == 0)
-		map->key.right = 0;
-	if (keycode == 2)
-		map->key.left = 0;
 	return (0);
 }

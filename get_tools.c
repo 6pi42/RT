@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:53:34 by emontagn          #+#    #+#             */
-/*   Updated: 2016/04/21 13:35:26 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/05/28 09:11:28 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ cl_float4	get_vector(char *line)
 		i++;
 	}
 	free(tab);
+	normalize_vec(&vector);
 	return (vector);
 }
 
