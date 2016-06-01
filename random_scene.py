@@ -25,10 +25,11 @@ if (os.path.isfile(sys.argv[7])):
 fichier = open(sys.argv[7], "a")
 fichier.write("SCENE\n\tWINDOW\n\t\twidth: " + str(dim[0]) + ".0\n\t\theight: " + str(dim[1]) + ".0\n\n\tMULTI_SAMPLING\n\t\tpower: " + str(sampling) + "\n\n")
 fichier.write("SHAPES\n")
-radius = 25
+
 for i in range (0, nb_sphere):
     if (i != 0):
         fichier.write("\n")
+    radius = random.randint(5, 30)
     x = str(random.randint(minp, maxp)) + ".0 "
     y = str(random.randint(minp, maxp)) + ".0 "
     z = str(random.randint(minp, maxp)) + ".0"
