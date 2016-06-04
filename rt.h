@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amathias <amathias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/29 16:17:02 by amathias         ###   ########.fr       */
+/*   Updated: 2016/06/04 17:54:25 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,6 +240,7 @@ void	get_cone(int fd, t_shape *shape);
 cl_float4	get_position(char *line);
 cl_float4	get_vector(char *line);
 cl_float4	get_rgb(char *line);
+int		get_rgb_int(char *line);
 cl_float4	get_radius(char *line);
 int		get_number(char *file, char *shape_name);
 int		get_nb_shape(char *file);

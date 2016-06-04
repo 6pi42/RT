@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amathias <amathias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/29 16:42:01 by amathias         ###   ########.fr       */
+/*   Updated: 2016/06/04 17:52:41 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ void	draw(t_map *map)
 	timersub(&map->fps.end, &map->fps.start, &sub);
 	if (sub.tv_sec >= 1.0)
 	{
-		printf ("\033[32;1m\nfps: %.3f\n\033[0m", map->fps.frames);
-		map->fps.frames = 0;
+		//printf ("\033[32;1m\nfps: %.3f\n\033[0m", map->fps.frames);
+		//map->fps.frames = 0;
 		gettimeofday(&map->fps.start, NULL);
 	}
 }
@@ -59,12 +59,13 @@ int		main(int argc, char **argv)
 	t_shape		*shape;
 	t_camera	cam;
 	t_mat		mat;
-	t_spot		spot;
 
 	if (argc != 2)
 		return (1);
+
 	map.scene.nb_shape = get_nb_shape(argv[1]);
 	shape = parse(&map, argv[1]);
+
 	//Add that to parsing
 	mat.ka = 0.2f;
 	mat.kd = 0.6f;
@@ -72,8 +73,8 @@ int		main(int argc, char **argv)
 	mat.ktran = 0.0f;
 	mat.kreflec = 0.0f;
 	mat.krefrac	= 0.0f;
-	// Same	
-	spot.type = 1;
+
+/*	spot.type = 1;
 	spot.pos.x = 50.0f;
 	spot.pos.y = 200.0f;
 	spot.pos.z = 10.0f;
@@ -81,17 +82,23 @@ int		main(int argc, char **argv)
 	spot.color = 0xFFFFFF;
 	spot.intensity = 42.0f;
 
+	map.scene.spot = &spot;
+*/
 	map.free_cam.pos.x = 500.0f;
 	map.free_cam.pos.y = 200.0f;
 	map.free_cam.pos.z = 0.0f;
 	map.scene.max_depth = 3;
 	map.scene.shape = shape;
 	map.scene.cam = &cam;
-	map.scene.spot = &spot;
 	map.scene.nb_spot = 1;
 	map.scene.mat = &mat;
 	map.scene.nb_mat = 1;
-
+/*
+	printf("\ntype: %d\n", map.scene.spot->type);
+	printf("color: %d\n", map.scene.spot->color);
+	printf("pos: %.2f %.2f %.2f \n", map.scene.spot->pos.x, map.scene.spot->pos.y, map.scene.spot->pos.z);
+	printf("intensity: %.2f\n", map.scene.spot->intensity);
+*/
 	gtk_init(&argc, &argv);
 	create_interface(&map);
 	connect_signal_gtk(&map);

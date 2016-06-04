@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_inter.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: amathias <amathias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/18 17:14:53 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/29 14:59:15 by amathias         ###   ########.fr       */
+/*   Updated: 2016/06/04 17:34:26 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ t_inter	*get_inter(t_map *map, size_t work_size, t_ray *ray)
 	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END,
 			sizeof(time_end), &time_end, NULL);
 	total_time = time_end - time_start;
-	printf("\nExecution time = %0.3f ms\n", (total_time / 1000000.0));
+	//printf("\nExecution time = %0.3f ms\n", (total_time / 1000000.0));
 	//END PROFILING
 	return (ptr);
 }
