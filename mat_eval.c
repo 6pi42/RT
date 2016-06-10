@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 11:02:39 by amathias          #+#    #+#             */
-/*   Updated: 2016/06/10 11:40:19 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/10 12:45:29 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ t_ray	get_refract_ray(t_inter inter, t_ray ray, double indice)
 	double	c1;
 	double	c2;
 
-	if (!inter.in_shape)
+	if (inter.in_shape)
 		n = indice / 1;
 	else
 	n = 1 / indice;
@@ -32,7 +32,7 @@ t_ray	get_refract_ray(t_inter inter, t_ray ray, double indice)
 		return (refract);
 	refract.ray = add_vec(scale_vec(n, ray.ray), scale_vec(n * c1 - c2,
 																inter.normal));
-	refract.origin = add_vec(ray.origin, scale_vec(inter.dist + 0.5, ray.ray));
+	refract.origin = add_vec(ray.origin, scale_vec(inter.dist + 0.05, ray.ray));
 	normalize_vec(&refract.ray);
 	return (refract);
 }

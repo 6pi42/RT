@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 03:35:19 by apaget            #+#    #+#             */
-/*   Updated: 2016/06/10 08:48:53 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/10 12:26:41 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	create_max_depth_bar(GtkWidget *interface, t_map *map)
 {
 	GtkWidget	*max_deep;
 
-	max_deep = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 10, 1);
+	max_deep = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 5, 1);
 	g_signal_connect(G_OBJECT(max_deep), "value-changed",
 											G_CALLBACK(max_depth_bar), map);
 	gtk_scale_set_digits(GTK_SCALE(max_deep), 0);

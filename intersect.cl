@@ -141,13 +141,13 @@ bool intersect_sph(t_ray *ray, t_shape sph, float *t)
 	d = sqrt(d);
 	float t1 = (-b + d) / (2.0f * a);
 	float t2 = (-b - d) / (2.0f * a);
-	t[0] = fmin(t1, t2);
-	t[1] = fmax(t1, t2);
+	t[0] = t1;
+	t[1] = t2;
 	if (t2 >= 0.0f && t2 < t1)
 	{
+		t[0] = t2;
+		t[1] = t1;
 		t1 = t2;
-		t[0] = fmin(t[0], t[1]);
-		t[1] = fmax(t[0], t[1]);
 	}
 	if (t1 < 0.0f)
 		return (0);
@@ -180,13 +180,13 @@ bool intersect_cyl(t_ray *ray, t_shape cyl, float *t)
 	d = sqrt(d);
 	float t1 = (-b + d) / (2.0f * a);
 	float t2 = (-b - d) / (2.0f * a);
-	t[0] = fmax(t1, t2);
-	t[1] = fmin(t1, t2);
+	t[0] = t1;
+	t[1] = t2;
 	if (t2 >= 0.0f && t2 < t1)
 	{
-		t1 = t2;
 		t[0] = t2;
 		t[1] = t1;
+		t1 = t2;
 	}
 	if (t1 < 0.0f)
 		return (0);
@@ -246,13 +246,13 @@ bool intersect_cone(t_ray *ray, t_shape cyl, float *t)
 	d = sqrt(d);
 	float t1 = (-b + d) / (2.0f * a);
 	float t2 = (-b - d) / (2.0f * a);
-	t[0] = fmax(t1, t2);
-	t[1] = fmin(t1, t2);
+	t[0] = t1;
+	t[1] = t2;
 	if (t2 >= 0.0f && t2 < t1)
 	{
-		t1 = t2;
 		t[0] = t2;
 		t[1] = t1;
+		t1 = t2;
 	}
 	if (t1 < 0.0f)
 		return (0);
@@ -362,28 +362,61 @@ void	copy_tab(float *dst, float *src, int len)
 	}
 }
 
-int	cut_obj(t_shape shape, t_ray *ray, float *end)
+int	cut_obj(t_shape shape, t_ray *ray, float *end, int type)
 {
 	float tplan;
-	tplan= -(dot(shape.axe_decoupe, ray->origin - shape.pos)
-			/ dot(shape.axe_decoupe, ray->dir));
-	if (dot(shape.axe_decoupe, (ray->origin + end[0] * ray->dir) - shape.pos) > 0.0f)
+	float m;
+	float4 dir_perp;
+
+	if (type == 1.0f)
 	{
-		if (tplan < 0)
+		tplan= -(dot(shape.axe_decoupe, ray->origin - shape.pos)
+				/ dot(shape.axe_decoupe, ray->dir));
+		if (dot(shape.axe_decoupe, (ray->origin + end[0] * ray->dir) - shape.pos) > 0.0f)
 		{
-			end[0] = -1;
-			return 0;
-		}
-		else if ((tplan > end[0] && tplan < end[1] && end[1] > 0))
-		{
-				end[0] = tplan;
-				end[2] = 1;
-				return 1;
-		}
-		else
-		{
+			if (tplan < 0)
+			{
 				end[0] = -1;
 				return 0;
+			}
+			else if ((tplan > end[0] && tplan < end[1] && end[1] > 0))
+			{
+					end[0] = tplan;
+					end[2] = 1;
+					return 1;
+			}
+			else
+			{
+					end[0] = -1;
+					return 0;
+			}
+		}
+	}
+	else
+	{
+		m = dot(ray->dir, shape.axis) * end[0] + dot(ray->origin - shape.pos, shape.axis);
+		dir_perp = (ray->dir * end[0]) + (ray->origin - shape.pos) - (shape.axis * m);
+		dir_perp = cross((float4)(1.0f, 0.0f, 0.0f, 0.0f), shape.axis);
+		tplan= -(dot(dir_perp, ray->origin - shape.pos)
+				/ dot(dir_perp, ray->dir));
+		if (dot(dir_perp, (ray->origin + end[0] * ray->dir) - shape.pos) > 0.0f)
+		{
+			if (tplan < 0)
+			{
+				end[0] = -1;
+				return 0;
+			}
+			else if ((tplan > end[0] && tplan < end[1] && end[1] > 0))
+			{
+					end[0] = tplan;
+					end[2] = 1;
+					return 1;
+			}
+			else
+			{
+					end[0] = -1;
+					return 0;
+			}
 		}
 	}
 	return 0;
@@ -399,7 +432,6 @@ static int intersect_all(t_ray *ray,
 	float	save[3];
 	float	end[3];
 	float	tplan;
-	float4	tmp2;
 
 
 	i = 0;
@@ -413,7 +445,6 @@ static int intersect_all(t_ray *ray,
 		save[0] = 0;
 		save[1] = 0;
 		save[2] = 0;
-		tmp2 = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
 		if (shape[i].type.x == 1.0f && intersect_sph(ray, shape[i], save))
 			copy_tab(end, save, 3);
 		if (shape[i].type.x == 2.0f && intersect_plan(ray, shape[i], save))
@@ -428,13 +459,13 @@ static int intersect_all(t_ray *ray,
 			copy_tab(end, save, 3);
 		if (shape[i].type.x == 8.0f && intersect_triangle(ray, shape[i], save))
 			copy_tab(end, save, 3);
-		if (shape[i].type.x == 3.0f)
-			shape[i].axe_decoupe = (float4)(1.0f, 0.0, 0.0, 0.0);
+		if (shape[i].type.x == 4.0f)
+			shape[i].axe_decoupe = (float4)(0.0f, 1.0, 0.0, 0.0);
 		else
 			shape[i].axe_decoupe = (float4)(0.0f, 0.0, 0.0, 0.0);
 		if (fast_length(shape[i].axe_decoupe) != 0 && end[0] != -1)
 		{
-			cut_obj(shape[i], ray, end);
+			cut_obj(shape[i], ray, end, 0);
 		}
 			tmp = end[0];
 		if (tmp != -1.0f && (*t1 == -1.0f || tmp < *t1))
