@@ -1,0 +1,42 @@
+SCENE
+	WINDOW
+		width: 720.0
+		height: 500.0
+
+	MULTI_SAMPLING
+		power: 0
+
+SHAPES
+	PLANE
+		tex: 0.0
+		rgb: 128.0 128.0 0.0
+		pos: 0.0 0.0 0.0
+		nor: 0.0 1.0 0.0
+
+	CONE
+		tex: 0.0
+		agl: 0.1
+		rgb: 0.0 255.0 0.0
+		pos: 250.0 150.0 0.0
+		dir: 0.0 1.0 0.0
+
+	CONE
+		tex: 0.0
+		agl: 0.5
+		rgb: 0.0 255.0 0.0
+		pos: 150.0 150.0 0.0
+		dir: 0.0 1.0 0.0
+
+	CONE
+		tex: 0.0
+		agl: 0.4
+		rgb: 0.0 255.0 0.0
+		pos: 250.0 100.0 0.0
+		dir: 0.0 1.0 0.0
+
+	CONE
+		tex: 0.0
+		agl: 0.3
+		rgb: 0.0 255.0 0.0
+		pos: 100.0 100.0 0.0
+		dir: 0.0 1.0 0.0

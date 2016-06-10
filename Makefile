@@ -6,13 +6,24 @@
 #    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/05/17 15:03:46 by amathias         ###   ########.fr        #
+#    Updated: 2016/06/10 03:38:30 by apaget           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 INC = /
 
 SRC =	main.c			\
+		get_inter.c		\
+		get_primary.c	\
+		mat_eval.c		\
+		gtk_build_bar.c	\
+		shade.c			\
+		gtk_build_menu.c\
+		gtk_call_bar.c	\
+		gtk_call_mouse.c\
+		raytrace.c		\
+		shadow.c		\
+		inter_utils.c	\
 		cl_utils.c		\
 		hook.c			\
 		vec_calc.c		\
@@ -24,16 +35,24 @@ SRC =	main.c			\
 		get_scene.c		\
 		get_tools.c		\
 		bitmap_writer.c	\
+		color.c			\
+		free_scene.c	\
+		signal_fct.c	\
+		gtk_build.c		\
+		gtk_button.c	\
+		gtk_callback.c	\
+		gtk_conect_interface.c	\
+		
 
 OBJ = $(SRC:.c=.o)
 NAME = rt
 CC = gcc
 RM = rm -f
-CFLAGS = -Wall -Werror -Wextra -O3
+CFLAGS = -Wall -Werror -Wextra -O3 `pkg-config --cflags gtk+-3.0`
 
-LIB_PATH = ./libft/ /usr/local/lib/
-LIB_NAME = -lft -lmlx -framework OpenCL -framework OpenGL -framework AppKit
-LIB = $(addprefix -L,$(LIB_PATH))
+LIB_PATH = ./libft/
+LIB_NAME = -lft -framework OpenCL -framework OpenGL -framework AppKit -lpthread
+LIB = $(addprefix -L,$(LIB_PATH)) `pkg-config --libs gtk+-3.0`
 LFLAGS = $(LIB) $(LIB_NAME)
 
 INC_PATH = ./libft/ /usr/local/include/ /usr/X11/lib

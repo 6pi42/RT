@@ -1,0 +1,20 @@
+SCENE
+	WINDOW
+		width: 500.0
+		height: 400.0
+
+	MULTI_SAMPLING
+		power: 0
+
+SHAPES
+	SPHERE
+		tex: 0.0
+		rad: 25.0
+		rgb: 255.0 0.0 0.0
+		pos: 130.0 110.0 40.0
+
+	PLANE
+		tex: 0.0
+		rgb: 128.0 128.0 0.0
+		pos: 0.0 0.0 0.0
+		nor: 0.0 1.0 0.0
