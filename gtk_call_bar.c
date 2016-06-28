@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 02:48:16 by apaget            #+#    #+#             */
-/*   Updated: 2016/06/10 04:03:59 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/28 16:26:24 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	color_bare(GtkWidget *widget, t_map *map)
 	else if (ft_strsearch("kra :", (char*)gtk_widget_get_name(widget)) != -1)
 		map->obj_selected->mat.krefrac = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("indice :", (char*)gtk_widget_get_name(widget)) != -1)
-		map->obj_selected->mat.indice = gtk_range_get_value(GTK_RANGE(widget)) * 2 + 0.5;
+		map->obj_selected->mat.indice = gtk_range_get_value(GTK_RANGE(widget)) / 2;
 	draw(map);
 }
 

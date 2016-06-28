@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/06/10 09:59:15 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/28 14:20:37 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,16 +54,16 @@ static int	get_color(t_map *map, t_mat mat, t_utils utils, int color)
 	diffuse = color;
 	spot = map->current_spot;
 	(void)mat;
-	if (!utils.inter.in_shape)
-	{
+	//if (!utils.inter.in_shape)
+	//{
 		spec = color_mul(spot.color,
 			spec_light(spot, utils.inter, utils.ray, utils.inter_pos) * map->scene.shape[utils.inter.id].mat.ks);
 
 	diffuse = color_mul(color,
 			diffuse_lighting(spot, utils.inter.normal, utils.inter_pos));
-	}
-	else
-		return (color);
+	//}
+//	else
+//		return (color);
 	/*
 map->scene.shape[utils.inter.id].mat.ks
 map->scene.shape[utils.inter.id].mat.kd
@@ -150,9 +150,7 @@ int		*shade(t_map *map, t_inter *inter)
 			color[i] += (int)(tmp.x * 256 * 256);
 			color[i] += (int)(tmp.y * 256);
 			color[i] += (int)(tmp.z);
-			// to here
-			if (!inter[i].in_shape)
-				color[i] = iter_spot(map, mat, utils, color[i]);
+			color[i] = iter_spot(map, mat, utils, color[i]);
 		}
 		i++;
 	}

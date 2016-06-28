@@ -290,9 +290,14 @@ static float4 get_normal_sphere(t_shape obj, float4 inter, float *sol)
 	return(norm);
 }
 
-static float4 get_normal_plan(t_shape obj)
+static float4 get_normal_plan(t_shape obj, float4 inter)
 {
-	return(obj.radius);
+	float4 tmp = inter  - obj.pos;
+float dist;
+
+	dist = tmp.x * tmp.x + tmp.y * tmp.y + tmp.z * tmp.z;
+	obj.radius += tmp * sin(dist);
+	return(normalize(obj.radius));
 }
 
 static float4 get_normal_ellips(t_shape ellips, float4 inter)
@@ -340,7 +345,7 @@ static float4 get_normal(t_shape obj, float4 inter_pt, t_inter *inter, t_ray ray
 	if (obj.type.x == 1.0f)
 		norm = get_normal_sphere(obj, inter_pt, sol);
 	if (obj.type.x == 2.0f)
-		norm = get_normal_plan(obj);
+		norm = get_normal_plan(obj, inter_pt);
 	if (obj.type.x == 3.0f)
 		norm = get_normal_cyl(obj, inter_pt, inter->dist, ray, sol);
 	if (obj.type.x == 4.0f)
@@ -395,8 +400,7 @@ int	cut_obj(t_shape shape, t_ray *ray, float *end, int type)
 	else
 	{
 		m = dot(ray->dir, shape.axis) * end[0] + dot(ray->origin - shape.pos, shape.axis);
-		dir_perp = (ray->dir * end[0]) + (ray->origin - shape.pos) - (shape.axis * m);
-		dir_perp = cross((float4)(1.0f, 0.0f, 0.0f, 0.0f), shape.axis);
+		dir_perp = normalize(cross(shape.axe_decoupe, shape.axis));
 		tplan= -(dot(dir_perp, ray->origin - shape.pos)
 				/ dot(dir_perp, ray->dir));
 		if (dot(dir_perp, (ray->origin + end[0] * ray->dir) - shape.pos) > 0.0f)
@@ -404,6 +408,7 @@ int	cut_obj(t_shape shape, t_ray *ray, float *end, int type)
 			if (tplan < 0)
 			{
 				end[0] = -1;
+				end[1] = -1;
 				return 0;
 			}
 			else if ((tplan > end[0] && tplan < end[1] && end[1] > 0))
@@ -427,7 +432,7 @@ static int intersect_all(t_ray *ray,
 {
 	int	i;
 	int	j;
-	int k;
+	int	k;
 	float	tmp;
 	float	save[3];
 	float	end[3];
@@ -459,13 +464,13 @@ static int intersect_all(t_ray *ray,
 			copy_tab(end, save, 3);
 		if (shape[i].type.x == 8.0f && intersect_triangle(ray, shape[i], save))
 			copy_tab(end, save, 3);
-		if (shape[i].type.x == 4.0f)
-			shape[i].axe_decoupe = (float4)(0.0f, 1.0, 0.0, 0.0);
+		if (shape[i].type.x == 1.0f)
+			shape[i].axe_decoupe = (float4)(0.0f, 0.0f, 1.0f, 0.0f);
 		else
 			shape[i].axe_decoupe = (float4)(0.0f, 0.0, 0.0, 0.0);
 		if (fast_length(shape[i].axe_decoupe) != 0 && end[0] != -1)
 		{
-			cut_obj(shape[i], ray, end, 0);
+			cut_obj(shape[i], ray, end, 1);
 		}
 			tmp = end[0];
 		if (tmp != -1.0f && (*t1 == -1.0f || tmp < *t1))
@@ -507,6 +512,12 @@ __kernel void intersect(__global t_inter *out, __global t_ray* ray,
 			{
 				inter.normal = get_normal(sh, get_intersection(&r, inter.dist),
 							&inter, r, sol);
+			}
+			//TODO: ajouter type sh.axe_decoupe.w
+			else if (0)
+			{
+				inter.normal = normalize(cross(sh.axe_decoupe, sh.axis));
+				inter.in_shape = 0;
 			}
 			else
 				inter.normal = sh.axe_decoupe;
