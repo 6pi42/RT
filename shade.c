@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/06/28 14:20:37 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/29 16:30:41 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,25 +49,14 @@ static int	get_color(t_map *map, t_mat mat, t_utils utils, int color)
 	t_spot spot;
 	int diffuse;
 	int spec;
+	(void)mat;
 
 	spec = 0;
 	diffuse = color;
 	spot = map->current_spot;
-	(void)mat;
-	//if (!utils.inter.in_shape)
-	//{
-		spec = color_mul(spot.color,
+	spec = color_mul(spot.color,
 			spec_light(spot, utils.inter, utils.ray, utils.inter_pos) * map->scene.shape[utils.inter.id].mat.ks);
-
-	diffuse = color_mul(color,
-			diffuse_lighting(spot, utils.inter.normal, utils.inter_pos));
-	//}
-//	else
-//		return (color);
-	/*
-map->scene.shape[utils.inter.id].mat.ks
-map->scene.shape[utils.inter.id].mat.kd
-*/
+	diffuse = color_mul(color, map->scene.shape[utils.inter.id].mat.kd * diffuse_lighting(spot, utils.inter.normal, utils.inter_pos));
 	return (color_add(spec, color_mul(diffuse, 1)));
 }
 

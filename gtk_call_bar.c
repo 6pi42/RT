@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 02:48:16 by apaget            #+#    #+#             */
-/*   Updated: 2016/06/28 16:26:24 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/29 16:17:21 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,15 @@ void	max_depth_bar(GtkWidget *widget, t_map *map)
 void	color_bare(GtkWidget *widget, t_map *map)
 {
 	if (ft_strsearch("R :", (char*)gtk_widget_get_name(widget)) != -1)
-		map->obj_selected->color.z = gtk_range_get_value(GTK_RANGE(widget));
+		map->obj_selected->color.x = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("G :", (char*)gtk_widget_get_name(widget)) != -1)
 		map->obj_selected->color.y = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("B :", (char*)gtk_widget_get_name(widget)) != -1)
-		map->obj_selected->color.x = gtk_range_get_value(GTK_RANGE(widget));
+		map->obj_selected->color.z = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("ka :", (char*)gtk_widget_get_name(widget)) != -1)
 		map->obj_selected->mat.ka = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("Ks :", (char*)gtk_widget_get_name(widget)) != -1)
 		map->obj_selected->mat.ks = gtk_range_get_value(GTK_RANGE(widget));
-	else if (ft_strsearch("kd :", (char*)gtk_widget_get_name(widget)) != -1)
-		map->obj_selected->mat.kd = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("kd :", (char*)gtk_widget_get_name(widget)) != -1)
 		map->obj_selected->mat.kd = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("kre :", (char*)gtk_widget_get_name(widget)) != -1)

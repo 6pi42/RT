@@ -10,12 +10,6 @@ SHAPES
 
 	SPHERE
 		tex: 1.0
-		rad: 25.0
-		rgb: 255.0 0.0 0.0
-		pos: 0.0 80.0 40.0
-
-	SPHERE
-		tex: 1.0
 		rad: 30.0
 		rgb: 250.0 200.0 0.0
 		pos: 250.0 200.0 0.0

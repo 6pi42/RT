@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:52:38 by emontagn          #+#    #+#             */
-/*   Updated: 2016/06/06 10:57:35 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/29 16:29:29 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void	get_plane(int fd, t_shape *shape)
 	}
 	if (ret == -1)
 		printf("error\n");
+	shape[nb].mat.kd = 1;
 	nb++;
 }
 
@@ -68,6 +69,7 @@ void	get_sphere(int fd, t_shape *shape)
 	}
 	if (ret == -1)
 		printf("error\n");
+	shape[nb].mat.kd = 1;
 	nb++;
 }
 
@@ -127,6 +129,7 @@ void	get_cone(int fd, t_shape *shape)
 	}
 	if (ret == -1)
 		printf("error\n");
+	shape[nb].mat.kd = 1;
 	nb++;
 }
 
@@ -157,6 +160,7 @@ void	get_cylinder(int fd, t_shape *shape)
 	}
 	if (ret == -1)
 		printf("error\n");
+	shape[nb].mat.kd = 1;
 	nb++;
 }
 
