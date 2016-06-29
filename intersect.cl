@@ -292,12 +292,7 @@ static float4 get_normal_sphere(t_shape obj, float4 inter, float *sol)
 
 static float4 get_normal_plan(t_shape obj, float4 inter)
 {
-	float4 tmp = inter  - obj.pos;
-float dist;
-
-	dist = tmp.x * tmp.x + tmp.y * tmp.y + tmp.z * tmp.z;
-	obj.radius += tmp * sin(dist);
-	return(normalize(obj.radius));
+	return(obj.radius);
 }
 
 static float4 get_normal_ellips(t_shape ellips, float4 inter)
@@ -465,7 +460,10 @@ static int intersect_all(t_ray *ray,
 		if (shape[i].type.x == 8.0f && intersect_triangle(ray, shape[i], save))
 			copy_tab(end, save, 3);
 		if (shape[i].type.x == 1.0f)
-			shape[i].axe_decoupe = (float4)(0.0f, 0.0f, 1.0f, 0.0f);
+		{
+			shape[i].axe_decoupe = (float4)(0.0f, 0.0, 0.0, 0.0);
+			shape[i].type.y = 1;
+		}
 		else
 			shape[i].axe_decoupe = (float4)(0.0f, 0.0, 0.0, 0.0);
 		if (fast_length(shape[i].axe_decoupe) != 0 && end[0] != -1)
@@ -480,6 +478,14 @@ static int intersect_all(t_ray *ray,
 			copy_tab(sol, end, 3);
 		}
 		i++;
+	}
+	if (j != -1 && shape[j].type.y == 1 && sol[1] > 0)
+	{
+		ray->origin = ray->origin + (sol[1] + 0.005f) * ray->dir;
+		sol[0] = 0;
+		sol[1] = 0;
+		sol[2] = 0;
+		return (intersect_all(ray, shape, num_shapes, t1, sol));
 	}
 	return (j);
 }
@@ -513,8 +519,7 @@ __kernel void intersect(__global t_inter *out, __global t_ray* ray,
 				inter.normal = get_normal(sh, get_intersection(&r, inter.dist),
 							&inter, r, sol);
 			}
-			//TODO: ajouter type sh.axe_decoupe.w
-			else if (0)
+			else if (sh.axe_decoupe.w)
 			{
 				inter.normal = normalize(cross(sh.axe_decoupe, sh.axis));
 				inter.in_shape = 0;
