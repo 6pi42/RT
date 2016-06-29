@@ -461,11 +461,11 @@ static int intersect_all(t_ray *ray,
 			copy_tab(end, save, 3);
 		if (shape[i].type.x == 1.0f)
 		{
-			shape[i].axe_decoupe = (float4)(0.0f, 0.0, 0.0, 0.0);
+			shape[i].axe_decoupe = (float4)(1.0f, 0.0f, 0.0f, 0.0f);
 			shape[i].type.y = 1;
 		}
 		else
-			shape[i].axe_decoupe = (float4)(0.0f, 0.0, 0.0, 0.0);
+			shape[i].axe_decoupe = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
 		if (fast_length(shape[i].axe_decoupe) != 0 && end[0] != -1)
 		{
 			cut_obj(shape[i], ray, end, 1);
@@ -479,12 +479,13 @@ static int intersect_all(t_ray *ray,
 		}
 		i++;
 	}
-	if (j != -1 && shape[j].type.y == 1 && sol[1] > 0)
+	if (j != -1 && shape[j].type.y > 0 && (sol[0] > 0 || sol[1] > 0))
 	{
-		ray->origin = ray->origin + (sol[1] + 0.005f) * ray->dir;
-		sol[0] = 0;
+		ray->origin = ray->origin + (fmax(sol[1], sol[0]) + 0.005f) * ray->dir;
+		sol[0] = -1;
 		sol[1] = 0;
 		sol[2] = 0;
+		*t1 = -1;
 		return (intersect_all(ray, shape, num_shapes, t1, sol));
 	}
 	return (j);
