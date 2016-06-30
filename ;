@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 03:37:42 by apaget            #+#    #+#             */
-/*   Updated: 2016/06/30 17:03:00 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/30 15:50:53 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,58 +53,21 @@ void	create_mat_conf(t_map *map, GtkWidget *onglet)
 	gtk_notebook_append_page(GTK_NOTEBOOK(onglet), GTK_WIDGET(map->interface), gtk_label_new("Mat"));
 }
 
-
-void	add_rotate_bar(GtkWidget *interface, t_map *map)
-{
-	GtkWidget *box;
-	GtkWidget *tmpbox;
-	GtkWidget *scroll;
-	GtkWidget *apply;
-
-	box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-	tmpbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-	scroll = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 180, 0.5);
-	gtk_box_pack_start(GTK_BOX(tmpbox), GTK_WIDGET(gtk_label_new("alpha")), FALSE, TRUE, 10);
-	gtk_box_pack_start(GTK_BOX(tmpbox), GTK_WIDGET(scroll), TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(tmpbox), TRUE, TRUE, 5);
-	tmpbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-	gtk_box_pack_start(GTK_BOX(tmpbox), GTK_WIDGET(gtk_label_new("beta")), FALSE, TRUE, 10);
-	scroll = gtk_scale_new_with_range(GTK_ORIENTATION_VERTICAL, 0, 180, 0.5);
-	gtk_box_pack_start(GTK_BOX(tmpbox), GTK_WIDGET(scroll), TRUE, TRUE, 5);
-	apply = gtk_button_new_with_label("Apply");
-	gtk_box_pack_start(GTK_BOX(tmpbox), GTK_WIDGET(apply), TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(tmpbox), TRUE, TRUE, 5);
-	(void)map;
-	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(box), TRUE, TRUE, 5);
-
-}
-
-void	add_dep_bar(GtkWidget *interface, t_map *map)
-{
-	(void)interface;
-	(void)map;
-	GtkWidget *box;
-	//GtkWidget *apply;
-
-	box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-	add_moove_scroll_bar(box, "x :", map);
-	add_moove_scroll_bar(box, "y :", map);
-	add_moove_scroll_bar(box, "z :", map);
-	//apply = gtk_button_new_with_label("Apply");
-
-	//gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(apply), TRUE, TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(box), TRUE, TRUE, 5);
-}
-
 void	create_transform_bar(t_map *map, GtkWidget *onglet)
 {
+	GtkWidget	*slct_file;
 	GtkWidget *interface;
 
 	interface = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(gtk_label_new("ROTATE MOTHER FUCKER")), FALSE, TRUE, 10);
-	add_rotate_bar(interface, map);
-	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(gtk_label_new("MOOVE MOTHER FUCKER")), FALSE, TRUE, 10);
-	add_dep_bar(interface, map);
+	slct_file = gtk_button_new_with_label("Choose scene file");
+	g_signal_connect(slct_file, "clicked", G_CALLBACK(choose_file), map);
+	map->obj_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(slct_file), FALSE,
+																	TRUE, 10);
+	create_label(interface, "Rotate");
+	create_multi_sampling_bar(interface, map);
+	create_label(interface, "deplacer");
+	create_max_depth_bar(interface, map);
 	gtk_notebook_append_page(GTK_NOTEBOOK(onglet), GTK_WIDGET(interface), gtk_label_new("Transform"));
 }
 

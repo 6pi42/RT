@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/06/29 10:28:48 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/30 16:52:26 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,6 +192,22 @@ typedef struct	s_args
 	t_ray		*ray;
 }				t_args;
 
+typedef struct		s_perlin
+{
+	unsigned char	table[512];
+	float			gradient[8][2];
+	int				x_tab;
+	int				y_tab;
+	float			x;
+	float			y;
+	float		a;
+	float		b;
+	float		c;
+	float		d;
+	int			xx;
+	int			yy;
+}				t_perlin;
+
 void	draw_pixel_to_image(t_map *map, int x, int y, int c);
 void	draw(t_map *map);
 void	ocl_init(t_env *env, t_prog prog);
@@ -248,6 +264,7 @@ void	click_mult_sampling_button(GtkWidget *widget, t_map *map);
 void	sampling_bar(GtkWidget *widget, t_map *map);
 void	choose_file(GtkWidget *widget, t_map *map);
 void	color_bare(GtkWidget *widget, t_map *map);
+void	moove_obj(GtkWidget *widget, t_map *map);
 void	add_color_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
 void	add_coef_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
 void	create_obj_interface(GtkWidget *interface, t_map *map);
@@ -289,5 +306,7 @@ cl_float4	get_position(char *line);
 cl_float4	get_vector(char *line);
 cl_float4	get_rgb(char *line);
 cl_float4	get_radius(char *line);
+int			*get_perl_tex(int height, int width, float res);
+void	add_moove_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
 
 #endif

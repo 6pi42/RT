@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 03:35:19 by apaget            #+#    #+#             */
-/*   Updated: 2016/06/10 12:26:41 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/30 16:55:09 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,27 @@ void	add_coef_scroll_bar(GtkWidget *interface, char *label_str, t_map *map)
 	gtk_widget_set_name(GTK_WIDGET(box), label_str);
 	gtk_widget_set_name(GTK_WIDGET(scroll), label_str);
 }
+
+
+void	add_moove_scroll_bar(GtkWidget *interface, char *label_str, t_map *map)
+{
+	GtkWidget	*box;
+	GtkWidget	*scroll;
+	GtkWidget	*label;
+
+	box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	label = gtk_label_new(label_str);
+	scroll = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 500, 2);
+	gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(label), FALSE, TRUE, 10);
+	gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(scroll), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(box), FALSE, TRUE, 0);
+	gtk_widget_set_name(GTK_WIDGET(box), label_str);
+	gtk_widget_set_name(GTK_WIDGET(scroll), label_str);
+	g_signal_connect(G_OBJECT(scroll), "value-changed",
+											G_CALLBACK(moove_obj), map);
+	(void)map;
+}
+
 
 void	add_sep(GtkWidget *interface)
 {

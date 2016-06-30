@@ -1,4 +1,28 @@
-float	get_color_perlin(float x, float y, float res)
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   perlin.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2016/06/30 11:28:12 by apaget            #+#    #+#             */
+/*   Updated: 2016/06/30 14:15:53 by apaget           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "rt.h"
+
+void	init_var(t_perlin *perl, float x, float y, float res)
+{
+	perl->x_tab = (int)x;
+	perl->y_tab = (int)y;
+	perl->xx = perl->x_tab & 255;
+	perl->yy = perl->y_tab & 255;
+	perl->x = x / res;
+	perl->y = y / res;
+}
+
+void	init_perl(t_perlin *perl)
 {
 	unsigned char table[512] =
 	{151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,
@@ -14,10 +38,80 @@ float	get_color_perlin(float x, float y, float res)
 		235,249,14,239,107,49,192,214,31,181,199,106,157,184,84,204,176,115,121,50,45,
 		127,4,150,254,138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,
 		156,180};
+	ft_memcpy(perl->table, table, 512);
+}
 
+float	get_sommet(t_perlin *perl, int x, int y)
+{
+	float	delta_x;
+	float	delta_y;
+	int		rand_vector;
 	float unit = 1.0f/sqrt(2);
 	float gradient[][2] = {{unit,unit},{-unit,unit},{unit,-unit},
 							{-unit,-unit},{1,0},{-1,0},{0,1},{0,-1}};
+
+	delta_x = perl->x - (perl->x_tab + x);
+	delta_y = perl->y - (perl->y_tab + y);
+	rand_vector = perl->table[perl->xx + x + perl->table[perl->yy + y]] % 8;
+	return (gradient[rand_vector][0] * delta_x + gradient[rand_vector][1] * delta_y);
+}
+
+
+int		calc_pt_color(t_perlin *perl, int x, int y, float res)
+{
+	float tmp;
+	float coef_lissage_x;
+	float coef_lissage_y;
+	float lx1;
+	float lx2;
+
+	init_var(perl, (x  + 0.1) / res , y / res, res);
+	perl->a = get_sommet(perl, 0, 0);
+	perl->b = get_sommet(perl, 1, 0);
+	perl->c = get_sommet(perl, 0, 1);
+	perl->d = get_sommet(perl, 1, 1);
+	tmp = perl->x - perl->x_tab;
+	coef_lissage_x = 3 * tmp * tmp - 2 * tmp * tmp;
+	lx1 = perl->a + coef_lissage_x * (perl->b - perl->a);
+	lx2 = perl->c + coef_lissage_x * (perl->d - perl->c);
+	tmp = perl->y - perl->y_tab;
+	coef_lissage_y = 3 * tmp * tmp - 2 * tmp * tmp;
+	return ((lx1 + coef_lissage_y * (lx2 - lx1)));
+}
+
+
+int		*get_perl_tex(int height, int width, float res)
+{
+	t_perlin	perl;
+	int			x;
+	int			y;
+	int			*tex;
+	int			i;
+
+	if ((tex = (int*)malloc(sizeof(int) * height * width)) == NULL)
+		return (NULL);
+	init_perl(&perl);
+	x = 0;
+	i = 0;
+	while (x < width)
+	{
+		y = 0;
+		while (y < height)
+		{
+			tex[i] = calc_pt_color(&perl, x, y, res);
+			tex[i] = tex[i] < 0 ? 0 : tex[i];
+			i++;
+			y++;
+		}
+		x++;
+	}
+	return (tex);
+}
+
+/*
+float	get_color_perlin(float x, float y, float res)
+{
+
 	int x_tab;
 	int y_tab;
 	int rand_vector;
@@ -59,3 +153,4 @@ float	get_color_perlin(float x, float y, float res)
 	tmp = y - y_tab;
 	coef_lissage_y = 3 * tmp * tmp - 2 * tmp * tmp;
 	return (lx1 + coef_lissage_y * (lx2 - lx1));
+	*/

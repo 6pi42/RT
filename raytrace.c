@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 11:29:58 by amathias          #+#    #+#             */
-/*   Updated: 2016/06/29 14:31:59 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/30 16:53:50 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ void	raytrace(t_map *map)
 	primary = get_primary(map);
 	inter = get_inter(map, (size_t)(map->height * map->width), primary);
 	//display_thread(map, inter, primary);
+	//shading = get_perl_tex(map->height, map->width, 50);
 	shading = get_color2(map, inter, shading, map->scene.max_depth);
 	i = 0;
 	k = 0;

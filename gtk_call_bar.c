@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 02:48:16 by apaget            #+#    #+#             */
-/*   Updated: 2016/06/29 16:17:21 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/30 17:03:02 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,11 @@ void	color_bare(GtkWidget *widget, t_map *map)
 		map->obj_selected->color.y = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("B :", (char*)gtk_widget_get_name(widget)) != -1)
 		map->obj_selected->color.z = gtk_range_get_value(GTK_RANGE(widget));
-	else if (ft_strsearch("ka :", (char*)gtk_widget_get_name(widget)) != -1)
+	else if (ft_strsearch("Ka :", (char*)gtk_widget_get_name(widget)) != -1)
 		map->obj_selected->mat.ka = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("Ks :", (char*)gtk_widget_get_name(widget)) != -1)
 		map->obj_selected->mat.ks = gtk_range_get_value(GTK_RANGE(widget));
-	else if (ft_strsearch("kd :", (char*)gtk_widget_get_name(widget)) != -1)
+	else if (ft_strsearch("Kd :", (char*)gtk_widget_get_name(widget)) != -1)
 		map->obj_selected->mat.kd = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("kre :", (char*)gtk_widget_get_name(widget)) != -1)
 		map->obj_selected->mat.kreflec = gtk_range_get_value(GTK_RANGE(widget));
@@ -41,6 +41,19 @@ void	color_bare(GtkWidget *widget, t_map *map)
 		map->obj_selected->mat.krefrac = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("indice :", (char*)gtk_widget_get_name(widget)) != -1)
 		map->obj_selected->mat.indice = gtk_range_get_value(GTK_RANGE(widget)) / 2;
+	draw(map);
+}
+
+void	moove_obj(GtkWidget *widget, t_map *map)
+{
+
+	if (ft_strsearch("x :", (char*)gtk_widget_get_name(widget)) != -1)
+		map->obj_selected->pos.x = gtk_range_get_value(GTK_RANGE(widget));
+	else if (ft_strsearch("y :", (char*)gtk_widget_get_name(widget)) != -1)
+		map->obj_selected->pos.y = gtk_range_get_value(GTK_RANGE(widget));
+	else if (ft_strsearch("z :", (char*)gtk_widget_get_name(widget)) != -1)
+		map->obj_selected->pos.z = gtk_range_get_value(GTK_RANGE(widget));
+	init_inter(map, map->height * map->width);
 	draw(map);
 }
 

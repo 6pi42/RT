@@ -6,7 +6,7 @@
 #    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/06/10 03:38:30 by apaget           ###   ########.fr        #
+#    Updated: 2016/06/30 12:31:06 by apaget           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ SRC =	main.c			\
 		mat_eval.c		\
 		gtk_build_bar.c	\
 		shade.c			\
+		perlin2.c		\
 		gtk_build_menu.c\
 		gtk_call_bar.c	\
 		gtk_call_mouse.c\

@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/06/10 01:24:08 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/30 14:19:43 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,15 @@ int		main(int argc, char **argv)
 	spot.pos.w = 0.0f;
 	spot.color = 0xFFFFFF;
 	spot.intensity = 42.0f;
+	int *tex = get_perl_tex(512, 512, 100);
 
+	(void)tex;
+	int i;
+	for (i = 0; i < 512*512; i++) {
+		printf("%d ", tex[i]);
+		if (i % 512 == 0)
+			printf("\n");
+	}
 	map.free_cam.pos.x = 20.0f;
 	map.free_cam.pos.y = 20.0f;
 	map.free_cam.pos.z = 20.0f;
