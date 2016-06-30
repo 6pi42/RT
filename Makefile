@@ -6,7 +6,7 @@
 #    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/06/30 12:31:06 by apaget           ###   ########.fr        #
+#    Updated: 2016/06/30 17:25:05 by apaget           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,7 @@ SRC =	main.c			\
 		gtk_call_bar.c	\
 		gtk_call_mouse.c\
 		raytrace.c		\
+		rotate_obj.c	\
 		shadow.c		\
 		inter_utils.c	\
 		cl_utils.c		\

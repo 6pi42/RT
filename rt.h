@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/06/30 16:52:26 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/30 18:01:23 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -308,5 +308,9 @@ cl_float4	get_rgb(char *line);
 cl_float4	get_radius(char *line);
 int			*get_perl_tex(int height, int width, float res);
 void	add_moove_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
+void	add_rotate_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
+void	rotate_cone_cyl(GtkWidget *widget, t_map *map);
+void	rotate_cone_cyl(GtkWidget *widget, t_map *map);
+void	rotate_obj(GtkWidget *widget, t_map *map);
 
 #endif

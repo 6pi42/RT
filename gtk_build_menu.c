@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 03:37:42 by apaget            #+#    #+#             */
-/*   Updated: 2016/06/30 17:03:00 by apaget           ###   ########.fr       */
+/*   Updated: 2016/06/30 18:01:24 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,22 @@ void	create_mat_conf(t_map *map, GtkWidget *onglet)
 void	add_rotate_bar(GtkWidget *interface, t_map *map)
 {
 	GtkWidget *box;
-	GtkWidget *tmpbox;
-	GtkWidget *scroll;
-	GtkWidget *apply;
+	//GtkWidget *tmpbox;
+	//GtkWidget *scroll;
+	//GtkWidget *apply;
 
-	box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+	box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+	add_rotate_scroll_bar(box, "x :", map);
+	add_rotate_scroll_bar(box, "y :", map);
+	add_rotate_scroll_bar(box, "z :", map);
+	/*
 	tmpbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
 	scroll = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 180, 0.5);
 	gtk_box_pack_start(GTK_BOX(tmpbox), GTK_WIDGET(gtk_label_new("alpha")), FALSE, TRUE, 10);
 	gtk_box_pack_start(GTK_BOX(tmpbox), GTK_WIDGET(scroll), TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(tmpbox), TRUE, TRUE, 5);
+	g_signal_connect(G_OBJECT(scroll), "value-changed",
+											G_CALLBACK(rotate_cone_cyl), map);
 	tmpbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
 	gtk_box_pack_start(GTK_BOX(tmpbox), GTK_WIDGET(gtk_label_new("beta")), FALSE, TRUE, 10);
 	scroll = gtk_scale_new_with_range(GTK_ORIENTATION_VERTICAL, 0, 180, 0.5);
@@ -74,9 +80,9 @@ void	add_rotate_bar(GtkWidget *interface, t_map *map)
 	apply = gtk_button_new_with_label("Apply");
 	gtk_box_pack_start(GTK_BOX(tmpbox), GTK_WIDGET(apply), TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(tmpbox), TRUE, TRUE, 5);
+	*/
 	(void)map;
 	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(box), TRUE, TRUE, 5);
-
 }
 
 void	add_dep_bar(GtkWidget *interface, t_map *map)
