@@ -6,11 +6,28 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/18 17:14:53 by amathias          #+#    #+#             */
-/*   Updated: 2016/06/30 17:03:04 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/11 13:22:00 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt.h"
+
+
+void	update_inter(t_map *map, size_t work_size)
+{
+	int err;
+
+	if (map->env.clbuf.ray)
+		clReleaseMemObject(map->env.clbuf.ray);
+	if (map->env.clbuf.output)
+		clReleaseMemObject(map->env.clbuf.output);
+	map->env.clbuf.ray = clCreateBuffer(map->env.context, CL_MEM_READ_ONLY,
+	work_size * sizeof(t_ray), NULL, &err);
+	map->env.clbuf.output = clCreateBuffer(map->env.context, CL_MEM_WRITE_ONLY,
+	work_size * sizeof(t_inter), NULL, &err);
+	if (err < 0)
+		ft_putstr("Failed to update kernel with new work_size");
+}
 
 void	init_inter(t_map *map, size_t work_size)
 {
@@ -20,6 +37,7 @@ void	init_inter(t_map *map, size_t work_size)
 
 	i = 0;
 	env = map->env;
+	update_inter(map, work_size);
 	map->env.clbuf.shape = clCreateBuffer(env.context, CL_MEM_READ_ONLY
 			| CL_MEM_COPY_HOST_PTR, map->scene.nb_shape * sizeof(t_shape),
 			map->scene.shape, &err);
