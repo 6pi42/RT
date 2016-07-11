@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/30 17:05:07 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/11 14:47:38 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/11 16:29:50 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	rotate_cone_cyl(GtkWidget *widget, t_map *map)
 	cl_float4 save;
 
 
-	value = gtk_range_get_value(GTK_RANGE(widget));
+	//value = gtk_range_get_value(GTK_RANGE(widget));
 	value = -5;
 	save = map->obj_selected->axis;
 	new = map->obj_selected->axis;

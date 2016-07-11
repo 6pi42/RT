@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/18 17:14:53 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/11 13:22:00 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/11 16:17:08 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,27 @@ void	update_inter(t_map *map, size_t work_size)
 	int err;
 
 	if (map->env.clbuf.ray)
+	{
 		clReleaseMemObject(map->env.clbuf.ray);
+		map->env.clbuf.ray = NULL;
+	}
 	if (map->env.clbuf.output)
+	{
 		clReleaseMemObject(map->env.clbuf.output);
+		map->env.clbuf.output = NULL;
+	}
+	if (map->env.clbuf.shape)
+	{
+		clReleaseMemObject(map->env.clbuf.shape);
+		map->env.clbuf.shape = NULL;
+	}
 	map->env.clbuf.ray = clCreateBuffer(map->env.context, CL_MEM_READ_ONLY,
 	work_size * sizeof(t_ray), NULL, &err);
 	map->env.clbuf.output = clCreateBuffer(map->env.context, CL_MEM_WRITE_ONLY,
 	work_size * sizeof(t_inter), NULL, &err);
+	map->env.clbuf.shape = clCreateBuffer(map->env.context, CL_MEM_READ_ONLY
+			| CL_MEM_COPY_HOST_PTR, map->scene.nb_shape * sizeof(t_shape),
+			map->scene.shape, &err);
 	if (err < 0)
 		ft_putstr("Failed to update kernel with new work_size");
 }
@@ -38,13 +52,12 @@ void	init_inter(t_map *map, size_t work_size)
 	i = 0;
 	env = map->env;
 	update_inter(map, work_size);
-	map->env.clbuf.shape = clCreateBuffer(env.context, CL_MEM_READ_ONLY
-			| CL_MEM_COPY_HOST_PTR, map->scene.nb_shape * sizeof(t_shape),
-			map->scene.shape, &err);
+	/*
 	map->env.clbuf.ray = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
 			work_size * sizeof(t_ray), NULL, &err);
 	map->env.clbuf.output = clCreateBuffer(env.context, CL_MEM_WRITE_ONLY,
 			work_size * sizeof(t_inter) , NULL, &err);
+			*/
 	err = clSetKernelArg(env.kernel, 0, sizeof(cl_mem), &map->env.clbuf.output);
 	err |= clSetKernelArg(env.kernel, 1, sizeof(cl_mem), &map->env.clbuf.ray);
 	err |= clSetKernelArg(env.kernel, 2, sizeof(cl_mem), &map->env.clbuf.shape);
