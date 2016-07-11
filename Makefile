@@ -6,7 +6,7 @@
 #    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/06/30 17:25:05 by apaget           ###   ########.fr        #
+#    Updated: 2016/07/11 18:55:19 by apaget           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,7 +50,7 @@ OBJ = $(SRC:.c=.o)
 NAME = rt
 CC = gcc
 RM = rm -f
-CFLAGS = -Wall -Werror -Wextra -O3 `pkg-config --cflags gtk+-3.0`
+CFLAGS = -g -Wall -Werror -Wextra -O3 `pkg-config --cflags gtk+-3.0`
 
 LIB_PATH = ./libft/
 LIB_NAME = -lft -framework OpenCL -framework OpenGL -framework AppKit -lpthread

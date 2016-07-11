@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 03:37:42 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/11 16:39:24 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/11 16:47:35 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	add_rotate_bar(GtkWidget *interface, t_map *map)
 	add_rotate_scroll_bar(box, "z :", map);
 	
 	(void)map;
-	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(box), FALSE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(box), FALSE, FALSE, 5);
 }
 
 void	add_dep_bar(GtkWidget *interface, t_map *map)

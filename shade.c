@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/06/29 16:30:41 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/11 20:07:17 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ int		iter_spot(t_map *map, t_mat mat, t_utils utils, int color)
 	int i;
 
 	i = 0;
+	(void)mat;
 	while (i < map->scene.nb_spot)
 	{
 		// check shadow here
@@ -77,44 +78,38 @@ int		iter_spot(t_map *map, t_mat mat, t_utils utils, int color)
 	}
 	return (color);
 }
-/*
-void	shade(t_args *args)
-{
-	t_mat	mat;
-	t_utils utils;
-	int		mat_id;
-	int		i;
-	cl_float4 tmp;
-	int		*color;
 
-	color = (int*)malloc(sizeof(int) * (size_t)
-			(args->map->height * args->map->width));
+int		*apply_trans(t_map *map, t_inter *inter, int *color)
+{
+	int		i;
+	t_inter *tmp;
+	t_ray	*ray;
+
 	i = 0;
-	while (i < (int)(args->map->height * args->map->width))
+	if ((ray = (t_ray*)malloc(sizeof(t_ray) * (size_t)(map->height * map->width))) == NULL)
+		return NULL;
+	while (i < (int)(map->height * map->width))
 	{
-		color[i] = 0x000000;
-		mat_id = (int)args->map->scene.shape[args->inter[i].id].type.w;
-		if (mat_id >= 0 && mat_id < args->map->scene.nb_mat)
+		if (inter[i].id != -1)
 		{
-			utils.inter = args->inter[i];
-			utils.ray = args->ray[i];
-			utils.inter_pos = get_inter_pos(utils.ray, utils.inter);
-			mat = args->map->scene.mat[mat_id];
-			// to remove when shape.color == int
-			tmp = args->map->scene.shape[utils.inter.id].color;
-			color[i] += (int)(tmp.x * 256 * 256);
-			color[i] += (int)(tmp.y * 256);
-			color[i] += (int)(tmp.z);
-			// to here
-			color[i] = iter_spot(args->map, mat, utils, color[i]);
+			ray[i].origin = add_vec(inter[i].from.origin, scale_vec(inter[i].dist - 0.05f, inter[i].from.ray));
+			ray[i].ray = sub_vec(map->scene.spot[0].pos, add_vec(inter[i].from.origin, scale_vec(inter[i].dist, inter[i].from.ray)));
+			normalize_vec(&ray[i].ray);
 		}
-		draw_pixel_to_image(args->map, i % (int)args->map->width,
-				i / (int)args->map->width, color[i]);
 		i++;
 	}
-	free(color);
+	tmp = get_inter(map, map->height * map->width, ray);
+	i = 0;
+	while (i < (int)(map->height * map->width))
+	{
+		if (inter[i].id != -1 && tmp[i].id != -1 && inter[i].id != tmp[i].id  && map->scene.shape[tmp[i].id].mat.krefrac != 0)
+		{
+			color[i] = color_add(color[i], color_mul(color_from_float4(map->scene.shape[tmp[i].id].color), map->scene.shape[tmp[i].id].mat.krefrac / 3));
+		}
+		i++;
+	}
+	return (color);
 }
-*/
 int		*shade(t_map *map, t_inter *inter)
 {
 	t_utils utils;
@@ -128,7 +123,7 @@ int		*shade(t_map *map, t_inter *inter)
 	i = 0;
 	while (i < (int)(map->height * map->width))
 	{
-		color[i] = 0x000000;
+		color[i] = 0x0;
 		if (inter[i].id != -1)
 		{
 			utils.inter = inter[i];
@@ -143,5 +138,6 @@ int		*shade(t_map *map, t_inter *inter)
 		}
 		i++;
 	}
+	color = apply_trans(map, inter, color);
 	return (color);
 }

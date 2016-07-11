@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/06/30 14:19:43 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/11 20:02:40 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,8 @@ int		main(int argc, char **argv)
 	mat.krefrac	= 0.0f;
 	// Same	
 	spot.type = 1;
-	spot.pos.x = 50.0f;
-	spot.pos.y = 200.0f;
+	spot.pos.x = 10.0f;
+	spot.pos.y = 10.0f;
 	spot.pos.z = 10.0f;
 	spot.pos.w = 0.0f;
 	spot.color = 0xFFFFFF;
@@ -83,15 +83,9 @@ int		main(int argc, char **argv)
 	int *tex = get_perl_tex(512, 512, 100);
 
 	(void)tex;
-	int i;
-	for (i = 0; i < 512*512; i++) {
-		printf("%d ", tex[i]);
-		if (i % 512 == 0)
-			printf("\n");
-	}
 	map.free_cam.pos.x = 20.0f;
 	map.free_cam.pos.y = 20.0f;
-	map.free_cam.pos.z = 20.0f;
+	map.free_cam.pos.z = -20.0f;
 	map.scene.max_depth = 0;
 	map.scene.shape = shape;
 	map.scene.cam = &cam;
