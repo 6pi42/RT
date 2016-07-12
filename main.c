@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/11 20:33:25 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/12 14:46:57 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ int		main(int argc, char **argv)
 	map.scene.cam = &cam;
 	map.scene.spot = &spot;
 	map.scene.nb_spot = 1;
-	map.scene.mat = &mat;
 	map.obj_selected = NULL;
 	map.scene.nb_mat = 1;
 

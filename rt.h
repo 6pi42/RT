@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 12:02:06 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/12 14:47:14 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,24 @@
 # include <unistd.h>
 # include "libft.h"
 #include <stdio.h>
+
+
+typedef struct	s_bil
+{
+	int			x1;
+	int			y1;
+	int			x2;
+	int			y2;
+	float		fractx;
+	float		fracty;
+}				t_bil;
+
+typedef struct	s_tex
+{
+	int			h;
+	int			w;
+	int			*buffer;
+}				t_tex;
 
 typedef	struct	s_ray
 {
@@ -45,6 +63,8 @@ typedef	struct	s_mat
 	float		kreflec;
 	float		krefrac;
 	double		indice;
+	t_tex 		*tex;
+	t_tex		*bump;
 }				t_mat;
 
 typedef struct	s_clbuf
@@ -89,7 +109,6 @@ typedef struct	s_scene
 	t_shape 	*shape;
 	t_spot		*spot;
 	int			nb_spot;
-	t_mat		*mat;
 	int			nb_mat;
 }				t_scene;
 
@@ -208,110 +227,129 @@ typedef struct		s_perlin
 	int			yy;
 }				t_perlin;
 
-void	draw_pixel_to_image(t_map *map, int x, int y, int c);
-void	draw(t_map *map);
-void	ocl_init(t_env *env, t_prog prog);
-t_prog	get_prog(char *file_name);
-int		key_hook(int keycode, t_map *map);
-int		loop_hook(t_map *map);
-void	move(t_map *map);
-void	rotate(t_map *map);
-void	init_key(t_map *map);
-int		key_release(GtkWidget *widget, GdkEventKey *event, t_map *map);
-int		key_press(GtkWidget *widget, GdkEventKey *event, t_map *map);
+void		draw_pixel_to_image(t_map *map, int x, int y, int c);
+void		draw(t_map *map);
+
+void		ocl_init(t_env *env, t_prog prog);
+t_prog		get_prog(char *file_name);
+
+int			key_hook(int keycode, t_map *map);
+int			loop_hook(t_map *map);
+void		move(t_map *map);
+void		rotate(t_map *map);
+void		init_key(t_map *map);
+int			key_release(GtkWidget *widget, GdkEventKey *event, t_map *map);
+int			key_press(GtkWidget *widget, GdkEventKey *event, t_map *map);
+void		motion_notify(GtkWidget *widget, GdkEventMotion *event, t_map *map);
+
 cl_float4	sub_vec(cl_float4 v1, cl_float4 v2);
 cl_float4	add_vec(cl_float4 v1, cl_float4 v2);
 cl_float4	mult_vec(cl_float4 v1, cl_float4 v2);
 cl_float4	cross_vec(cl_float4 v1, cl_float4 v2);
-double	len_vec(cl_float4 v1);
+double		len_vec(cl_float4 v1);
 cl_float4	scale_vec(double fact, cl_float4 v1);
-void	normalize_vec(cl_float4 *v1);
-double	docl_float4(cl_float4 v1, cl_float4 v2);
-double	dis_point(cl_float4 pt1, cl_float4 pt2);
+void		normalize_vec(cl_float4 *v1);
+double		docl_float4(cl_float4 v1, cl_float4 v2);
+double		dis_point(cl_float4 pt1, cl_float4 pt2);
 cl_float4	neg_vec(cl_float4 vec);
-void	vector_from_angle(t_cam *cam);
-void	update_cam(t_cam *cam, t_key *key, t_map *map);
-void	init_cam(t_map *map);
-int		color_mul(int color, float coef);
-int		color_add(int c1, int c2);
-int		color_sub(int c1, int c2);
+void		vector_from_angle(t_cam *cam);
+
+void		update_cam(t_cam *cam, t_key *key, t_map *map);
+void		init_cam(t_map *map);
+
+int			color_mul(int color, float coef);
+int			color_add(int c1, int c2);
+int			color_sub(int c1, int c2);
+
+void		raytracer(t_map *map);
 cl_float4	get_inter_pos(t_ray ray, t_inter inter);
-void	raytrace(t_map *map);
-int		*shade(t_map *map, t_inter *inter);
-//void	shade(t_args *args);
-t_ray	*get_primary(t_map *map);
-void	init_inter(t_map *map, size_t work_size);
-t_inter	*get_inter(t_map *map, size_t work_size, t_ray *ray);
-int		*shadow(t_map *map, t_inter *inter, t_ray *primary);
-void	motion_notify(GtkWidget *widget, GdkEventMotion *event, t_map *map);
-void	write_bitmap(t_map *map);
-int		ft_strsearch(char *str1, char *str2);
-t_shape	*parse(t_map *map, char *file);
-float	atoi_double(char *line);
-void	get_sphere(int fd, t_shape *shape);
-void	get_plane(int fd, t_shape *shape);
-void	get_ellipsoid(int fd, t_shape *shape);
-void	get_cylinder(int fd, t_shape *shape);
-void	get_cone(int fd, t_shape *shape);
-int		get_number(char *file, char *shape_name);
-int		get_nb_shape(char *file);
-void	get_window(int fd, t_map *map);
-void	get_spotlight(int fd, t_map *map);
-void	get_multi_sampling(int fd, t_map *map);
-void	get_triangle(int fd, t_shape *shape);
-void	get_cube(int fd, t_shape *shape);
-void	get_cercle(int fd, t_shape *shape);
-void	click_mult_sampling_button(GtkWidget *widget, t_map *map);
-void	sampling_bar(GtkWidget *widget, t_map *map);
-void	choose_file(GtkWidget *widget, t_map *map);
-void	color_bare(GtkWidget *widget, t_map *map);
-void	moove_obj(GtkWidget *widget, t_map *map);
-void	add_color_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
-void	add_coef_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
-void	create_obj_interface(GtkWidget *interface, t_map *map);
-void	create_interface(t_map *map);
-void	update_old_pos(GtkWidget *widget, GdkEventCrossing *event, t_map *map);
-void	switch_focus(GtkWidget *widget, GdkEventButton *event, t_map *map);
-void	redraw(GtkWidget *widget, GdkEvent *event, t_map *map);
-void	set_obj_box(t_map *map);
-void	leave_event(GtkWidget *widget, GdkEventCrossing *event, t_map *map);
-void	free_scene(t_scene *scene);
-void	raytracer(t_map *map);
-void	init_cam(t_map *map);
-void	init_cam2(t_map *map);
-void	connect_signal_gtk(t_map *map);
-void	exit_rt(t_map *map);
-void	create_menu(GtkWidget *interface, t_map *map);
-void	max_depth_bar(GtkWidget *interface, t_map *map);
-void	menu_connect(GtkWidget *widget, t_map *map);
-void	scene_update(t_map *map);
-void	write_bitmap(t_map *map);
-void	set_css_style(t_map *map, char *css_file);
-void	load_new_scene(t_map *map, char *file_name);
-void	open_generateur_scene(t_map *map);
-int		color_from_float4(cl_float4 color);
-int		*get_color2(t_map *map, t_inter *inter, int *color, int depth);
-int		*get_reflect_color_tab(t_map *map, t_inter *inter, int *color, int depth);
-void	create_left_bar(GtkWidget *interface, t_map *map, GtkWidget *onglet);
-void	create_obj_interface(GtkWidget *interface, t_map *map);
-void	create_interface(t_map *map);
-void	create_sub_menu(GtkWidget *menu, t_map *map, char *label);
-void	create_menu(GtkWidget *interface, t_map *map);
-void	set_css_style(t_map *map, char *css_file);
-void	create_label(GtkWidget *interface, char *label_str);
-void	set_event(GtkWidget *event_box, t_map *map);
-void	create_multi_sampling_bar(GtkWidget *interface, t_map *map);
-void	create_max_depth_bar(GtkWidget *interface, t_map *map);
-void	add_sep(GtkWidget *interface);
+void		raytrace(t_map *map);
+int			*shade(t_map *map, t_inter *inter);
+t_ray		*get_primary(t_map *map);
+void		init_inter(t_map *map, size_t work_size);
+t_inter		*get_inter(t_map *map, size_t work_size, t_ray *ray);
+void		init_cam(t_map *map);
+void		init_cam2(t_map *map);
+int			*shadow(t_map *map, t_inter *inter, t_ray *primary);
+
+void		write_bitmap(t_map *map);
+t_tex		load_texture(char *file_name);
+int			color_add4(int c1, int c2, int c3, int c4);
+int			bilinear_filtering(t_tex *tex, float x, float y);
+t_tex		load_texture(char *file_name);
+cl_float4	get_bumped_normal(t_map *map, t_inter inter, t_shape shape,
+				cl_float4 inter_pos);
+cl_float4	plane_bumpmapping(t_tex *tex, t_inter inter, cl_float4 inter_pos);
+cl_float4	sphere_bumpmapping(t_tex *tex, t_inter inter);
+int			get_texture_color(t_map *map, t_inter inter, t_shape shape,
+				cl_float4 inter_pos);
+int			plane_texturing(t_tex *tex, t_inter inter, cl_float4 inter_pos);
+int			sphere_texturing(t_tex *tex, t_inter inter);
+
+int			ft_strsearch(char *str1, char *str2);
+t_shape		*parse(t_map *map, char *file);
+float		atoi_double(char *line);
+void		get_sphere(int fd, t_shape *shape);
+void		get_plane(int fd, t_shape *shape);
+void		get_ellipsoid(int fd, t_shape *shape);
+void		get_cylinder(int fd, t_shape *shape);
+void		get_cone(int fd, t_shape *shape);
+int			get_number(char *file, char *shape_name);
+int			get_nb_shape(char *file);
+void		get_window(int fd, t_map *map);
+void		get_spotlight(int fd, t_map *map);
+void		get_multi_sampling(int fd, t_map *map);
+void		get_triangle(int fd, t_shape *shape);
+void		get_cube(int fd, t_shape *shape);
+void		get_cercle(int fd, t_shape *shape);
 cl_float4	get_position(char *line);
 cl_float4	get_vector(char *line);
 cl_float4	get_rgb(char *line);
 cl_float4	get_radius(char *line);
+
+void		click_mult_sampling_button(GtkWidget *widget, t_map *map);
+void		sampling_bar(GtkWidget *widget, t_map *map);
+void		choose_file(GtkWidget *widget, t_map *map);
+void		color_bare(GtkWidget *widget, t_map *map);
+void		moove_obj(GtkWidget *widget, t_map *map);
+void		add_color_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
+void		add_coef_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
+void		create_obj_interface(GtkWidget *interface, t_map *map);
+void		create_interface(t_map *map);
+void		update_old_pos(GtkWidget *widget, GdkEventCrossing *event, t_map *map);
+void		switch_focus(GtkWidget *widget, GdkEventButton *event, t_map *map);
+void		redraw(GtkWidget *widget, GdkEvent *event, t_map *map);
+void		set_obj_box(t_map *map);
+void		leave_event(GtkWidget *widget, GdkEventCrossing *event, t_map *map);
+void		free_scene(t_scene *scene);
+void		connect_signal_gtk(t_map *map);
+void		exit_rt(t_map *map);
+void		create_menu(GtkWidget *interface, t_map *map);
+void		max_depth_bar(GtkWidget *interface, t_map *map);
+void		menu_connect(GtkWidget *widget, t_map *map);
+void		scene_update(t_map *map);
+void		write_bitmap(t_map *map);
+void		set_css_style(t_map *map, char *css_file);
+void		load_new_scene(t_map *map, char *file_name);
+void		open_generateur_scene(t_map *map);
+int			color_from_float4(cl_float4 color);
+int			*get_color2(t_map *map, t_inter *inter, int *color, int depth);
+int			*get_reflect_color_tab(t_map *map, t_inter *inter, int *color, int depth);
+void		create_left_bar(GtkWidget *interface, t_map *map, GtkWidget *onglet);
+void		create_obj_interface(GtkWidget *interface, t_map *map);
+void		create_interface(t_map *map);
+void		create_sub_menu(GtkWidget *menu, t_map *map, char *label);
+void		create_menu(GtkWidget *interface, t_map *map);
+void		set_css_style(t_map *map, char *css_file);
+void		create_label(GtkWidget *interface, char *label_str);
+void		set_event(GtkWidget *event_box, t_map *map);
+void		create_multi_sampling_bar(GtkWidget *interface, t_map *map);
+void		create_max_depth_bar(GtkWidget *interface, t_map *map);
+void		add_sep(GtkWidget *interface);
 int			*get_perl_tex(int height, int width, float res);
-void	add_moove_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
-void	add_rotate_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
-void	rotate_cone_cyl(GtkWidget *widget, t_map *map);
-void	rotate_cone_cyl(GtkWidget *widget, t_map *map);
-void	rotate_obj(GtkWidget *widget, t_map *map);
+void		add_moove_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
+void		add_rotate_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
+void		rotate_cone_cyl(GtkWidget *widget, t_map *map);
+void		rotate_obj(GtkWidget *widget, t_map *map);
 
 #endif

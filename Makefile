@@ -6,44 +6,47 @@
 #    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/07/11 18:55:19 by apaget           ###   ########.fr        #
+#    Updated: 2016/07/12 13:46:41 by amathias         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 INC = /
 
-SRC =	main.c			\
-		get_inter.c		\
-		get_primary.c	\
-		mat_eval.c		\
-		gtk_build_bar.c	\
-		shade.c			\
-		perlin2.c		\
-		gtk_build_menu.c\
-		gtk_call_bar.c	\
-		gtk_call_mouse.c\
-		raytrace.c		\
-		rotate_obj.c	\
-		shadow.c		\
-		inter_utils.c	\
-		cl_utils.c		\
-		hook.c			\
-		vec_calc.c		\
-		vec_calc2.c		\
-		free_cam.c		\
-		move.c			\
-		parser.c		\
-		get_shape.c		\
-		get_scene.c		\
-		get_tools.c		\
-		bitmap_writer.c	\
-		color.c			\
-		free_scene.c	\
-		signal_fct.c	\
-		gtk_build.c		\
-		gtk_button.c	\
-		gtk_callback.c	\
-		gtk_conect_interface.c	\
+SRC =	main.c				\
+		get_inter.c			\
+		get_primary.c		\
+		mat_eval.c			\
+		gtk_build_bar.c		\
+		shade.c				\
+		perlin2.c			\
+		gtk_build_menu.c	\
+		gtk_call_bar.c		\
+		gtk_call_mouse.c	\
+		raytrace.c			\
+		rotate_obj.c		\
+		shadow.c			\
+		inter_utils.c		\
+		cl_utils.c			\
+		hook.c				\
+		vec_calc.c			\
+		vec_calc2.c			\
+		free_cam.c			\
+		move.c				\
+		parser.c			\
+		get_shape.c			\
+		get_scene.c			\
+		get_tools.c			\
+		bitmap_writer.c		\
+		color.c				\
+		free_scene.c		\
+		signal_fct.c		\
+		texture_loading.c	\
+		texturing.c			\
+		bump_mapping.c		\
+		gtk_build.c			\
+		gtk_button.c		\
+		gtk_callback.c		\
+		gtk_connect.c		\
 		
 
 OBJ = $(SRC:.c=.o)
