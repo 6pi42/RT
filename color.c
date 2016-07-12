@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/25 10:21:01 by amathias          #+#    #+#             */
-/*   Updated: 2016/06/09 22:37:53 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/12 12:00:47 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,20 @@ int		color_mul(int color, float coef)
 	return (red << 16 | green << 8 | blue);
 }
 
+int		color_sub(int c1, int c2)
+{
+	int	red;
+	int green;
+	int blue;
+
+	red = (((c1 & 0xFF0000) >> 16) - ((c2 & 0xFF0000) >> 16));
+	green = (((c1 & 0xFF00) >> 8) - ((c2 & 0xFF00) >> 8));
+	blue = ((c1 & 0xFF) - (c2 & 0xFF));
+	red = red < 0x0 ? 0x0 : red;
+	green = green < 0x0 ? 0x0 : green;
+	blue = blue < 0x0 ? 0x0 : blue;
+	return (red << 16 | green << 8 | blue);
+}
 int		color_add(int c1, int c2)
 {
 	int	red;

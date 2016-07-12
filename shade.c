@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 11:49:56 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/12 13:21:28 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,10 @@ int		iter_spot(t_map *map, t_mat mat, t_utils utils, int color)
 	return (color);
 }
 
-int		*apply_trans(t_map *map, t_inter *inter, int *color)
+t_ray *prep_ray_trans(t_map *map, t_inter *inter)
 {
-	int		i;
-	t_inter *tmp;
 	t_ray	*ray;
+	int		i;
 
 	i = 0;
 	if ((ray = (t_ray*)malloc(sizeof(t_ray) * (size_t)(map->height * map->width))) == NULL)
@@ -92,19 +91,32 @@ int		*apply_trans(t_map *map, t_inter *inter, int *color)
 	{
 		if (inter[i].id != -1)
 		{
-			ray[i].origin =  map->scene.spot[0].pos;//add_vec(inter[i].from.origin, scale_vec(inter[i].dist - 0.05f, inter[i].from.ray));
+			ray[i].origin =  map->scene.spot[0].pos;
 			ray[i].ray = sub_vec(add_vec(inter[i].from.origin, scale_vec(inter[i].dist, inter[i].from.ray)), map->scene.spot[0].pos);
 			normalize_vec(&ray[i].ray);
 		}
 		i++;
 	}
+	return (ray);
+}
+
+int		*apply_trans(t_map *map, t_inter *inter, int *color)
+{
+	int		i;
+	t_inter *tmp;
+	t_ray	*ray;
+
+	i = 0;
+	
+	if ((ray = prep_ray_trans(map, inter)) == NULL)
+		return (color);
 	tmp = get_inter(map, map->height * map->width, ray);
 	i = 0;
 	while (i < (int)(map->height * map->width))
 	{
 		if (inter[i].id != -1 && tmp[i].id != -1 && inter[i].id != tmp[i].id  && map->scene.shape[tmp[i].id].mat.krefrac != 0)
 		{
-			color[i] = color_add(color[i], color_mul(color_from_float4(map->scene.shape[tmp[i].id].color), map->scene.shape[tmp[i].id].mat.krefrac / 3));
+			color[i] = color_sub(color[i], color_mul(color_from_float4(map->scene.shape[tmp[i].id].color), map->scene.shape[tmp[i].id].mat.krefrac / 2));
 		}
 		i++;
 	}

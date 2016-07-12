@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/11 17:34:12 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/12 12:02:06 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,6 +234,7 @@ void	update_cam(t_cam *cam, t_key *key, t_map *map);
 void	init_cam(t_map *map);
 int		color_mul(int color, float coef);
 int		color_add(int c1, int c2);
+int		color_sub(int c1, int c2);
 cl_float4	get_inter_pos(t_ray ray, t_inter inter);
 void	raytrace(t_map *map);
 int		*shade(t_map *map, t_inter *inter);
