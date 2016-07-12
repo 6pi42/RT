@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/11 20:02:40 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/11 20:33:25 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,9 @@ int		main(int argc, char **argv)
 	mat.krefrac	= 0.0f;
 	// Same	
 	spot.type = 1;
-	spot.pos.x = 10.0f;
-	spot.pos.y = 10.0f;
-	spot.pos.z = 10.0f;
+	spot.pos.x = 100.0f;
+	spot.pos.y = 1000.0f;
+	spot.pos.z = 100.0f;
 	spot.pos.w = 0.0f;
 	spot.color = 0xFFFFFF;
 	spot.intensity = 42.0f;

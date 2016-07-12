@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/11 20:07:17 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/12 11:49:56 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,8 @@ int		*apply_trans(t_map *map, t_inter *inter, int *color)
 	{
 		if (inter[i].id != -1)
 		{
-			ray[i].origin = add_vec(inter[i].from.origin, scale_vec(inter[i].dist - 0.05f, inter[i].from.ray));
-			ray[i].ray = sub_vec(map->scene.spot[0].pos, add_vec(inter[i].from.origin, scale_vec(inter[i].dist, inter[i].from.ray)));
+			ray[i].origin =  map->scene.spot[0].pos;//add_vec(inter[i].from.origin, scale_vec(inter[i].dist - 0.05f, inter[i].from.ray));
+			ray[i].ray = sub_vec(add_vec(inter[i].from.origin, scale_vec(inter[i].dist, inter[i].from.ray)), map->scene.spot[0].pos);
 			normalize_vec(&ray[i].ray);
 		}
 		i++;
