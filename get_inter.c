@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/18 17:14:53 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/11 16:17:08 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/12 17:15:01 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,10 @@ t_inter	*get_inter(t_map *map, size_t work_size, t_ray *ray)
 	cl_ulong	time_start;
 	cl_ulong	time_end;
 	double		total_time;
+	int i = 0;
+	for (i = 0; i < (int)work_size; i++) {
+		//printf("%f %f %f\n", ray[i].ray.x, ray[i].ray.y,ray[i].ray.z);
+	}
 
 	ptr = (t_inter*)malloc(sizeof(t_inter) * work_size);
 	init_cam(map);

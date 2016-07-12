@@ -473,6 +473,7 @@ __kernel void intersect(__global t_inter *out, __global t_ray* ray,
 	global_addr = get_global_id(0);
 
 	r = ray[global_addr];
+	//printf("%f %f %f\n", r.dir.x, r.dir.y, r.dir.z);
 	inter.dist = -1.0f;
 	inter.normal = (float4)(0.0f, 0.0f, 0.0f ,0.0f);
 	if (fast_length(r.dir) != 0.0f)

@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 16:22:19 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/12 16:42:47 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,7 @@ int		*shade(t_map *map, t_inter *inter)
 		color[i] = 0x0;
 		if (inter[i].id != -1)
 		{
+			printf("%d \n", inter[i].id);
 			utils.inter = inter[i];
 			utils.ray = inter[i].from;
 			utils.inter_pos = get_inter_pos(utils.ray, utils.inter);
