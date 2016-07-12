@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/28 13:19:27 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 16:16:46 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/13 00:36:33 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,12 @@ int 	get_texture_color(t_map *map, t_inter inter, t_shape shape,
 {
 	int		color;
 	t_tex 	*tex;
+	t_tex 	tex2;
 
-	tex = map->scene.mat[shape.mat_id].tex;
+	tex2 =  load_texture("bois.jpg");
+
+	(void)map;
+	tex = &tex2;//map->scene.mat[shape.mat_id].tex;
 	color = color_from_float4(shape.color);
 	if (tex)
 	{

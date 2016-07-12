@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 16:42:47 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 01:15:13 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,24 @@ int		*apply_trans(t_map *map, t_inter *inter, int *color)
 	}
 	return (color);
 }
+
+int		apply_tex(t_map *map, t_inter inter)
+{
+	t_tex tmp = load_texture("bois.jpg");
+
+	if (map->scene.shape[inter.id].type.x == 2)
+	{
+		map->scene.mat[map->scene.shape[inter.id].mat_id].tex = &tmp;
+	}
+	else
+		return 0xFFFFFF;
+	if (map->scene.mat[map->scene.shape[inter.id].mat_id].tex)
+	{
+		return (get_texture_color(map, inter, map->scene.shape[inter.id], get_inter_pos(inter.from, inter)));
+	}
+	return 0xFFFFFF;
+}
+
 int		*shade(t_map *map, t_inter *inter)
 {
 	t_utils utils;
@@ -140,12 +158,13 @@ int		*shade(t_map *map, t_inter *inter)
 		color[i] = 0x0;
 		if (inter[i].id != -1)
 		{
-			printf("%d \n", inter[i].id);
+			//printf("%d \n", inter[i].id);
 			utils.inter = inter[i];
 			utils.ray = inter[i].from;
 			utils.inter_pos = get_inter_pos(utils.ray, utils.inter);
 			// to remove when shape.color == int
 			tmp = map->scene.shape[inter[i].id].color;
+	//		color[i] = apply_tex(map, inter[i]);
 			color[i] += (int)(tmp.x * 256 * 256);
 			color[i] += (int)(tmp.y * 256);
 			color[i] += (int)(tmp.z);

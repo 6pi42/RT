@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/02 15:34:48 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 17:27:33 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/12 23:41:41 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@ void	init_key(t_map *map)
 void	motion_notify(GtkWidget *widget, GdkEventMotion *event, t_map *map)
 {
 	(void)widget;
-	printf("wesh alors\n");
-	map->fix = 0;
 	if (!map->fix)
 	{
 		map->free_cam.sensitivity = 1.0f;

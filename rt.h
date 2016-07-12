@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 16:23:42 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/13 01:03:03 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +74,12 @@ typedef struct	s_clbuf
 	cl_mem		shape;
 }				t_clbuf;
 
-typedef struct	s_fps
+typedef struct		s_fps
 {
 	double			frames;
 	struct timeval	start;
 	struct timeval	end;
-}				t_fps;
+}					t_fps;
 
 typedef struct	s_shape
 {
@@ -196,7 +196,8 @@ typedef struct	s_map
 	t_shape		*obj_selected;
 	float		height;
 	float		width;
-	int fix;
+	int			fix;
+	int			spoti;
 }				t_map;
 
 typedef struct	s_prog
@@ -227,6 +228,15 @@ typedef struct		s_perlin
 	int			xx;
 	int			yy;
 }				t_perlin;
+
+typedef struct	s_parse
+{
+	t_map		*map;
+	t_shape		*shape;
+	int			nb;
+	int			nb_mat;
+}				t_parse;
+
 
 void		draw_pixel_to_image(t_map *map, int x, int y, int c);
 void		draw(t_map *map);
@@ -290,23 +300,31 @@ int			sphere_texturing(t_tex *tex, t_inter inter);
 int			ft_strsearch(char *str1, char *str2);
 t_shape		*parse(t_map *map, char *file);
 float		atoi_double(char *line);
-void		get_sphere(int fd, t_shape *shape);
-void		get_plane(int fd, t_shape *shape);
-void		get_ellipsoid(int fd, t_shape *shape);
-void		get_cylinder(int fd, t_shape *shape);
-void		get_cone(int fd, t_shape *shape);
+
+
+void	get_sphere(int fd, t_parse *fuck);
+void	get_ellipsoid(int fd, t_parse *fuck);
+void	get_plane(int fd, t_parse *fuck);
+void	get_cone(int fd, t_parse *fuck);
+void	get_cylinder(int fd, t_parse *fuck);
+void	get_triangle(int fd, t_parse *fuck);
+void	get_thorus(int fd, t_parse *fuck);
+void	get_cercle(int fd, t_parse *fuck);
+cl_float4	get_radius2(char *line);
+
+
 int			get_number(char *file, char *shape_name);
 int			get_nb_shape(char *file);
 void		get_window(int fd, t_map *map);
 void		get_spotlight(int fd, t_map *map);
 void		get_multi_sampling(int fd, t_map *map);
-void		get_triangle(int fd, t_shape *shape);
-void		get_cube(int fd, t_shape *shape);
-void		get_cercle(int fd, t_shape *shape);
 cl_float4	get_position(char *line);
 cl_float4	get_vector(char *line);
 cl_float4	get_rgb(char *line);
 cl_float4	get_radius(char *line);
+void		get_camera(int fd, t_map *map);
+int			get_rgb_int(char *line);
+void	get_material(int fd, t_parse *fuck);
 
 void		click_mult_sampling_button(GtkWidget *widget, t_map *map);
 void		sampling_bar(GtkWidget *widget, t_map *map);
