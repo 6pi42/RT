@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 14:39:36 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/12 16:22:19 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,12 @@ static int	get_color(t_map *map, t_mat mat, t_utils utils, int color)
 	t_spot spot;
 	int diffuse;
 	int spec;
-	(void)mat;
-
-	spec = 0;
+	
 	diffuse = color;
 	spot = map->current_spot;
 	spec = color_mul(spot.color,
-			spec_light(spot, utils.inter, utils.ray, utils.inter_pos) * map->scene.shape[utils.inter.id].mat.ks);
-	diffuse = color_mul(color, map->scene.shape[utils.inter.id].mat.kd * diffuse_lighting(spot, utils.inter.normal, utils.inter_pos));
+	spec_light(spot, utils.inter, utils.ray, utils.inter_pos) * mat.ks);
+	diffuse = color_mul(color, 1.0f/*mat.kd*/ * diffuse_lighting(spot, utils.inter.normal, utils.inter_pos));
 	return (color_add(spec, color_mul(diffuse, 1)));
 }
 
@@ -71,6 +69,7 @@ int		iter_spot(t_map *map, t_mat mat, t_utils utils, int color)
 		// check shadow here
 		if (utils.inter.id != -1)
 		{
+			mat = map->scene.mat[map->scene.shape[utils.inter.id].mat_id];
 			map->current_spot = map->scene.spot[i];
 			color = get_color(map, mat, utils, color);
 		}
@@ -114,9 +113,12 @@ int		*apply_trans(t_map *map, t_inter *inter, int *color)
 	i = 0;
 	while (i < (int)(map->height * map->width))
 	{
-		if (inter[i].id != -1 && tmp[i].id != -1 && inter[i].id != tmp[i].id  && map->scene.shape[tmp[i].id].mat.krefrac != 0)
+		if (inter[i].id != -1 && tmp[i].id != -1 && inter[i].id != tmp[i].id
+		&& map->scene.mat[map->scene.shape[tmp[i].id].mat_id].krefrac != 0)
 		{
-			color[i] = color_sub(color[i], color_mul(color_from_float4(map->scene.shape[tmp[i].id].color), map->scene.shape[tmp[i].id].mat.krefrac / 2));
+			color[i] = color_sub(color[i],
+				color_mul(color_from_float4(map->scene.shape[tmp[i].id].color),
+				map->scene.mat[map->scene.shape[tmp[i].id].mat_id].krefrac / 2));
 		}
 		i++;
 	}

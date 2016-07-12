@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 11:02:39 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/11 17:25:48 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/12 15:21:58 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ t_ray	*get_secondaries(t_map *map, t_inter *inter, t_ray *ray, int type)
 		{
 			if (type == 1)
 				secondaries[i] = get_refract_ray(inter[i], inter[i].from,
-						map->scene.shape[inter[i].id].mat.indice);
+				map->scene.mat[map->scene.shape[inter[i].id].mat_id].indice);
 			else
 				secondaries[i] = get_reflec_ray(inter[i], inter[i].from);
 		}
@@ -86,6 +86,7 @@ t_ray	*get_secondaries(t_map *map, t_inter *inter, t_ray *ray, int type)
 
 int		*end_recursion(t_map *map, int *reflec, int *refract, t_inter *inter)
 {
+	t_mat mat;
 	int i;
 	int	*color;
 
@@ -94,9 +95,11 @@ int		*end_recursion(t_map *map, int *reflec, int *refract, t_inter *inter)
 	while (i < map->height * map->width)
 	{
 		if (inter[i].id != -1)
+		{
+			mat = map->scene.mat[map->scene.shape[inter[i].id].mat_id];
 			color[i] = color_add(color_add(color[i], color_mul(reflec[i],
-			map->scene.shape[inter[i].id].mat.kreflec)), color_mul(refract[i],
-			map->scene.shape[inter[i].id].mat.krefrac));
+				mat.kreflec)), color_mul(refract[i], mat.krefrac));
+		}
 		i++;
 	}
 	if (reflec)

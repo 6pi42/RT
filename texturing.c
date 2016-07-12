@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/28 13:19:27 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 14:42:58 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/12 16:16:46 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,8 +118,7 @@ int 	get_texture_color(t_map *map, t_inter inter, t_shape shape,
 	int		color;
 	t_tex 	*tex;
 
-	(void)map;
-	tex = shape.mat.tex;
+	tex = map->scene.mat[shape.mat_id].tex;
 	color = color_from_float4(shape.color);
 	if (tex)
 	{

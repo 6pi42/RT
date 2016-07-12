@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 02:48:16 by apaget            #+#    #+#             */
-/*   Updated: 2016/06/30 18:01:22 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/12 16:10:19 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@ void	max_depth_bar(GtkWidget *widget, t_map *map)
 
 void	color_bare(GtkWidget *widget, t_map *map)
 {
+	t_mat *mat;
+
+	mat = &map->scene.mat[map->obj_selected->mat_id];
 	if (ft_strsearch("R :", (char*)gtk_widget_get_name(widget)) != -1)
 		map->obj_selected->color.x = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("G :", (char*)gtk_widget_get_name(widget)) != -1)
@@ -30,17 +33,17 @@ void	color_bare(GtkWidget *widget, t_map *map)
 	else if (ft_strsearch("B :", (char*)gtk_widget_get_name(widget)) != -1)
 		map->obj_selected->color.z = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("Ka :", (char*)gtk_widget_get_name(widget)) != -1)
-		map->obj_selected->mat.ka = gtk_range_get_value(GTK_RANGE(widget));
+		mat->ka = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("Ks :", (char*)gtk_widget_get_name(widget)) != -1)
-		map->obj_selected->mat.ks = gtk_range_get_value(GTK_RANGE(widget));
+		mat->ks = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("Kd :", (char*)gtk_widget_get_name(widget)) != -1)
-		map->obj_selected->mat.kd = gtk_range_get_value(GTK_RANGE(widget));
+		mat->kd = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("kre :", (char*)gtk_widget_get_name(widget)) != -1)
-		map->obj_selected->mat.kreflec = gtk_range_get_value(GTK_RANGE(widget));
+		mat->kreflec = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("kra :", (char*)gtk_widget_get_name(widget)) != -1)
-		map->obj_selected->mat.krefrac = gtk_range_get_value(GTK_RANGE(widget));
+		mat->krefrac = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("indice :", (char*)gtk_widget_get_name(widget)) != -1)
-		map->obj_selected->mat.indice = gtk_range_get_value(GTK_RANGE(widget)) / 2;
+		mat->indice = gtk_range_get_value(GTK_RANGE(widget)) / 2;
 	draw(map);
 }
 

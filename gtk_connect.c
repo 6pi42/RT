@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 02:40:29 by apaget            #+#    #+#             */
-/*   Updated: 2016/06/29 16:18:20 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/12 16:21:51 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,15 @@ void		connect_scroll_bar(t_map *map, char *name, float value)
 
 void		set_obj_box(t_map *map)
 {
+	t_mat *mat;
 	if (map->obj_selected != NULL)
 	{
+		mat = &map->scene.mat[map->obj_selected->mat_id];	
 		connect_scroll_bar(map, "R :", map->obj_selected->color.x);
 		connect_scroll_bar(map, "G :", map->obj_selected->color.y);
 		connect_scroll_bar(map, "B :", map->obj_selected->color.z);
-		connect_scroll_bar(map, "Ka :", map->obj_selected->mat.ka);
-		connect_scroll_bar(map, "Ks :", map->obj_selected->mat.ks);
-		connect_scroll_bar(map, "Kd :", map->obj_selected->mat.kd);
+		connect_scroll_bar(map, "Ka :", mat->ka);
+		connect_scroll_bar(map, "Ks :", mat->ks);
+		connect_scroll_bar(map, "Kd :", mat->kd);
 	}
 }

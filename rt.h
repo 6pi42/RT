@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 14:47:14 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/12 16:23:42 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,8 @@ typedef struct	s_shape
 	cl_float4	radius;
 	cl_float4	color;
 	cl_float4	axis;
-	t_mat		mat;
 	cl_float4	axe_decoupe;
+	cl_int		mat_id;
 }				t_shape;
 
 typedef struct	s_camera
@@ -110,6 +110,7 @@ typedef struct	s_scene
 	t_spot		*spot;
 	int			nb_spot;
 	int			nb_mat;
+	t_mat		*mat;
 }				t_scene;
 
 typedef struct	s_img

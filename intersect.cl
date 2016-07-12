@@ -1,13 +1,3 @@
-typedef	struct	s_mat
-{
-	float		ka;
-	float		kd;
-	float		ks;
-	float		ktran;
-	float		kreflec;
-	float		krefrac;
-}				t_mat;
-
 typedef struct	s_ray
 {
 	float4		origin;
@@ -21,8 +11,8 @@ typedef struct s_shape
 	float4		radius;
 	float4		color;
 	float4		axis;
-	t_mat		mat;
 	float4		axe_decoupe;
+	int			mat_id;
 }				t_shape;
 
 typedef struct	s_inter
@@ -39,30 +29,6 @@ static void swap(float *a, float *b)
 	float tmp = *a;
 	*a = *b;
 	*b = tmp;
-}
-
-static float intersect_cube(t_ray *ray, t_shape obj)
-{
-	float tmin = (obj.radius.x - ray->origin.x) / ray->dir.x;
-	float tmax = (obj.pos.x - ray->origin.x) / ray->dir.x;
-	if (tmin > tmax)
-		swap(&tmin, &tmax);
-	float tymin = (obj.radius.y - ray->origin.y) / ray->dir.y;
-	float tymax = (obj.pos.y - ray->origin.y) / ray->dir.y;
-	if (tymin > tymax)
-		swap(&tymin, &tymax);
-	if ((tmin > tymax) || (tymin > tmax))
-		return -1;
-	tmin = fmax(tymin, tmin);
-	tmax = fmin(tymax, tmax);
-	float tzmin = (obj.radius.z - ray->origin.z) / ray->dir.z;
-	float tzmax = (obj.pos.z - ray->origin.z) / ray->dir.z;
-	if (tzmin > tzmax)
-		swap(&tzmin, &tzmax);
-	if ((tmin > tzmax) || (tzmin > tmax) || tmin <= 0)
-		return -1;
-	tmin = fmin(tzmin, tmin);
-	return (tmin);
 }
 
 bool intersect_disque(t_ray *ray, t_shape obj, float *t)

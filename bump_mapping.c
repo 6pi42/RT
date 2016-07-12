@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/30 10:25:39 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 14:08:17 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/12 16:18:03 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ cl_float4	get_bumped_normal(t_map *map, t_inter inter, t_shape shape,
 	cl_float4	normal;
 
 	(void)map;
-	tex = shape.mat.bump;
+	tex = map->scene.mat[shape.mat_id].tex;
 	normal = inter.normal;
 	if (tex)
 	{
