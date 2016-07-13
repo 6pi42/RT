@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:52:38 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/13 05:01:12 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 05:11:32 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,6 @@ void	get_plane(int fd, t_parse *fuck)
 			fuck->shape[fuck->nb].mat_id = ft_atoi(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "decoupe: ")) != -1)
 			fuck->shape[fuck->nb].axe_decoupe = get_vector(ft_strchr(line, ' ') + 1);
-		else if ((j = ft_strsearch(line, "neg: ")) != -1)
-			fuck->shape[fuck->nb].type.y = ft_atoi(ft_strchr(line, ' ') + 1);
 		free(line);
 		i++;
 	}
@@ -145,7 +143,7 @@ void	get_cone(int fd, t_parse *fuck)
 
 	i = -1;
 	init_shape(fuck);
-	while ((ret = get_next_line(fd, &line)) > 0 && ++i != 8)
+	while ((ret = get_next_line(fd, &line)) > 0 && ++i != 10)
 	{
 		fuck->shape[fuck->nb].type.x = 4.0f;
 		if ((j = ft_strsearch(line, "tex: ")) != -1)
@@ -228,8 +226,6 @@ void	get_triangle(int fd, t_parse *fuck)
 			fuck->shape[fuck->nb].axis = get_vector(line + j);
 		else if ((j = ft_strsearch(line, "id: ")) != -1)
 			fuck->shape[fuck->nb].mat_id = ft_atoi(ft_strchr(line, ' ') + 1);
-		else if ((j = ft_strsearch(line, "neg: ")) != -1)
-			fuck->shape[fuck->nb].type.y = ft_atoi(ft_strchr(line, ' ') + 1);
 		free(line);
 	}
 	if (ret == -1)
@@ -259,8 +255,6 @@ void	get_cercle(int fd, t_parse *fuck)
 			fuck->shape[fuck->nb].radius = get_radius(line + j);
 		else if ((j = ft_strsearch(line, "id: ")) != -1)
 			fuck->shape[fuck->nb].mat_id = ft_atoi(ft_strchr(line, ' ') + 1);
-		else if ((j = ft_strsearch(line, "neg: ")) != -1)
-			fuck->shape[fuck->nb].type.y = ft_atoi(ft_strchr(line, ' ') + 1);
 		free(line);
 	}
 	if (ret == -1)

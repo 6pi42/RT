@@ -84,14 +84,14 @@ SHAPES
 
 	- Cylinder
 	{
+		neg: 0
 		rgb: 190 190 0
 		pos: 0.0 0.0 200.0
 		dir: 0.0 1.0 0.0
 		rad: 50.0
 		nor: 0.0 0.0 1.0
-		decoupe: 1.0 0.0 0.0 1.0
+		decoupe: 0.0 0.0 0.0 0.0
 		id: 2
-		neg: 1
 	}
 
 	- Sphere
