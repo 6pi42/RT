@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 11:29:58 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 17:08:44 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 03:43:10 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ void	raytrace(t_map *map)
 	//display_thread(map, inter, primary);
 	//shading = get_perl_tex(map->height, map->width, 50);
 	shading = get_color2(map, inter, shading, map->scene.max_depth);
-	printf("shading passer\n");
 	i = 0;
 	k = 0;
 	while (i < (int)map->width * (int)map->height)
@@ -69,7 +68,7 @@ void	raytrace(t_map *map)
 	g_object_unref(G_OBJECT(pixel_buf));
 	if (pixel_buf)
 	{
-		printf("free pix buf\n");
+		//printf("free pix buf\n");
 	//	g_free(pixel_buf);
 	}
 	free(buf);

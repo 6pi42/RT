@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:54:18 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/13 01:19:06 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 03:42:56 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ int		get_nb_mat(char *file)
 {
 	int		spot_nb;
 
-	spot_nb = get_number(file, "id");
+	spot_nb = get_number(file, "mat");
 	return (spot_nb);
 }
 
@@ -104,7 +104,7 @@ void	parsing(t_parse *fuck, t_map *map, char *line, int fd)
 {
 	if (ft_strsearch(line, "Multi Sampling") != -1)
 		get_multi_sampling(fd, map);
-	else if (ft_strsearch(line, "id") != -1)
+	else if (ft_strsearch(line, "mat") != -1)
 		get_material(fd, fuck);
 	else if (ft_strsearch(line, "Camera") != -1)
 		get_camera(fd, map);
@@ -147,6 +147,7 @@ t_shape	*parse(t_map *map, char *file)
 	map->scene.nb_mat = get_nb_mat(file);
 
 	printf("NB OF SHAPES:%d\n", map->scene.nb_shape);
+	printf("NB OF MAT:%d\n", map->scene.nb_mat);
 	map->scene.spot = (t_spot *)malloc(sizeof(t_spot) * map->scene.nb_spot);
 	fuck.shape = (t_shape*)malloc(sizeof(t_shape) * map->scene.nb_shape);
 	map->scene.mat = (t_mat*)malloc(sizeof(t_mat) * map->scene.nb_mat);

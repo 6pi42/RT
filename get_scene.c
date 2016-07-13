@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/18 16:16:11 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/13 02:47:21 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 03:36:43 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,9 +99,9 @@ void	get_spotlight(int fd, t_map *map)
 }
 void	init_material_value(t_mat *mat, t_parse *fuck)
 {
-	mat[fuck->nb_mat].ka = 0.4f;
-	mat[fuck->nb_mat].kd = 0.2f;
-	mat[fuck->nb_mat].ks = 0.0f;
+	mat[fuck->nb_mat].ka = 0.9f;
+	mat[fuck->nb_mat].kd = 0.9f;
+	mat[fuck->nb_mat].ks = 0.9f;
 	mat[fuck->nb_mat].ktran = 0.0f;
 	mat[fuck->nb_mat].kreflec = 0.0f;
 	mat[fuck->nb_mat].krefrac = 0.0f;
@@ -116,6 +116,7 @@ void	get_material(int fd, t_parse *fuck)
 	char		*line;
 	t_mat		*mat;
 
+	printf("preuve de passage\n");
 	i = 0;
 	mat = fuck->map->scene.mat;
 	init_material_value(mat, fuck);

@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 02:46:46 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/13 02:28:57 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 03:31:59 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	switch_focus(GtkWidget *widget, GdkEventButton *event, t_map *map)
 		printf("id : %d", id);
 	printf("le normal de cette obj vaut %f %f %f\n", 
 			tmp[(int)(event->y * map->width + event->x)].normal.x , tmp[(int)(event->y * map->width + event->x)].normal.y ,tmp[(int)(event->y * map->width + event->x)].normal.z);
-	printf("le mat id de cette obj vaut %d\n", map->obj_selected->mat_id);
+	printf("le mat id de cette obj vaut %d et kd %f\n", map->obj_selected->mat_id, map->scene.mat[map->obj_selected->mat_id].kd);
 	}
 	else
 		map->obj_selected = &map->scene.shape[0];

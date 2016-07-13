@@ -6,8 +6,8 @@ SCENE
 {
 	- Window
 	{
-		width: 620
-		height: 360
+		width: 400
+		height: 400
 	}
 
 	- Camera
@@ -31,20 +31,20 @@ SCENE
 
 MATERIAL
 {
-	- id 0
+	- mat 0
 	{
 		tex: pierre.jpg
-		ka: 0.2
+		ka: 1.0
 		ks: 0.9
-		kd: 0.8
+		kd: 0.6
 		ktran: 0.0
 		kreflec: 0.9
 		krefrac: 0.0
 	}
-	- id 1
+
+	- mat 1
 	{
-		tex: bois.jpg
-		ka: 0.2
+		ka: 1.0
 		ks: 0.5
 		kd: 0.8
 		ktran: 0.0
@@ -95,4 +95,3 @@ SHAPES
 		dir: 0.0 1.0 0.0
 		id: 0
 	}
-}
