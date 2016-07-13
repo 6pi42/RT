@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:52:38 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/13 05:11:32 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 06:01:17 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,12 @@ void	init_shape(t_parse *fuck)
 
 void	get_plane(int fd, t_parse *fuck)
 {
-	short		i;
 	short		j;
 	short		ret;
 	char		*line;
 
-	i = 0;
 	init_shape(fuck);
-	while ((ret = get_next_line(fd, &line)) > 0 && i != 8)
+	while ((ret = get_next_line(fd, &line)) > 0 && ft_strsearch(line, "}") == -1)
 	{
 		fuck->shape[fuck->nb].type.x = 2.0f;
 		if ((j = ft_strsearch(line, "tex: ")) != -1)
@@ -59,7 +57,6 @@ void	get_plane(int fd, t_parse *fuck)
 		else if ((j = ft_strsearch(line, "decoupe: ")) != -1)
 			fuck->shape[fuck->nb].axe_decoupe = get_vector(ft_strchr(line, ' ') + 1);
 		free(line);
-		i++;
 	}
 	if (ret == -1)
 		exit(0);
@@ -68,14 +65,12 @@ void	get_plane(int fd, t_parse *fuck)
 
 void	get_sphere(int fd, t_parse *fuck)
 {
-	short		i;
 	short		j;
 	short		ret;
 	char		*line;
 
-	i = 0;
 	init_shape(fuck);
-	while ((ret = get_next_line(fd, &line)) > 0 && i != 7)
+	while ((ret = get_next_line(fd, &line)) > 0 && ft_strsearch(line, "}") == -1)
 	{
 		fuck->shape[fuck->nb].type.x = 1.0f;
 		if ((j = ft_strsearch(line, "tex: ")) != -1)
@@ -93,7 +88,6 @@ void	get_sphere(int fd, t_parse *fuck)
 		else if ((j = ft_strsearch(line, "neg: ")) != -1)
 			fuck->shape[fuck->nb].type.y = ft_atoi(ft_strchr(line, ' ') + 1);
 		free(line);
-		i++;
 	}
 	if (ret == -1)
 		exit(0);
@@ -102,14 +96,12 @@ void	get_sphere(int fd, t_parse *fuck)
 
 void	get_ellipsoid(int fd, t_parse *fuck)
 {
-	short		i;
 	short		j;
 	short		ret;
 	char		*line;
 
-	i = 0;
 	init_shape(fuck);
-	while ((ret = get_next_line(fd, &line)) > 0 && i != 8)
+	while ((ret = get_next_line(fd, &line)) > 0 && ft_strsearch(line, "}") == -1)
 	{
 		fuck->shape[fuck->nb].type.x = 5.0f;
 		if ((j = ft_strsearch(line, "tex: ")) != -1)
@@ -127,7 +119,6 @@ void	get_ellipsoid(int fd, t_parse *fuck)
 		else if ((j = ft_strsearch(line, "neg: ")) != -1)
 			fuck->shape[fuck->nb].type.y = ft_atoi(ft_strchr(line, ' ') + 1);
 		free(line);
-		i++;
 	}
 	if (ret == -1)
 		exit(0);
@@ -136,14 +127,12 @@ void	get_ellipsoid(int fd, t_parse *fuck)
 
 void	get_cone(int fd, t_parse *fuck)
 {
-	short		i;
 	short		j;
 	short		ret;
 	char		*line;
 
-	i = -1;
 	init_shape(fuck);
-	while ((ret = get_next_line(fd, &line)) > 0 && ++i != 10)
+	while ((ret = get_next_line(fd, &line)) > 0 && ft_strsearch(line, "}") == -1)
 	{
 		fuck->shape[fuck->nb].type.x = 4.0f;
 		if ((j = ft_strsearch(line, "tex: ")) != -1)
@@ -171,14 +160,12 @@ void	get_cone(int fd, t_parse *fuck)
 
 void	get_cylinder(int fd, t_parse *fuck)
 {
-	short		i;
 	short		j;
 	short		ret;
 	char		*line;
 
-	i = -1;
 	init_shape(fuck);
-	while ((ret = get_next_line(fd, &line)) > 0 && ++i != 8)
+	while ((ret = get_next_line(fd, &line)) > 0 && ft_strsearch(line, "}") == -1)
 	{
 		fuck->shape[fuck->nb].type.x = 3.0f;
 		if ((j = ft_strsearch(line, "tex: ")) != -1)
@@ -206,14 +193,12 @@ void	get_cylinder(int fd, t_parse *fuck)
 
 void	get_triangle(int fd, t_parse *fuck)
 {
-	short		i;
 	short		j;
 	short		ret;
 	char		*line;
 
-	i = -1;
 	init_shape(fuck);
-	while ((ret = get_next_line(fd, &line)) > 0 && ++i != 6)
+	while ((ret = get_next_line(fd, &line)) > 0 && ft_strsearch(line, "}") == -1)
 	{
 		fuck->shape[fuck->nb].type.x = 8.0f;
 		if ((j = ft_strsearch(line, "pt1: ")) != -1)
@@ -235,14 +220,12 @@ void	get_triangle(int fd, t_parse *fuck)
 
 void	get_cercle(int fd, t_parse *fuck)
 {
-	short		i;
 	short		j;
 	short		ret;
 	char		*line;
 
-	i = -1;
 	init_shape(fuck);
-	while ((ret = get_next_line(fd, &line)) > 0 && ++i != 7)
+	while ((ret = get_next_line(fd, &line)) > 0 && ft_strsearch(line, "}") == -1)
 	{
 		fuck->shape[fuck->nb].type.x = 7.0f;
 		if ((j = ft_strsearch(line, "pos: ")) != -1)
@@ -264,14 +247,12 @@ void	get_cercle(int fd, t_parse *fuck)
 
 void	get_thorus(int fd, t_parse *fuck)
 {
-	short		i;
 	short		j;
 	short		ret;
 	char		*line;
 
-	i = -1;
 	init_shape(fuck);
-	while ((ret = get_next_line(fd, &line)) > 0 && ++i != 6)
+	while ((ret = get_next_line(fd, &line)) > 0 && ft_strsearch(line, "}") == -1)
 	{
 		fuck->shape[fuck->nb].type.x = 6.0f;
 		if ((j = ft_strsearch(line, "pos: ")) != -1)

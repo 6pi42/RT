@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 03:17:09 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 05:35:05 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,7 @@ int		*shade(t_map *map, t_inter *inter)
 		color[i] = 0x0;
 		if (inter[i].id != -1)
 		{
+			inter[i].normal = get_bumped_normal(map, inter[i], map->scene.shape[inter[i].id], get_inter_pos(inter[i].from, inter[i]));
 			utils.inter = inter[i];
 			utils.ray = inter[i].from;
 			utils.inter_pos = get_inter_pos(utils.ray, utils.inter);

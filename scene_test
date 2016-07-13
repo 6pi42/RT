@@ -33,7 +33,8 @@ MATERIAL
 {
 	- mat 0
 	{
-		tex: pierre.jpg
+		bump: bump.jpg
+		tex: tex.png
 		ka: 1.0
 		ks: 0.9
 		kd: 0.8
@@ -68,22 +69,23 @@ SHAPES
 {
 	- Plane
 	{
+		id: 0
 		rgb: 128 128 0
 		pos: 0.0 0.0 0.0
 		nor: 0.0 1.0 0.0
-		id: 0
 	}
 
 	- Plane
 	{
+		id: 1
 		rgb: 190 190 0
 		pos: 0.0 0.0 -200.0
 		nor: 0.0 0.0 1.0
-		id: 1
 	}
 
 	- Cylinder
 	{
+		id: 2
 		neg: 0
 		rgb: 190 190 0
 		pos: 0.0 0.0 200.0
@@ -91,25 +93,24 @@ SHAPES
 		rad: 50.0
 		nor: 0.0 0.0 1.0
 		decoupe: 0.0 0.0 0.0 0.0
-		id: 2
 	}
 
 	- Sphere
 	{
+		id: 1
 		rad: 25
 		rgb: 255 255 255
 		pos: 0.0 0.0 0.0
 		decoupe: 1.0 0.0 0.0 1.0
 		neg: 1
-		id: 1
 	}
 
 	- Sphere
 	{
+		id: 1
 		rad: 25
 		rgb: 255 0 0
 		pos: 130.0 110.0 40.0
-		id: 1
 	}
 
 	- Thorus
