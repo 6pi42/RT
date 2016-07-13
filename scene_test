@@ -36,13 +36,24 @@ MATERIAL
 		tex: pierre.jpg
 		ka: 1.0
 		ks: 0.9
-		kd: 0.6
+		kd: 0.8
 		ktran: 0.0
 		kreflec: 0.9
 		krefrac: 0.0
 	}
 
 	- mat 1
+	{
+		tex: bois.jpg
+		ka: 1.0
+		ks: 0.5
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.0
+		krefrac: 0.0
+	}
+
+	- mat 2
 	{
 		ka: 1.0
 		ks: 0.5
@@ -71,11 +82,25 @@ SHAPES
 		id: 1
 	}
 
+	- Cylinder
+	{
+		rgb: 190 190 0
+		pos: 0.0 0.0 200.0
+		dir: 0.0 1.0 0.0
+		rad: 50.0
+		nor: 0.0 0.0 1.0
+		decoupe: 1.0 0.0 0.0 1.0
+		id: 2
+		neg: 1
+	}
+
 	- Sphere
 	{
 		rad: 25
 		rgb: 255 255 255
-		pos: -100.0 50.0 20.0
+		pos: 0.0 0.0 0.0
+		decoupe: 1.0 0.0 0.0 1.0
+		neg: 1
 		id: 1
 	}
 

@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:53:34 by emontagn          #+#    #+#             */
-/*   Updated: 2016/06/11 14:54:55 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/07/13 04:15:59 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,15 @@ cl_float4	get_vector(char *line)
 	i = 0;
 	while (tab[i])
 		i++;
-	if (i != 3)
+	if (!(i == 3 || i == 4))
 		printf("error\n");
 	vector.x = atoi_double(tab[0]);
 	vector.y = atoi_double(tab[1]);
 	vector.z = atoi_double(tab[2]);
-	vector.w = 0.0f;
+	if (i == 3)
+		vector.w = 0.0f;
+	else
+		vector.w = atoi_double(tab[3]);
 	i = 0;
 	while (tab[i])
 	{

@@ -1,1 +1,2 @@
--conflit entre le ptr tex et les non ptr
+le parseur fuite mem changer ++i != par des delimitation }}} + parseur pas hirarchiser
+regler le neg + ajouter wolrd conf + ajouter au parseur
