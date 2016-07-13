@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/18 16:16:11 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/13 01:19:38 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 02:47:21 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,17 @@ void	get_spotlight(int fd, t_map *map)
 		printf("fuck\n");
 	map->spoti++;
 }
-
+void	init_material_value(t_mat *mat, t_parse *fuck)
+{
+	mat[fuck->nb_mat].ka = 0.4f;
+	mat[fuck->nb_mat].kd = 0.2f;
+	mat[fuck->nb_mat].ks = 0.0f;
+	mat[fuck->nb_mat].ktran = 0.0f;
+	mat[fuck->nb_mat].kreflec = 0.0f;
+	mat[fuck->nb_mat].krefrac = 0.0f;
+	mat[fuck->nb_mat].tex = NULL;
+	mat[fuck->nb_mat].bump = NULL;
+}
 void	get_material(int fd, t_parse *fuck)
 {
 	int			i;
@@ -108,6 +118,7 @@ void	get_material(int fd, t_parse *fuck)
 
 	i = 0;
 	mat = fuck->map->scene.mat;
+	init_material_value(mat, fuck);
 	while ((ret = get_next_line(fd, &line)) > 0 && i != 9)
 	{
 		if ((j = ft_strsearch(line, "ka: ")) != -1)
@@ -122,8 +133,11 @@ void	get_material(int fd, t_parse *fuck)
 			mat[fuck->nb_mat].kreflec = atoi_double(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "krefrac: ")) != -1)
 			mat[fuck->nb_mat].krefrac = atoi_double(ft_strchr(line, ' ') + 1);
-		else if ((j = ft_strsearch(line, "max_depth: ")) != -1)
-			fuck->map->scene.max_depth = atoi(ft_strchr(line, ' ') + 1);
+		else if ((j = ft_strsearch(line, "tex: ")) != -1)
+		{
+			printf("texture charger : %s\n", ft_strchr(line, ' ') + 1);
+			mat[fuck->nb_mat].tex = load_texture(ft_strchr(line, ' ') + 1);
+		}
 		free(line);
 		i++;
 	}

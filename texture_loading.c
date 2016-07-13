@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/29 10:24:51 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 00:10:13 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 02:39:02 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,22 +32,25 @@ int		*convert_texture(guchar *gubuffer, int width, int height, int c)
 	return buf;
 }
 
-t_tex	load_texture(char *file_name)
+t_tex	*load_texture(char *file_name)
 {
-	t_tex		tex;
+	t_tex		*tex;
 	GdkPixbuf 	*pixbuf;
 	GError 		*error;
 
 	error = NULL;
+	if ((tex = (t_tex*)malloc(sizeof(t_tex))) == NULL)
+		return (NULL);
 	pixbuf = gdk_pixbuf_new_from_file(file_name, &error);
 	if (pixbuf == NULL)
 	{
 		ft_putstr("Gdk cannnot load texture\n");
 		g_error_free(error);
+		return (NULL);
 	}
-	tex.w = gdk_pixbuf_get_width(pixbuf);
-	tex.h = gdk_pixbuf_get_height(pixbuf);
-	tex.buffer = convert_texture(gdk_pixbuf_get_pixels(pixbuf), tex.w, tex.h,
+	tex->w = gdk_pixbuf_get_width(pixbuf);
+	tex->h = gdk_pixbuf_get_height(pixbuf);
+	tex->buffer = convert_texture(gdk_pixbuf_get_pixels(pixbuf), tex->w, tex->h,
 					gdk_pixbuf_get_n_channels(pixbuf));
 	g_object_unref(pixbuf);
 	return (tex);

@@ -425,6 +425,7 @@ static int intersect_all(t_ray *ray,
 			copy_tab(end, save, 3);
 		if (shape[i].type.x == 8.0f && intersect_triangle(ray, shape[i], save))
 			copy_tab(end, save, 3);
+/*
 		if (shape[i].type.x == 1.0f)
 		{
 			shape[i].axe_decoupe = (float4)(1.0f, 0.0f, 0.0f, 0.0f);
@@ -436,6 +437,7 @@ static int intersect_all(t_ray *ray,
 		{
 			cut_obj(shape[i], ray, end, 1);
 		}
+*/
 			tmp = end[0];
 		if (tmp != -1.0f && (*t1 == -1.0f || tmp < *t1))
 		{
@@ -482,7 +484,7 @@ __kernel void intersect(__global t_inter *out, __global t_ray* ray,
 		if (inter.id != -1)
 		{
 			sh = shape[inter.id];
-			if (sol[2] != 1.0)
+			if (sol[2] != 1.0) // WTF ?
 			{
 				inter.normal = get_normal(sh, get_intersection(&r, inter.dist),
 							&inter, r, sol);

@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:52:38 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/13 00:45:58 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 02:10:10 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	get_plane(int fd, t_parse *fuck)
 	char		*line;
 
 	i = 0;
-	while ((ret = get_next_line(fd, &line)) > 0 && i != 6)
+	while ((ret = get_next_line(fd, &line)) > 0 && i != 7)
 	{
 		fuck->shape[fuck->nb].type.x = 2.0f;
 		if ((j = ft_strsearch(line, "tex: ")) != -1)
@@ -31,6 +31,8 @@ void	get_plane(int fd, t_parse *fuck)
 			fuck->shape[fuck->nb].pos = get_position(line + j);
 		else if ((j = ft_strsearch(line, "nor: ")) != -1)
 			fuck->shape[fuck->nb].radius = get_vector(line + j);
+		else if ((j = ft_strsearch(line, "id: ")) != -1)
+			fuck->shape[fuck->nb].mat_id = ft_atoi(ft_strchr(line, ' ') + 1);
 		free(line);
 		i++;
 	}
@@ -58,6 +60,8 @@ void	get_sphere(int fd, t_parse *fuck)
 			fuck->shape[fuck->nb].color = get_rgb(line + j);
 		else if ((j = ft_strsearch(line, "pos: ")) != -1)
 			fuck->shape[fuck->nb].pos = get_position(line + j);
+		else if ((j = ft_strsearch(line, "id: ")) != -1)
+			fuck->shape[fuck->nb].mat_id = ft_atoi(ft_strchr(line, ' ') + 1);
 		free(line);
 		i++;
 	}
@@ -85,6 +89,8 @@ void	get_ellipsoid(int fd, t_parse *fuck)
 			fuck->shape[fuck->nb].color = get_rgb(line + j);
 		else if ((j = ft_strsearch(line, "pos: ")) != -1)
 			fuck->shape[fuck->nb].pos = get_position(line + j);
+		else if ((j = ft_strsearch(line, "id: ")) != -1)
+			fuck->shape[fuck->nb].mat_id = ft_atoi(ft_strchr(line, ' ') + 1);
 		free(line);
 		i++;
 	}
@@ -114,6 +120,8 @@ void	get_cone(int fd, t_parse *fuck)
 			fuck->shape[fuck->nb].pos = get_position(line + j);
 		else if ((j = ft_strsearch(line, "dir: ")) != -1)
 			fuck->shape[fuck->nb].axis = get_vector(line + j);
+		else if ((j = ft_strsearch(line, "id: ")) != -1)
+			fuck->shape[fuck->nb].mat_id = ft_atoi(ft_strchr(line, ' ') + 1);
 		free(line);
 	}
 	if (ret == -1)
@@ -142,6 +150,8 @@ void	get_cylinder(int fd, t_parse *fuck)
 			fuck->shape[fuck->nb].pos = get_position(line + j);
 		else if ((j = ft_strsearch(line, "dir: ")) != -1)
 			fuck->shape[fuck->nb].axis = get_vector(line + j);
+		else if ((j = ft_strsearch(line, "id: ")) != -1)
+			fuck->shape[fuck->nb].mat_id = ft_atoi(ft_strchr(line, ' ') + 1);
 		free(line);
 	}
 	if (ret == -1)
@@ -168,6 +178,8 @@ void	get_triangle(int fd, t_parse *fuck)
 			fuck->shape[fuck->nb].pos = get_vector(line + j);
 		else if ((j = ft_strsearch(line, "pt3: ")) != -1)
 			fuck->shape[fuck->nb].axis = get_vector(line + j);
+		else if ((j = ft_strsearch(line, "id: ")) != -1)
+			fuck->shape[fuck->nb].mat_id = ft_atoi(ft_strchr(line, ' ') + 1);
 		free(line);
 	}
 	if (ret == -1)
@@ -194,6 +206,8 @@ void	get_cercle(int fd, t_parse *fuck)
 			fuck->shape[fuck->nb].axis = get_vector(line + j);
 		else if ((j = ft_strsearch(line, "rad: ")) != -1)
 			fuck->shape[fuck->nb].radius = get_radius(line + j);
+		else if ((j = ft_strsearch(line, "id: ")) != -1)
+			fuck->shape[fuck->nb].mat_id = ft_atoi(ft_strchr(line, ' ') + 1);
 		free(line);
 	}
 	if (ret == -1)
@@ -220,6 +234,8 @@ void	get_thorus(int fd, t_parse *fuck)
 			fuck->shape[fuck->nb].axis = get_vector(line + j);
 		else if ((j = ft_strsearch(line, "rad: ")) != -1)
 			fuck->shape[fuck->nb].radius = get_radius2(line + j);
+		else if ((j = ft_strsearch(line, "id: ")) != -1)
+			fuck->shape[fuck->nb].mat_id = ft_atoi(ft_strchr(line, ' ') + 1);
 		free(line);
 	}
 	if (ret == -1)

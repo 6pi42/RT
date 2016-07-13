@@ -12,7 +12,7 @@ SCENE
 
 	- Camera
 	{
-		pos: 350.0 100.0 0.0
+		pos: 350.0 100.0 40.0
 	}
 
 	- Spotlight
@@ -31,15 +31,25 @@ SCENE
 
 MATERIAL
 {
+	- id 0
+	{
+		tex: pierre.jpg
+		ka: 0.2
+		ks: 0.9
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.9
+		krefrac: 0.0
+	}
 	- id 1
 	{
+		tex: bois.jpg
 		ka: 0.2
-		ks: 0.6
+		ks: 0.5
 		kd: 0.8
 		ktran: 0.0
 		kreflec: 0.0
 		krefrac: 0.0
-		max_depth: 3
 	}
 }
 
@@ -47,34 +57,34 @@ SHAPES
 {
 	- Plane
 	{
-		tex: 0
 		rgb: 128 128 0
 		pos: 0.0 0.0 0.0
 		nor: 0.0 1.0 0.0
+		id: 0
 	}
 
 	- Plane
 	{
-		tex: 0
 		rgb: 190 190 0
 		pos: 0.0 0.0 -200.0
 		nor: 0.0 0.0 1.0
+		id: 1
 	}
 
 	- Sphere
 	{
-		tex: 0
 		rad: 25
-		rgb: 255 0 0
+		rgb: 255 255 255
 		pos: -100.0 50.0 20.0
+		id: 1
 	}
 
 	- Sphere
 	{
-		tex: 0
 		rad: 25
 		rgb: 255 0 0
 		pos: 130.0 110.0 40.0
+		id: 1
 	}
 
 	- Thorus
@@ -83,5 +93,6 @@ SHAPES
 		rgb: 255 0 0
 		pos: -130.0 110.0 40.0
 		dir: 0.0 1.0 0.0
+		id: 0
 	}
 }

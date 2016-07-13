@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 02:46:46 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/12 16:35:57 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 02:28:57 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,17 @@ void	switch_focus(GtkWidget *widget, GdkEventButton *event, t_map *map)
 
 	prim = get_primary(map);
 	tmp = get_inter(map, (int)(map->height * map->width), prim);
-	id = tmp[(int)(event->y * map->width + event->x)].id;
-	printf("le normal de cette obj vaut %f %f %f\n", 
-			tmp[(int)(event->y * map->height + event->x)].normal.x , tmp[(int)(event->y * map->height + event->x)].normal.y ,tmp[(int)(event->y * map->height + event->x)].normal.z);
+	id = tmp[(int)((int)event->y * map->width + (int)event->x)].id;
 	if (id != -1)
 	{
 	
 		set_obj_box(map);
 		gtk_widget_show(GTK_WIDGET(map->obj_box));
 		map->obj_selected = &map->scene.shape[id];
+		printf("id : %d", id);
+	printf("le normal de cette obj vaut %f %f %f\n", 
+			tmp[(int)(event->y * map->width + event->x)].normal.x , tmp[(int)(event->y * map->width + event->x)].normal.y ,tmp[(int)(event->y * map->width + event->x)].normal.z);
+	printf("le mat id de cette obj vaut %d\n", map->obj_selected->mat_id);
 	}
 	else
 		map->obj_selected = &map->scene.shape[0];

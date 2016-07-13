@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 01:15:13 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 03:17:09 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ static int	get_color(t_map *map, t_mat mat, t_utils utils, int color)
 	spot = map->current_spot;
 	spec = color_mul(spot.color,
 	spec_light(spot, utils.inter, utils.ray, utils.inter_pos) * mat.ks);
-	diffuse = color_mul(color, 1.0f/*mat.kd*/ * diffuse_lighting(spot, utils.inter.normal, utils.inter_pos));
-	return (color_add(spec, color_mul(diffuse, 1)));
+	diffuse = color_mul(color, mat.kd * diffuse_lighting(spot, utils.inter.normal, utils.inter_pos));
+	return (color_add(spec, color_mul(diffuse, mat.ka)));
 }
 
 int		iter_spot(t_map *map, t_mat mat, t_utils utils, int color)
@@ -125,32 +125,13 @@ int		*apply_trans(t_map *map, t_inter *inter, int *color)
 	return (color);
 }
 
-int		apply_tex(t_map *map, t_inter inter)
-{
-	t_tex tmp = load_texture("bois.jpg");
-
-	if (map->scene.shape[inter.id].type.x == 2)
-	{
-		map->scene.mat[map->scene.shape[inter.id].mat_id].tex = &tmp;
-	}
-	else
-		return 0xFFFFFF;
-	if (map->scene.mat[map->scene.shape[inter.id].mat_id].tex)
-	{
-		return (get_texture_color(map, inter, map->scene.shape[inter.id], get_inter_pos(inter.from, inter)));
-	}
-	return 0xFFFFFF;
-}
-
 int		*shade(t_map *map, t_inter *inter)
 {
 	t_utils utils;
 	int		i;
-	t_mat mat;
 	cl_float4 tmp;
 	int		*color;
 
-	mat.ks = 0;
 	color = (int*)malloc(sizeof(int) * (size_t)(map->height * map->width));
 	i = 0;
 	while (i < (int)(map->height * map->width))
@@ -158,17 +139,12 @@ int		*shade(t_map *map, t_inter *inter)
 		color[i] = 0x0;
 		if (inter[i].id != -1)
 		{
-			//printf("%d \n", inter[i].id);
 			utils.inter = inter[i];
 			utils.ray = inter[i].from;
 			utils.inter_pos = get_inter_pos(utils.ray, utils.inter);
-			// to remove when shape.color == int
 			tmp = map->scene.shape[inter[i].id].color;
-	//		color[i] = apply_tex(map, inter[i]);
-			color[i] += (int)(tmp.x * 256 * 256);
-			color[i] += (int)(tmp.y * 256);
-			color[i] += (int)(tmp.z);
-			color[i] = iter_spot(map, mat, utils, color[i]);
+			color[i] = get_texture_color(map, inter[i], map->scene.shape[inter[i].id], get_inter_pos(inter[i].from, inter[i]));
+			color[i] = iter_spot(map, map->scene.mat[map->scene.shape[inter[i].id].mat_id], utils, color[i]);
 		}
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 01:03:03 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 02:36:18 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -284,10 +284,9 @@ void		init_cam2(t_map *map);
 int			*shadow(t_map *map, t_inter *inter, t_ray *primary);
 
 void		write_bitmap(t_map *map);
-t_tex		load_texture(char *file_name);
+t_tex		*load_texture(char *file_name);
 int			color_add4(int c1, int c2, int c3, int c4);
 int			bilinear_filtering(t_tex *tex, float x, float y);
-t_tex		load_texture(char *file_name);
 cl_float4	get_bumped_normal(t_map *map, t_inter inter, t_shape shape,
 				cl_float4 inter_pos);
 cl_float4	plane_bumpmapping(t_tex *tex, t_inter inter, cl_float4 inter_pos);
