@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 05:35:05 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 06:47:58 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,16 +139,22 @@ int		*shade(t_map *map, t_inter *inter)
 		color[i] = 0x0;
 		if (inter[i].id != -1)
 		{
-			inter[i].normal = get_bumped_normal(map, inter[i], map->scene.shape[inter[i].id], get_inter_pos(inter[i].from, inter[i]));
 			utils.inter = inter[i];
 			utils.ray = inter[i].from;
 			utils.inter_pos = get_inter_pos(utils.ray, utils.inter);
 			tmp = map->scene.shape[inter[i].id].color;
-			color[i] = get_texture_color(map, inter[i], map->scene.shape[inter[i].id], get_inter_pos(inter[i].from, inter[i]));
+			if (map->config.texture)
+			{
+				inter[i].normal = get_bumped_normal(map, inter[i], map->scene.shape[inter[i].id], get_inter_pos(inter[i].from, inter[i]));
+				color[i] = get_texture_color(map, inter[i], map->scene.shape[inter[i].id], get_inter_pos(inter[i].from, inter[i]));
+			}
+			else
+				color[i] = color_from_float4( map->scene.shape[inter[i].id].color);
 			color[i] = iter_spot(map, map->scene.mat[map->scene.shape[inter[i].id].mat_id], utils, color[i]);
 		}
 		i++;
 	}
-	color = apply_trans(map, inter, color);
+	if (map->config.transparence)
+		color = apply_trans(map, inter, color);
 	return (color);
 }

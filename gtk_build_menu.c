@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 03:37:42 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/11 16:47:35 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 06:57:20 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	create_world_conf(t_map *map, GtkWidget *onglet)
 	create_multi_sampling_bar(interface, map);
 	create_label(interface, "Max depth");
 	create_max_depth_bar(interface, map);
+	manip_conf(map, interface);
 	gtk_notebook_append_page(GTK_NOTEBOOK(onglet), GTK_WIDGET(interface), gtk_label_new("World"));
 }
 

@@ -6,12 +6,11 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/18 17:14:53 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 18:22:03 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 06:11:12 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt.h"
-
 
 void	update_inter(t_map *map, size_t work_size)
 {
@@ -39,8 +38,7 @@ void	update_inter(t_map *map, size_t work_size)
 	map->env.clbuf.shape = clCreateBuffer(map->env.context, CL_MEM_READ_ONLY
 			| CL_MEM_COPY_HOST_PTR, map->scene.nb_shape * sizeof(t_shape),
 			map->scene.shape, &err);
-	if (err < 0)
-		ft_putstr("Failed to update kernel with new work_size");
+	err < 0 ? ft_putstr("Failed to update kernel ") : (void)err;
 }
 
 void	init_inter(t_map *map, size_t work_size)
@@ -52,12 +50,6 @@ void	init_inter(t_map *map, size_t work_size)
 	i = 0;
 	env = map->env;
 	update_inter(map, work_size);
-	/*
-	map->env.clbuf.ray = clCreateBuffer(env.context, CL_MEM_READ_ONLY,
-			work_size * sizeof(t_ray), NULL, &err);
-	map->env.clbuf.output = clCreateBuffer(env.context, CL_MEM_WRITE_ONLY,
-			work_size * sizeof(t_inter) , NULL, &err);
-			*/
 	err = clSetKernelArg(env.kernel, 0, sizeof(cl_mem), &map->env.clbuf.output);
 	err |= clSetKernelArg(env.kernel, 1, sizeof(cl_mem), &map->env.clbuf.ray);
 	err |= clSetKernelArg(env.kernel, 2, sizeof(cl_mem), &map->env.clbuf.shape);
@@ -73,10 +65,6 @@ t_inter	*get_inter(t_map *map, size_t work_size, t_ray *ray)
 	cl_ulong	time_start;
 	cl_ulong	time_end;
 	double		total_time;
-	int i = 0;
-	for (i = 0; i < (int)work_size; i++) {
-		//printf("%f %f %f\n", ray[i].ray.x, ray[i].ray.y,ray[i].ray.z);
-	}
 
 	ptr = (t_inter*)malloc(sizeof(t_inter) * work_size);
 	init_cam(map);
@@ -92,17 +80,11 @@ t_inter	*get_inter(t_map *map, size_t work_size, t_ray *ray)
 			&work_size, NULL, 0, NULL, &event);
 	clEnqueueReadBuffer(map->env.cmds, map->env.clbuf.output,
 			CL_TRUE, 0, work_size * sizeof(t_inter), ptr, 0, NULL, NULL);
-	//ptr = (t_inter*)clEnqueueMapBuffer(env.cmds,
-	//		map->env.clbuf.output, CL_TRUE, CL_MAP_READ, 0,
-	//		work_size * sizeof(t_inter), 0, NULL, NULL, NULL);
-	//PROFILING
-	//clWaitForEvents(1, &event);
 	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START,
 			sizeof(time_start), &time_start, NULL);
 	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END,
 			sizeof(time_end), &time_end, NULL);
 	total_time = time_end - time_start;
 	printf("\nExecution time = %0.3f ms\n", (total_time / 1000000.0));
-	//END PROFILING
 	return (ptr);
 }

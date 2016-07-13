@@ -425,15 +425,6 @@ static int intersect_all(t_ray *ray,
 			copy_tab(end, save, 3);
 		if (shape[i].type.x == 8.0f && intersect_triangle(ray, shape[i], save))
 			copy_tab(end, save, 3);
-/*
-		if (shape[i].type.x == 1.0f)
-		{
-			shape[i].axe_decoupe = (float4)(1.0f, 0.0f, 0.0f, 0.0f);
-			shape[i].type.y = 0;
-		}
-		else
-			shape[i].axe_decoupe = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
-*/
 		if (fast_length(shape[i].axe_decoupe) != 0 && end[0] != -1)
 		{
 			cut_obj(shape[i], ray, end, (int)shape[i].axe_decoupe.w);

@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:57:13 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 17:27:10 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 06:11:39 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ cl_float4	get_dir(t_map *map, float x, float y)
 	vp_down.x = (yamnt - 0.5f) * map->scene.cam->down.x;
 	vp_down.y = (yamnt - 0.5f) * map->scene.cam->down.y;
 	vp_down.z = (yamnt - 0.5f) * map->scene.cam->down.z;
-	//printf("%f %f %f\n", xamnt, 1.0f, yamnt);
 	vp_right.x = (xamnt - 0.5f) * map->scene.cam->right.x;
 	vp_right.y = (xamnt - 0.5f) * map->scene.cam->right.y;
 	vp_right.z = (xamnt - 0.5f) * map->scene.cam->right.z;
@@ -54,7 +53,6 @@ t_ray		*get_primary(t_map *map)
 		{
 			ray[i].origin = map->scene.cam->origin;
 			ray[i].ray = get_dir(map, (float)x, (float)y);
-			//printf("%f %f %f\n", ray[i].ray.x, ray[i].ray.y,ray[i].ray.z);
 			i++;
 			x++;
 		}

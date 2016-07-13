@@ -6,7 +6,7 @@
 #    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/07/12 15:08:02 by amathias         ###   ########.fr        #
+#    Updated: 2016/07/13 06:57:18 by apaget           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,9 +18,11 @@ SRC =	main.c				\
 		mat_eval.c			\
 		gtk_build_bar.c		\
 		shade.c				\
+		world_conf.c		\
 		perlin2.c			\
 		gtk_build_menu.c	\
 		gtk_call_bar.c		\
+		init_value.c		\
 		gtk_call_mouse.c	\
 		raytrace.c			\
 		rotate_obj.c		\

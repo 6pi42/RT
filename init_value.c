@@ -1,21 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   gtk_button.c                                       :+:      :+:    :+:   */
+/*   init_value.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/05/17 14:57:10 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/13 06:46:04 by apaget           ###   ########.fr       */
+/*   Created: 2016/07/13 06:18:05 by apaget            #+#    #+#             */
+/*   Updated: 2016/07/13 06:22:58 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt.h"
 
-void	connect_signal_gtk(t_map *map)
+
+void		init_material_value(t_mat *mat, t_parse *fuck)
 {
-	g_signal_connect(GTK_WINDOW(map->window), "key_press_event",
-													(void*)key_press, map);
-	g_signal_connect(GTK_WINDOW(map->window), "key_release_event",
-													(void*)key_release, map);
+	mat[fuck->nb_mat].ka = 1.0f;
+	mat[fuck->nb_mat].kd = 1.0f;
+	mat[fuck->nb_mat].ks = 0.0f;
+	mat[fuck->nb_mat].ktran = 1.0f;
+	mat[fuck->nb_mat].kreflec = 0.0f;
+	mat[fuck->nb_mat].krefrac = 0.0f;
+	mat[fuck->nb_mat].tex = NULL;
+	mat[fuck->nb_mat].bump = NULL;
 }

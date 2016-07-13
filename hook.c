@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/02 15:34:48 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 23:41:41 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 07:56:22 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	init_key(t_map *map)
 void	motion_notify(GtkWidget *widget, GdkEventMotion *event, t_map *map)
 {
 	(void)widget;
-	if (!map->fix)
+	if (!map->config.fix)
 	{
 		map->free_cam.sensitivity = 1.0f;
 		map->free_cam.phi +=
@@ -55,7 +55,7 @@ void	redraw(GtkWidget *widget, GdkEvent *event, t_map *map)
 int		key_press(GtkWidget *widget, GdkEventKey *event, t_map *map)
 {
 	(void)widget;
-	if (!map->fix)
+	if (!map->config.fix)
 	{
 		if (event->keyval == 'a')
 			map->key.mright = 1;
@@ -67,8 +67,8 @@ int		key_press(GtkWidget *widget, GdkEventKey *event, t_map *map)
 			map->key.down = 1;
 		update_cam(&map->free_cam, &map->key, map);
 	}
-	if (event->keyval == 32)
-		map->fix ^= 1;
+	if (event->keyval == 102)
+		map->config.fix ^= 1;
 	if (event->keyval == 65307)
 		gtk_main_quit();
 	return (0);

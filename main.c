@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 00:36:32 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 06:44:56 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,18 @@ void	init_cam(t_map *map)
 	map->free_cam.left = cross_vec(tmp, map->free_cam.dir);
 	normalize_vec(&map->free_cam.left);
 	map->free_cam.down = cross_vec(map->free_cam.dir, map->free_cam.left);
+}
+
+void	init_config(t_conf *conf)
+{
+	conf->fix = 0;
+	conf->refraction = 1;
+	conf->reflection = 1;
+	conf->filtre = 0;
+	conf->transparence = 1;
+	conf->ombre = 1;
+	conf->print_neg = 0;
+	conf->texture = 1;
 }
 
 void	draw(t_map *map)
@@ -97,6 +109,7 @@ int		main(int argc, char **argv)
 
 
 	gtk_init(&argc, &argv);
+	init_config(&map.config);
 	create_interface(&map);
 	connect_signal_gtk(&map);
 	set_css_style(&map, "style.css");

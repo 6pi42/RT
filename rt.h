@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 05:31:09 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 07:56:52 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,17 @@ typedef	struct	s_utils
 	cl_float4	inter_pos;
 }				t_utils;
 
+typedef struct	s_conf
+{
+	int			fix;
+	int			refraction;
+	int			reflection;
+	int			print_neg;
+	int			filtre;
+	int			transparence;
+	int			ombre;
+	int			texture;
+}				t_conf;
 typedef struct	s_map
 {
 	GtkWidget	*window;
@@ -187,6 +198,7 @@ typedef struct	s_map
 	GtkWidget	*interface;
 	unsigned int multi_sampling;
 	t_spot		current_spot;
+	t_conf		config;
 	t_env		env;
 	t_cam		free_cam;
 	t_img		img;
@@ -301,14 +313,14 @@ t_shape		*parse(t_map *map, char *file);
 float		atoi_double(char *line);
 
 
-void	get_sphere(int fd, t_parse *fuck);
-void	get_ellipsoid(int fd, t_parse *fuck);
-void	get_plane(int fd, t_parse *fuck);
-void	get_cone(int fd, t_parse *fuck);
-void	get_cylinder(int fd, t_parse *fuck);
-void	get_triangle(int fd, t_parse *fuck);
-void	get_thorus(int fd, t_parse *fuck);
-void	get_cercle(int fd, t_parse *fuck);
+void		get_sphere(int fd, t_parse *fuck);
+void		get_ellipsoid(int fd, t_parse *fuck);
+void		get_plane(int fd, t_parse *fuck);
+void		get_cone(int fd, t_parse *fuck);
+void		get_cylinder(int fd, t_parse *fuck);
+void		get_triangle(int fd, t_parse *fuck);
+void		get_thorus(int fd, t_parse *fuck);
+void		get_cercle(int fd, t_parse *fuck);
 cl_float4	get_radius2(char *line);
 
 
@@ -323,7 +335,8 @@ cl_float4	get_rgb(char *line);
 cl_float4	get_radius(char *line);
 void		get_camera(int fd, t_map *map);
 int			get_rgb_int(char *line);
-void	get_material(int fd, t_parse *fuck);
+void		get_material(int fd, t_parse *fuck);
+void		init_material_value(t_mat *mat, t_parse *fuck);
 
 void		click_mult_sampling_button(GtkWidget *widget, t_map *map);
 void		sampling_bar(GtkWidget *widget, t_map *map);
@@ -332,6 +345,7 @@ void		color_bare(GtkWidget *widget, t_map *map);
 void		moove_obj(GtkWidget *widget, t_map *map);
 void		add_color_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
 void		add_coef_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
+void		check_bar(GtkWidget *widget, t_map *map);
 void		create_obj_interface(GtkWidget *interface, t_map *map);
 void		create_interface(t_map *map);
 void		update_old_pos(GtkWidget *widget, GdkEventCrossing *event, t_map *map);
@@ -356,6 +370,7 @@ int			*get_reflect_color_tab(t_map *map, t_inter *inter, int *color, int depth);
 void		create_left_bar(GtkWidget *interface, t_map *map, GtkWidget *onglet);
 void		create_obj_interface(GtkWidget *interface, t_map *map);
 void		create_interface(t_map *map);
+void		manip_conf(t_map *map, GtkWidget *interface);
 void		create_sub_menu(GtkWidget *menu, t_map *map, char *label);
 void		create_menu(GtkWidget *interface, t_map *map);
 void		set_css_style(t_map *map, char *css_file);
