@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 02:40:29 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/12 16:21:51 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/13 09:52:23 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,10 @@ GtkWidget	*find_widget_with_name(char *name, t_map *map)
 	{
 		name2 = (char*)gtk_widget_get_name((GtkWidget*)list->data);
 		if (ft_strsearch(name2, name) != -1)
+		{
+			printf("name find %s \n", name);
 			return (list->data);
+		}
 		list = list->next;
 	}
 	return (NULL);
@@ -39,7 +42,9 @@ void		connect_scroll_bar(t_map *map, char *name, float value)
 	if (!list || !list->next)
 		return ;
 	tmp = (GtkWidget*)list->next->data;
+	printf("name widget %s et value %f\n", gtk_widget_get_name(tmp), value);
 	gtk_range_set_value(GTK_RANGE(tmp), value);
+	//draw(map);
 }
 
 void		set_obj_box(t_map *map)
@@ -47,7 +52,7 @@ void		set_obj_box(t_map *map)
 	t_mat *mat;
 	if (map->obj_selected != NULL)
 	{
-		mat = &map->scene.mat[map->obj_selected->mat_id];	
+		mat = &map->scene.mat[map->obj_selected->mat_id];
 		connect_scroll_bar(map, "R :", map->obj_selected->color.x);
 		connect_scroll_bar(map, "G :", map->obj_selected->color.y);
 		connect_scroll_bar(map, "B :", map->obj_selected->color.z);

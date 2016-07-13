@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/18 17:14:53 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 06:11:12 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/13 10:00:07 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ void	init_inter(t_map *map, size_t work_size)
 	err |= clSetKernelArg(env.kernel, 1, sizeof(cl_mem), &map->env.clbuf.ray);
 	err |= clSetKernelArg(env.kernel, 2, sizeof(cl_mem), &map->env.clbuf.shape);
 	err |= clSetKernelArg(env.kernel, 3, sizeof(cl_int), &map->scene.nb_shape);
+	err |= clSetKernelArg(env.kernel, 4, sizeof(cl_int), &map->config.print_neg);
 	if (err < 0)
 		ft_putstr("Failed to create kernel argument");
 }

@@ -389,7 +389,7 @@ int	cut_obj(t_shape shape, t_ray *ray, float *end, int type)
 }
 
 static int intersect_all(t_ray *ray,
-		__global t_shape *shape, int num_shapes, float *t1, float *sol)
+		__global t_shape *shape, int num_shapes, float *t1, float *sol, int show_neg)
 {
 	int	i;
 	int	j;
@@ -438,20 +438,20 @@ static int intersect_all(t_ray *ray,
 		}
 		i++;
 	}
-	if (j != -1 && shape[j].type.y > 0 && (sol[0] > 0 || sol[1] > 0))
+	if (j != -1 && shape[j].type.y > 0 && (sol[0] > 0 || sol[1] > 0) && !show_neg)
 	{
 		ray->origin = ray->origin + (fmax(sol[1], sol[0]) + 0.005f) * ray->dir;
 		sol[0] = -1;
 		sol[1] = 0;
 		sol[2] = 0;
 		*t1 = -1;
-		return (intersect_all(ray, shape, num_shapes, t1, sol));
+		return (intersect_all(ray, shape, num_shapes, t1, sol, show_neg));
 	}
 	return (j);
 }
 
 __kernel void intersect(__global t_inter *out, __global t_ray* ray,
-						__global t_shape *shape, int num_shapes)
+						__global t_shape *shape, int num_shapes, int show_neg)
 {
 	t_ray	r;
 	t_shape sh;
@@ -471,7 +471,7 @@ __kernel void intersect(__global t_inter *out, __global t_ray* ray,
 	inter.normal = (float4)(0.0f, 0.0f, 0.0f ,0.0f);
 	if (fast_length(r.dir) != 0.0f)
 	{
-		inter.id = intersect_all(&r, shape, num_shapes, &inter.dist, sol);
+		inter.id = intersect_all(&r, shape, num_shapes, &inter.dist, sol, show_neg);
 		if (inter.id != -1)
 		{
 			sh = shape[inter.id];
