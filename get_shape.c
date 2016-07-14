@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:52:38 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/13 06:04:50 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 02:34:41 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,7 +232,7 @@ void	get_cercle(int fd, t_parse *fuck)
 			fuck->shape[fuck->nb].pos = get_position(line + j);
 		else if ((j = ft_strsearch(line, "rgb: ")) != -1)
 			fuck->shape[fuck->nb].color = get_rgb(line + j);
-		else if ((j = ft_strsearch(line, "dir: ")) != -1)
+		else if ((j = ft_strsearch(line, "nor: ")) != -1)
 			fuck->shape[fuck->nb].axis = get_vector(line + j);
 		else if ((j = ft_strsearch(line, "rad: ")) != -1)
 			fuck->shape[fuck->nb].radius = get_radius(line + j);
@@ -240,6 +240,7 @@ void	get_cercle(int fd, t_parse *fuck)
 			fuck->shape[fuck->nb].mat_id = ft_atoi(ft_strchr(line, ' ') + 1);
 		free(line);
 	}
+	//printf("le cercle charger pos\npos: %f %f %f\nnor: %f %f %f\nrad: %f\nid: %d", fuck->shape[fuck->nb].pos.x, fuck->shape[fuck->nb].pos.y, fuck->shape[fuck->nb].pos.z, fuck->shape[fuck->nb].color.x, fuck->shape[fuck->nb].color.y, fuck->shape[fuck->nb].color.z, fuck->shape[fuck->nb].radius.x, fuck->shape[fuck->nb].mat_id);
 	if (ret == -1)
 		exit(0);
 	fuck->nb++;

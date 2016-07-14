@@ -6,8 +6,8 @@ SCENE
 {
 	- Window
 	{
-		width: 1980
-		height: 1280
+		width: 500
+		height: 500
 	}
 
 	- Camera
@@ -33,8 +33,6 @@ MATERIAL
 {
 	- mat 0
 	{
-		bump: bump.jpg
-		tex: tex.png
 		ka: 1.0
 		ks: 0.9
 		kd: 0.8
@@ -45,7 +43,6 @@ MATERIAL
 
 	- mat 1
 	{
-		tex: bois.jpg
 		ka: 1.0
 		ks: 0.5
 		kd: 0.8
@@ -61,10 +58,10 @@ MATERIAL
 		kd: 0.8
 		ktran: 0.0
 		kreflec: 0.0
-		krefrac: 0.0
+		krefrac: 1.0
 	}
 
-	- mat 2
+	- mat 3
 	{
 		ka: 1.0
 		ks: 0.5
@@ -74,14 +71,15 @@ MATERIAL
 		krefrac: 0.0
 	}
 
-	- mat 2
+	- mat 4
 	{
+		tex: apple.jpeg
 		ka: 1.0
 		ks: 0.5
 		kd: 0.8
 		ktran: 0.0
 		kreflec: 0.0
-		krefrac: 0.0
+		krefrac: 1.0
 	}
 }
 
@@ -103,32 +101,18 @@ SHAPES
 		nor: 0.0 0.0 1.0
 	}
 
-	- Cylinder
-	{
-		id: 2
-		neg: 0
-		rgb: 190 190 0
-		pos: 0.0 0.0 200.0
-		dir: 0.0 1.0 0.0
-		rad: 50.0
-		nor: 0.0 0.0 1.0
-		decoupe: 0.0 0.0 0.0 0.0
-	}
-
-	- Sphere
-	{
-		id: 3
-		rad: 25.0
-		rgb: 255 255 255
-		pos: 0.0 0.0 0.0
-		decoupe: 1.0 0.0 0.0 1.0
-		neg: 0
-	}
-
-	- Sphere
+	- Plane
 	{
 		id: 4
+		rgb: 255 255 255
+		pos: 40.0 40.0 40.0
+		nor: 1.0 0.0 0.0
+	}
+	- Sphere
+	{
+		id: 2
 		rad: 25.0
-		rgb: 255 0 0
-		pos: 130.0 110.0 40.0
+		rgb: 255 255 255
+		pos: 10.0 10.0 10.0
+		neg: 0
 	}

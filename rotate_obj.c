@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/30 17:05:07 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/11 16:29:50 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 04:47:49 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ void	rotate_obj(GtkWidget *widget, t_map *map)
 {
 	(void)widget;
 	(void)map;
-	rotate_cone_cyl(widget, map);
+	printf("name %s\n", gtk_widget_get_name(widget));
+	//rotate_cone_cyl(widget, map);
 }
 
 
@@ -29,8 +30,8 @@ void	rotate_cone_cyl(GtkWidget *widget, t_map *map)
 
 	//value = gtk_range_get_value(GTK_RANGE(widget));
 	value = -5;
-	save = map->obj_selected->axis;
-	new = map->obj_selected->axis;
+	save.x = map->obj_selected->axis.x;
+	new.x = map->obj_selected->axis.x;
 	if (ft_strsearch("x :", (char*)gtk_widget_get_name(widget)) != -1)
 	{
 		new.x = map->obj_selected->axis.x;

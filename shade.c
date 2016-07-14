@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 06:47:58 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 02:56:02 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,8 +116,8 @@ int		*apply_trans(t_map *map, t_inter *inter, int *color)
 		if (inter[i].id != -1 && tmp[i].id != -1 && inter[i].id != tmp[i].id
 		&& map->scene.mat[map->scene.shape[tmp[i].id].mat_id].krefrac != 0)
 		{
-			color[i] = color_sub(color[i],
-				color_mul(color_from_float4(map->scene.shape[tmp[i].id].color),
+			color[i] = color_add(color[i],
+				color_mul(get_texture_color(map, tmp[i], map->scene.shape[tmp[i].id], get_inter_pos(tmp[i].from, tmp[i])),
 				map->scene.mat[map->scene.shape[tmp[i].id].mat_id].krefrac / 2));
 		}
 		i++;

@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 11:02:39 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 08:49:49 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 05:33:00 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ int		*end_recursion(t_map *map, int *reflec, int *refract, t_inter *inter)
 	{
 		if (inter[i].id != -1)
 		{
-			mat = map->scene.mat[map->scene.shape[inter->id].mat_id];
+			mat = map->scene.mat[map->scene.shape[inter[i].id].mat_id];
 			if (reflec != NULL && refract == NULL)
 				color[i] = color_add(color[i], color_mul(reflec[i], mat.kreflec));
 			else if (reflec == NULL && refract != NULL)

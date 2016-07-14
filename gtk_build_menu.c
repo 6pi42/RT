@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 03:37:42 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/13 06:57:20 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 05:22:08 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,9 @@ void	add_rotate_bar(GtkWidget *interface, t_map *map)
 	GtkWidget *box;
 
 	box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-	add_rotate_scroll_bar(box, "x :", map);
-	add_rotate_scroll_bar(box, "y :", map);
-	add_rotate_scroll_bar(box, "z :", map);
+	add_rotate_scroll_bar(box, "x", map);
+	add_rotate_scroll_bar(box, "y", map);
+	add_rotate_scroll_bar(box, "z", map);
 	
 	(void)map;
 	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(box), FALSE, FALSE, 5);
@@ -76,9 +76,26 @@ void	add_dep_bar(GtkWidget *interface, t_map *map)
 	//GtkWidget *apply;
 
 	box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-	add_moove_scroll_bar(box, "x :", map);
-	add_moove_scroll_bar(box, "y :", map);
-	add_moove_scroll_bar(box, "z :", map);
+	add_moove_scroll_bar(box, "x :", map, "x :");
+	add_moove_scroll_bar(box, "y :", map, "y :");
+	add_moove_scroll_bar(box, "z :", map, "z :");
+	//apply = gtk_button_new_with_label("Apply");
+
+	//gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(apply), TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(box), TRUE, TRUE, 5);
+}
+
+void	add_dep_light_bar(GtkWidget *interface, t_map *map)
+{
+	(void)interface;
+	(void)map;
+	GtkWidget *box;
+	//GtkWidget *apply;
+
+	box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+	add_moove_scroll_bar(box, "x :", map, "x_l");
+	add_moove_scroll_bar(box, "y :", map, "y_l");
+	add_moove_scroll_bar(box, "z :", map, "z_l");
 	//apply = gtk_button_new_with_label("Apply");
 
 	//gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(apply), TRUE, TRUE, 5);
@@ -94,6 +111,8 @@ void	create_transform_bar(t_map *map, GtkWidget *onglet)
 	add_rotate_bar(interface, map);
 	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(gtk_label_new("MOOVE MOTHER FUCKER")), FALSE, TRUE, 10);
 	add_dep_bar(interface, map);
+	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(gtk_label_new("MOOVE LIGHT MOTHER FUCKER")), FALSE, TRUE, 10);
+	add_dep_light_bar(interface, map);
 	gtk_notebook_append_page(GTK_NOTEBOOK(onglet), GTK_WIDGET(interface), gtk_label_new("Transform"));
 }
 
@@ -139,17 +158,17 @@ void	create_interface(t_map *map)
 	map->render = gtk_image_new_from_pixbuf(NULL);
 	scree_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 	frame_buffer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-	interface = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+	interface = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	event_box = gtk_event_box_new();
 	set_event(event_box, map);
-	gtk_box_pack_start(GTK_BOX(scree_box), GTK_WIDGET(event_box), TRUE,
-			FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(scree_box), GTK_WIDGET(event_box), FALSE,
+			FALSE, 10);
 	gtk_container_add(GTK_CONTAINER(event_box), map->render);
 	gtk_box_pack_end(GTK_BOX(scree_box), GTK_WIDGET(interface), TRUE,
-				TRUE, 30);
+				TRUE, 5);
 
 	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(onglet), FALSE,
-				FALSE, 20);
+				FALSE, 10);
 
 	create_menu(frame_buffer, map);
 	gtk_box_pack_start(GTK_BOX(frame_buffer), GTK_WIDGET(scree_box), FALSE,
@@ -158,7 +177,7 @@ void	create_interface(t_map *map)
 	gtk_window_set_title(GTK_WINDOW(map->window), "Raytracer");
 	gtk_window_set_default_size (GTK_WINDOW(map->window), map->width,
 			map->height);
-	gtk_window_set_resizable(GTK_WINDOW(map->window), TRUE);
+	gtk_window_set_resizable(GTK_WINDOW(map->window), FALSE);
 	gtk_container_add(GTK_CONTAINER(map->window), GTK_WIDGET(frame_buffer));
 	gtk_widget_show_all(map->window);
 	if (map->obj_selected == NULL)

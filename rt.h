@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 07:56:52 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 02:49:18 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -380,7 +380,7 @@ void		create_multi_sampling_bar(GtkWidget *interface, t_map *map);
 void		create_max_depth_bar(GtkWidget *interface, t_map *map);
 void		add_sep(GtkWidget *interface);
 int			*get_perl_tex(int height, int width, float res);
-void		add_moove_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
+void		add_moove_scroll_bar(GtkWidget *interface, char *label_str, t_map *map, char *name);
 void		add_rotate_scroll_bar(GtkWidget *interface, char *label_str, t_map *map);
 void		rotate_cone_cyl(GtkWidget *widget, t_map *map);
 void		rotate_obj(GtkWidget *widget, t_map *map);

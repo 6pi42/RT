@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 07:29:15 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/11 15:41:24 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 04:50:33 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,9 @@ void	open_generateur_scene(t_map *map)
 void	load_new_scene(t_map *map, char *file_name)
 {
 	printf("le fichier charger : %s\n", file_name);
-	//free_scene(&map->scene);
+	//free_scene(&map->scene); // TODO: MEMORY non allocated apparament 
 	map->scene.nb_shape = get_nb_shape(file_name);
-	//map->scene.shape = NULL;//parse(map, file_name);
+	map->scene.shape = parse(map, file_name);
 	printf("ptr shape : %p\n", map->scene.shape);
 	map->obj_selected = map->scene.shape;
 	init_inter(map, map->height * map->width);
