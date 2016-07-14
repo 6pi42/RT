@@ -6,8 +6,8 @@ SCENE
 {
 	- Window
 	{
-		width: 1980
-		height: 1280
+		width: 600
+		height: 480
 	}
 
 	- Camera
@@ -105,7 +105,7 @@ SHAPES
 
 	- Cylinder
 	{
-		id: 2
+		id: 0
 		neg: 0
 		rgb: 190 190 0
 		pos: 0.0 0.0 200.0
