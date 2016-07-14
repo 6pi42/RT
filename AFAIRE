@@ -10,3 +10,7 @@ les bug ecran noir de temps en temps
 implementer les filtres
 bug connection des boutton qd on click
 bug cercle saffiche qui qd ils veut se fdp
+faire les scene
+obj selected = NULL sans segfault
+multispot
+ombre
