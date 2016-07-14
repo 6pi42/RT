@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/18 16:16:11 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/13 06:26:10 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 16:13:35 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,13 @@ void	get_material(int fd, t_parse *fuck)
 			mat[fuck->nb_mat].tex = load_texture(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "bump: ")) != -1)
 			mat[fuck->nb_mat].bump = load_texture(ft_strchr(line, ' ') + 1);
+		else if ((j = ft_strsearch(line, "off_x: ")) != -1)
+			mat[fuck->nb_mat].tex->off_x = atoi_double(ft_strchr(line, ' ') + 1);
+		else if ((j = ft_strsearch(line, "off_y: ")) != -1)
+			mat[fuck->nb_mat].tex->off_y = atoi_double(ft_strchr(line, ' ') + 1);
+		else if ((j = ft_strsearch(line, "scale: ")) != -1)
+			mat[fuck->nb_mat].tex->scale = atoi_double(ft_strchr(line, ' ') + 1);
+		//printf("\n\n%.2f\t%.2f\t%.2f\n", mat[0].tex->off_x, mat[0].tex->off_y, mat[0].tex->scale);
 		free(line);
 	}
 	fuck->nb_mat++;
