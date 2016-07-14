@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/28 13:19:27 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/14 13:42:45 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/14 13:57:47 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,8 @@ int		plane_texturing(t_tex *tex, t_inter inter, cl_float4 inter_pos)
 	u_axis.z = -inter.normal.x;
 	v_axis = cross_vec(inter.normal, u_axis);
 	color = bilinear_filtering(tex,
-			fmod(docl_float4(inter_pos, v_axis) * 0.005f, tex->w),
-			fmod(docl_float4(inter_pos, u_axis) * 0.005f, tex->h));
+		tex->off_x + fmod(docl_float4(inter_pos, v_axis) * tex->scale, tex->w),
+		tex->off_y + fmod(docl_float4(inter_pos, u_axis) * tex->scale, tex->h));
 	return (color);
 }
 
@@ -87,8 +87,8 @@ int		sphere_texturing(t_tex *tex, t_inter inter)
 	u = 0.5f + atan2(inter.normal.z, inter.normal.x) * (2.0f * M_PI);
 	v = 0.5f - asin(inter.normal.y) * M_PI;
 	color = bilinear_filtering(tex,
-			(((float)tex->w - 1.0f) * u) * 0.001f,
-			(((float)tex->h - 1.0f) * v) * 0.001f);
+		tex->off_x + (((float)tex->w - 1.0f) * u) * tex->scale,
+		tex->off_y + (((float)tex->h - 1.0f) * v) * tex->scale);
 	return (color);
 }
 
@@ -105,8 +105,8 @@ int		cylinder_texturing(t_tex *tex, t_inter inter, t_shape shape,
 	u = atan2(inter_pos.z, inter_pos.x) + M_PI;
 	v = inter_pos.y / 42.0f;
 	color = bilinear_filtering(tex,
-			(((float)tex->w - 1.0f) * u) * 0.001f,
-			(((float)tex->h - 1.0f) * v) * 0.001f);
+		tex->off_x + (((float)tex->w - 1.0f) * u) * tex->scale,
+		tex->off_y + (((float)tex->h - 1.0f) * v) * tex->scale);
 	return (color);
 }
 

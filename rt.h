@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/14 02:49:18 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 13:56:01 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,9 @@ typedef struct	s_tex
 {
 	int			h;
 	int			w;
+	float		off_x;
+	float		off_y;
+	float		scale;
 	int			*buffer;
 }				t_tex;
 
