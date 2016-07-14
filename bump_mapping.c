@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/30 10:25:39 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 05:35:47 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 13:45:41 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,23 @@ cl_float4	sphere_bumpmapping(t_tex *tex, t_inter inter)
 	return (calc_binormal(inter.normal, get_bump_normal(color)));
 }
 
+cl_float4	cylinder_bumpmapping(t_tex *tex, t_inter inter, t_shape shape,
+				cl_float4 inter_pos)
+{
+	float	u;
+	float	v;
+	int		color;
+	(void)shape;
+	(void)inter;
+	u = atan2(inter_pos.z, inter_pos.x) + M_PI;
+	v = inter_pos.y / 42.0f;
+	color = bilinear_filtering(tex,
+			(((float)tex->w - 1.0f) * u) * 0.001f,
+			(((float)tex->h - 1.0f) * v) * 0.001f);
+	return (calc_binormal(inter.normal, get_bump_normal(color)));
+}
+
+
 cl_float4	get_bumped_normal(t_map *map, t_inter inter, t_shape shape,
 				cl_float4 inter_pos)
 {
@@ -161,6 +178,8 @@ cl_float4	get_bumped_normal(t_map *map, t_inter inter, t_shape shape,
 			normal = sphere_bumpmapping(tex, inter);
 		else if (shape.type.x == 2.0f)
 			normal = plane_bumpmapping(tex, inter, inter_pos);
+		else if (shape.type.x == 3.0f || shape.type.x == 4.0f)
+			normal = cylinder_bumpmapping(tex, inter, shape, inter_pos);
 	}
 	return (normal);
 }

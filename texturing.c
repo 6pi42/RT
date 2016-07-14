@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/28 13:19:27 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 05:40:30 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 13:42:45 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,17 @@ int		color_add4(int c1, int c2, int c3, int c4)
 	int blue;
 
 	red = (((c1 & 0xFF0000) >> 16)
-		+ ((c2 & 0xFF0000) >> 16)
-		+ ((c3 & 0xFF0000) >> 16)
-		+ ((c4 & 0xFF0000) >> 16));
+			+ ((c2 & 0xFF0000) >> 16)
+			+ ((c3 & 0xFF0000) >> 16)
+			+ ((c4 & 0xFF0000) >> 16));
 	green = (((c1 & 0xFF00) >> 8)
-		+ ((c2 & 0xFF00) >> 8)
-		+ ((c3 & 0xFF00) >> 8)
-		+ ((c4 & 0xFF00) >> 8));
+			+ ((c2 & 0xFF00) >> 8)
+			+ ((c3 & 0xFF00) >> 8)
+			+ ((c4 & 0xFF00) >> 8));
 	blue = ((c1 & 0xFF)
-		+ (c2 & 0xFF)
-		+ (c3 & 0xFF)
-		+ (c4 & 0xFF));
+			+ (c2 & 0xFF)
+			+ (c3 & 0xFF)
+			+ (c4 & 0xFF));
 	red = red > 0xFF ? 0xFF : red;
 	green = green > 0xFF ? 0xFF : green;
 	blue = blue > 0xFF ? 0xFF : blue;
@@ -52,13 +52,13 @@ int		bilinear_filtering(t_tex *tex, float x, float y)
 	bil.fractx = fx - floor(fx);
 	bil.fracty = fy - floor(fy);
 	color = color_add4(color_mul(tex->buffer[bil.x1 + bil.y1 * tex->w],
-						(1.0f - bil.fractx) * (1.0f - bil.fracty)),
-					color_mul(tex->buffer[bil.x2 + bil.y1 * tex->w],
-						bil.fractx * (1.0f - bil.fracty)),
-					color_mul(tex->buffer[bil.x1 + bil.y2 * tex->w],
-						(1.0f - bil.fractx) * bil.fracty),
-					color_mul(tex->buffer[bil.x2 + bil.y2 * tex->w],
-						bil.fractx * bil.fracty));
+				(1.0f - bil.fractx) * (1.0f - bil.fracty)),
+			color_mul(tex->buffer[bil.x2 + bil.y1 * tex->w],
+				bil.fractx * (1.0f - bil.fracty)),
+			color_mul(tex->buffer[bil.x1 + bil.y2 * tex->w],
+				(1.0f - bil.fractx) * bil.fracty),
+			color_mul(tex->buffer[bil.x2 + bil.y2 * tex->w],
+				bil.fractx * bil.fracty));
 	return (color);
 }
 
@@ -73,8 +73,8 @@ int		plane_texturing(t_tex *tex, t_inter inter, cl_float4 inter_pos)
 	u_axis.z = -inter.normal.x;
 	v_axis = cross_vec(inter.normal, u_axis);
 	color = bilinear_filtering(tex,
-				fmod(docl_float4(inter_pos, v_axis) * 0.005f, tex->w),
-				fmod(docl_float4(inter_pos, u_axis) * 0.005f, tex->h));
+			fmod(docl_float4(inter_pos, v_axis) * 0.005f, tex->w),
+			fmod(docl_float4(inter_pos, u_axis) * 0.005f, tex->h));
 	return (color);
 }
 
@@ -87,33 +87,31 @@ int		sphere_texturing(t_tex *tex, t_inter inter)
 	u = 0.5f + atan2(inter.normal.z, inter.normal.x) * (2.0f * M_PI);
 	v = 0.5f - asin(inter.normal.y) * M_PI;
 	color = bilinear_filtering(tex,
-				(((float)tex->w - 1.0f) * u) * 0.001f,
-				(((float)tex->h - 1.0f) * v) * 0.001f);
+			(((float)tex->w - 1.0f) * u) * 0.001f,
+			(((float)tex->h - 1.0f) * v) * 0.001f);
 	return (color);
 }
 
+
+
 int		cylinder_texturing(t_tex *tex, t_inter inter, t_shape shape,
-			cl_float4 inter_pos)
+		cl_float4 inter_pos)
 {
 	float	u;
 	float	v;
 	int		color;
 	(void)shape;
 	(void)inter;
-	//u = shape.radius.x * cos(inter.normal.x * (2.0f * M_PI));
-	//v = shape.radius.x * sin(inter.normal.y * (2.0f * M_PI));
 	u = atan2(inter_pos.z, inter_pos.x) + M_PI;
-	v = inter_pos.y;
-	//printf("u: %f|v: %f\n", u, v);
+	v = inter_pos.y / 42.0f;
 	color = bilinear_filtering(tex,
-				(((float)tex->w - 1.0f) * u) * 0.0001f,
-				(((float)tex->h - 1.0f) * v) * 0.0001f);
+			(((float)tex->w - 1.0f) * u) * 0.001f,
+			(((float)tex->h - 1.0f) * v) * 0.001f);
 	return (color);
 }
 
-
 int 	get_texture_color(t_map *map, t_inter inter, t_shape shape,
-						cl_float4 inter_pos)
+		cl_float4 inter_pos)
 {
 	int		color;
 	t_tex 	*tex;
@@ -127,7 +125,7 @@ int 	get_texture_color(t_map *map, t_inter inter, t_shape shape,
 			color = sphere_texturing(tex, inter);
 		else if (shape.type.x == 2.0f)
 			color = plane_texturing(tex, inter, inter_pos);	
-		else if (shape.type.x == 3.0f)
+		else if (shape.type.x == 3.0f || shape.type.x == 4.0f)
 			color = cylinder_texturing(tex, inter, shape,inter_pos);
 	}
 	return (color);	
