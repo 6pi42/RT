@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/29 10:24:51 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 02:39:02 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 15:51:46 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,14 @@ int		*convert_texture(guchar *gubuffer, int width, int height, int c)
 		j -= c;
 		i++;
 	}
-	return buf;
+	return (buf);
 }
 
 t_tex	*load_texture(char *file_name)
 {
 	t_tex		*tex;
-	GdkPixbuf 	*pixbuf;
-	GError 		*error;
+	GdkPixbuf	*pixbuf;
+	GError		*error;
 
 	error = NULL;
 	if ((tex = (t_tex*)malloc(sizeof(t_tex))) == NULL)

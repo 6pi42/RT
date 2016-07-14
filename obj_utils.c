@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/13 11:31:54 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/13 16:00:13 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/14 15:54:46 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ cl_float4	get_vector(char *line)
 	while (tab[i])
 		i++;
 	if (i != 3)
-		printf("error\n");
+		ft_putstr("error\n");
 	vector.x = atoi_double(tab[0]);
 	vector.y = atoi_double(tab[1]);
 	vector.z = atoi_double(tab[2]);
@@ -64,10 +64,10 @@ cl_float4	parse_element(char *line)
 	free(tab);
 }
 
-void	parse_face(char *line, t_obj *obj, t_shape *shape)
+void		parse_face(char *line, t_obj *obj, t_shape *shape)
 {
-	char		**tab;
-	int			i;
+	char	**tab;
+	int		i;
 
 	i = 0;
 	tab = ft_strsplit(line, ' ');
@@ -87,8 +87,7 @@ void	parse_face(char *line, t_obj *obj, t_shape *shape)
 	free(tab);
 }
 
-
-t_shape	get_face(char *line, t_obj *obj)
+t_shape		get_face(char *line, t_obj *obj)
 {
 	t_shape shape;
 

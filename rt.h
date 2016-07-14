@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/14 13:56:01 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/14 14:35:30 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -310,6 +310,10 @@ int			get_texture_color(t_map *map, t_inter inter, t_shape shape,
 				cl_float4 inter_pos);
 int			plane_texturing(t_tex *tex, t_inter inter, cl_float4 inter_pos);
 int			sphere_texturing(t_tex *tex, t_inter inter);
+cl_float4	get_perpendicular_vec(cl_float4 normal);
+cl_float4	mul_mat3_vector(cl_float4 tan, cl_float4 bi, cl_float4 norm,
+				cl_float4 bump);
+cl_float4	get_bump_normal(int color);
 
 int			ft_strsearch(char *str1, char *str2);
 t_shape		*parse(t_map *map, char *file);

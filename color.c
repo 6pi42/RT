@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/25 10:21:01 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/12 12:00:47 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 15:31:46 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ int		color_sub(int c1, int c2)
 	blue = blue < 0x0 ? 0x0 : blue;
 	return (red << 16 | green << 8 | blue);
 }
+
 int		color_add(int c1, int c2)
 {
 	int	red;
