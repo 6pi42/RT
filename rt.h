@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/14 17:36:28 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/15 14:08:01 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,7 +298,7 @@ void					init_inter(t_map *map, size_t work_size);
 t_inter					*get_inter(t_map *map, size_t work_size, t_ray *ray);
 void					init_cam(t_map *map);
 void					init_cam2(t_map *map);
-int						*shadow(t_map *map, t_inter *inter, t_ray *primary);
+int						*shadow(t_map *map, t_inter *inter);
 
 void					write_bitmap(t_map *map);
 t_tex					*load_texture(char *file_name);

@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 11:32:14 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/26 13:25:05 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/15 14:07:57 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,33 +24,39 @@ cl_float4	get_shadow_dir(cl_float4 inter_pos, t_spot spot)
 	return (shadow_dir);
 }
 
-t_ray		*get_shadow_ray(t_map *map, t_spot spot,
-									t_ray *ray, t_inter *inter)
+t_ray		*get_shadow_ray(t_map *map, t_spot spot, t_inter *inter)
 {
 	t_ray		*shadow;
+	cl_float4	inter_pos;
 	int			i;
-	
+
 	i = 0;
 	shadow = (t_ray*)malloc(sizeof(t_ray) * (size_t)(map->height * map->width));
 	while (i < (int)(map->height * map->width))
 	{
 		if (inter[i].id != -1)
 		{
-			shadow[i].origin.x = (ray[i].origin.x
-				+ (ray[i].ray.x * inter[i].dist)) + (ray[i].ray.x * 0.01f);
-			shadow[i].origin.y = (ray[i].origin.y
-				+ (ray[i].ray.y * inter[i].dist)) + (ray[i].ray.y * 0.01f);
-			shadow[i].origin.z = (ray[i].origin.z
-				+ (ray[i].ray.z * inter[i].dist)) + (ray[i].ray.z * 0.01f);
+			//printf("%f %f %f\n", spot.pos.x, spot.pos.y, spot.pos.z);
+			shadow[i].origin.x = spot.pos.x;
+			shadow[i].origin.y = spot.pos.y;
+			shadow[i].origin.z = spot.pos.z;
 			shadow[i].origin.w = 0.0f;
-			shadow[i].ray = get_shadow_dir(shadow[i].origin, spot);
+
+			inter_pos.x = (inter[i].from.origin.x + (inter[i].from.ray.x
+						* inter[i].dist)) + (inter[i].from.ray.x * 0.01f);
+			inter_pos.y = (inter[i].from.origin.y + (inter[i].from.ray.y
+						* inter[i].dist)) + (inter[i].from.ray.y * 0.01f);
+			inter_pos.z = (inter[i].from.origin.z + (inter[i].from.ray.z
+						* inter[i].dist)) + (inter[i].from.ray.z * 0.01f);
+			inter_pos.w = 0.0f;
+			shadow[i].ray = get_shadow_dir(inter_pos, spot);
 		}
 		i++;
 	}
 	return (shadow);
 }
 
-int		*shadow(t_map *map, t_inter *inter, t_ray *primary)
+int		*shadow(t_map *map, t_inter *inter)
 {
 	t_ray	*shadow;
 	t_inter	*inter_shadow;
@@ -63,7 +69,7 @@ int		*shadow(t_map *map, t_inter *inter, t_ray *primary)
 	while (i < map->scene.nb_spot)
 	{
 		j = 0;
-		shadow = get_shadow_ray(map, map->scene.spot[i], primary, inter);
+		shadow = get_shadow_ray(map, map->scene.spot[i], inter);
 		inter_shadow = get_inter(map, (size_t)map->height * map->width, shadow);
 		while (j < (int)(map->height * map->width))
 		{
@@ -71,7 +77,9 @@ int		*shadow(t_map *map, t_inter *inter, t_ray *primary)
 				is_shadow[j] = 0;
 			if (inter_shadow[j].id != -1
 					&& (inter[j].id != inter_shadow[j].id))
+			{
 				is_shadow[j]++; //need this to create different shade of shadow
+			}
 			j++;
 		}
 		i++;
