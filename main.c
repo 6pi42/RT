@@ -6,7 +6,7 @@
 /*   By: amathias <amathias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/15 11:50:31 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/07/15 14:28:11 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,28 +70,11 @@ int		main(int argc, char **argv)
 	t_prog		prog;
 	t_shape		*shape;
 	t_camera	cam;
-//	t_mat		mat;
-	t_spot		spot;
 
 	if (argc != 2)
 		return (1);
 	map.scene.nb_shape = get_nb_shape(argv[1]);
 	shape = parse(&map, argv[1]);
-	//Add that to parsing
-//	mat.ka = 0.2f;
-//	mat.kd = 0.6f;
-//	mat.ks = 0.8f;
-//	mat.ktran = 0.0f;
-//	mat.kreflec = 0.0f;
-//	mat.krefrac	= 0.0f;
-	// Same
-	spot.type = 1;
-	spot.pos.x = 20.0f;
-	spot.pos.y = 20.0f;
-	spot.pos.z = -20.0f;
-	spot.pos.w = 0.0f;
-	spot.color = 0xFFFFFF;
-	spot.intensity = 42.0f;
 	int *tex = get_perl_tex(512, 512, 100);
 
 	(void)tex;
@@ -101,12 +84,10 @@ int		main(int argc, char **argv)
 	map.scene.max_depth = 0;
 	map.scene.shape = shape;
 	map.scene.cam = &cam;
-	map.scene.spot = &spot;
 	map.scene.nb_spot = 1;
 	map.obj_selected = shape;
 	map.scene.nb_mat = 1;
 	map.fix = 0;
-
 
 	gtk_init(&argc, &argv);
 	init_config(&map.config);
