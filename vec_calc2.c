@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/24 03:41:10 by apaget            #+#    #+#             */
-/*   Updated: 2016/06/02 15:42:49 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 17:08:27 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ cl_float4	scale_vec(double fact, cl_float4 v1)
 	return (res);
 }
 
-void	normalize_vec(cl_float4 *v1)
+void		normalize_vec(cl_float4 *v1)
 {
 	double	fact;
 	double	vec_len;
@@ -35,12 +35,12 @@ void	normalize_vec(cl_float4 *v1)
 	v1->z *= fact;
 }
 
-double	docl_float4(cl_float4 v1, cl_float4 v2)
+double		docl_float4(cl_float4 v1, cl_float4 v2)
 {
 	return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
 }
 
-double	dis_point(cl_float4 pt1, cl_float4 pt2)
+double		dis_point(cl_float4 pt1, cl_float4 pt2)
 {
 	return (sqrt((pt2.x - pt1.x) * (pt2.x - pt1.x) + (pt2.y - pt1.y) *
 				(pt2.y - pt1.y) + (pt2.z - pt1.z) * (pt2.z - pt1.z)));
