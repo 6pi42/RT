@@ -7,7 +7,7 @@ SCENE
 	- Window
 	{
 		width: 600
-		height: 480
+		height: 545
 	}
 
 	- Camera
@@ -19,7 +19,7 @@ SCENE
 	{
 		type: 1
 		rgb: 255 255 255
-		pos: 250.0 100.0 0.0
+		pos: 250.0 100.0 50.0
 		intensity: 42.0
 	}
 
@@ -34,10 +34,10 @@ MATERIAL
 	- mat 0
 	{
 		bump: bump.jpg
-		tex: tex.png
+		tex: apple.jpeg
 		off_x: 0.0
 		off_y: 0.0
-		scale: 0.000001
+		scale: 0.1
 		ka: 1.0
 		ks: 0.9
 		kd: 0.8
@@ -63,28 +63,6 @@ SHAPES
 		rgb: 190 190 0
 		pos: 0.0 0.0 -200.0
 		nor: 0.0 0.0 1.0
-	}
-
-	- Cylinder
-	{
-		id: 0
-		neg: 0
-		rgb: 190 190 0
-		pos: 0.0 0.0 200.0
-		dir: 0.0 1.0 0.0
-		rad: 50.0
-		nor: 0.0 0.0 1.0
-		decoupe: 0.0 0.0 0.0 0.0
-	}
-
-	- Sphere
-	{
-		id: 0
-		rad: 25.0
-		rgb: 255 255 255
-		pos: 0.0 0.0 0.0
-		decoupe: 1.0 0.0 0.0 1.0
-		neg: 0
 	}
 
 	- Sphere
