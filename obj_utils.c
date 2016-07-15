@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   obj_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: amathias <amathias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/13 11:31:54 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/14 15:54:46 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/15 14:00:41 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ cl_float4	get_vector(char *line)
 		i++;
 	if (i != 3)
 		ft_putstr("error\n");
-	vector.x = atoi_double(tab[0]);
-	vector.y = atoi_double(tab[1]);
-	vector.z = atoi_double(tab[2]);
+	vector.x = atof(tab[0]);
+	vector.y = atof(tab[1]);
+	vector.z = atof(tab[2]);
 	vector.w = 0.0f;
 	i = 0;
 	while (tab[i])
