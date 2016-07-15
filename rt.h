@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amathias <amathias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/14 14:35:30 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/15 14:01:12 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -317,7 +317,6 @@ cl_float4	get_bump_normal(int color);
 
 int			ft_strsearch(char *str1, char *str2);
 t_shape		*parse(t_map *map, char *file);
-float		atoi_double(char *line);
 
 
 void		get_sphere(int fd, t_parse *fuck);

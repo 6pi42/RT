@@ -6,29 +6,11 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:54:18 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/13 03:42:56 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/15 14:01:04 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt.h"
-
-float	atoi_double(char *line)
-{
-	float	integer;
-	float	decimal;
-	float	sign;
-
-	sign = 1.0f;
-	integer = (double)ft_atoi(line);
-	if (ft_strchr(line, '-'))
-		sign = -1.0f;
-	integer = fabs(integer);
-	line = ft_strchr(line, '.') + 1;
-	decimal = (double)ft_atoi(line);
-	while (decimal >= 1.0f)
-		decimal /= 10.0f;
-	return (sign * (integer + decimal));
-}
 
 int		ft_strsearch(char *str1, char *str2)
 {

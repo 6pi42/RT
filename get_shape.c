@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:52:38 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/14 02:34:41 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/15 12:01:10 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ void	init_shape(t_parse *fuck)
 	fuck->shape[fuck->nb].radius.x = 0;
 	fuck->shape[fuck->nb].radius.y = 0;
 	fuck->shape[fuck->nb].radius.z = 0;
+
+	fuck->shape[fuck->nb].mat_id = 0;
 }
 
 

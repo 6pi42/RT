@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/18 16:16:11 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/14 16:13:35 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/07/15 14:00:25 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	get_spotlight(int fd, t_map *map)
 		else if ((j = ft_strsearch(line, "type: ")) != -1)
 			map->scene.spot[map->spoti].type = atoi(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "intensity: ")) != -1)
-			map->scene.spot[map->spoti].intensity = atoi_double(ft_strchr(line,
+			map->scene.spot[map->spoti].intensity = atof(ft_strchr(line,
 						' ') + 1);
 		free(line);
 	}
@@ -103,27 +103,27 @@ void	get_material(int fd, t_parse *fuck)
 			== -1)
 	{
 		if ((j = ft_strsearch(line, "ka: ")) != -1)
-			mat[fuck->nb_mat].ka = atoi_double(ft_strchr(line, ' ') + 1);
+			mat[fuck->nb_mat].ka = atof(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "ks: ")) != -1)
-			mat[fuck->nb_mat].ks = atoi_double(ft_strchr(line, ' ') + 1);
+			mat[fuck->nb_mat].ks = atof(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "kd: ")) != -1)
-			mat[fuck->nb_mat].kd = atoi_double(ft_strchr(line, ' ') + 1);
+			mat[fuck->nb_mat].kd = atof(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "ktran: ")) != -1)
-			mat[fuck->nb_mat].ktran = atoi_double(ft_strchr(line, ' ') + 1);
+			mat[fuck->nb_mat].ktran = atof(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "kreflec: ")) != -1)
-			mat[fuck->nb_mat].kreflec = atoi_double(ft_strchr(line, ' ') + 1);
+			mat[fuck->nb_mat].kreflec = atof(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "krefrac: ")) != -1)
-			mat[fuck->nb_mat].krefrac = atoi_double(ft_strchr(line, ' ') + 1);
+			mat[fuck->nb_mat].krefrac = atof(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "tex: ")) != -1)
 			mat[fuck->nb_mat].tex = load_texture(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "bump: ")) != -1)
 			mat[fuck->nb_mat].bump = load_texture(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "off_x: ")) != -1)
-			mat[fuck->nb_mat].tex->off_x = atoi_double(ft_strchr(line, ' ') + 1);
+			mat[fuck->nb_mat].tex->off_x = atof(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "off_y: ")) != -1)
-			mat[fuck->nb_mat].tex->off_y = atoi_double(ft_strchr(line, ' ') + 1);
+			mat[fuck->nb_mat].tex->off_y = atof(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "scale: ")) != -1)
-			mat[fuck->nb_mat].tex->scale = atoi_double(ft_strchr(line, ' ') + 1);
+			mat[fuck->nb_mat].tex->scale = atof(ft_strchr(line, ' ') + 1);
 		//printf("\n\n%.2f\t%.2f\t%.2f\n", mat[0].tex->off_x, mat[0].tex->off_y, mat[0].tex->scale);
 		free(line);
 	}
