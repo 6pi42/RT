@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 03:35:19 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/14 04:47:42 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 18:22:40 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,25 +72,25 @@ void	add_moove_scroll_bar(GtkWidget *interface, char *label_str, t_map *map, cha
 
 void	add_fleche(GtkWidget *interface, t_map *map, char *cote, char *label_str)
 {
-	GtkWidget	*label;
-	GtkWidget	*event_box;
+	char	*label;
+	GtkWidget	*but;
 	char *name;
 
-	event_box = gtk_event_box_new();
-	gtk_widget_add_events(event_box, GDK_POINTER_MOTION_MASK |
-			GDK_KEY_RELEASE_MASK | GDK_BUTTON_PRESS_MASK |
-				GDK_BUTTON_RELEASE_MASK);
-	g_signal_connect(G_OBJECT(event_box), "motion-notify-event",
+	but = gtk_button_new();
+	(void)map;
+	(void)cote;
+	(void)label_str;
+	(void)interface;
+	g_signal_connect(G_OBJECT(but), "pressed",
 											G_CALLBACK(rotate_obj), map);
 	if (*cote == 'l')
-		label = gtk_label_new("<span background='grey'size='xx-large'> ← </span>");
+		label = " ← ";
 	else
-		label = gtk_label_new("<span background='grey'size='xx-large'> → </span>");
-	gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
-	gtk_container_add(GTK_CONTAINER(event_box), label);
+		label =  " → ";
+	gtk_button_set_label(GTK_BUTTON(but), label);
 	name = ft_strjoin(label_str, cote);
-	gtk_widget_set_name(GTK_WIDGET(event_box), name);
-	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(event_box), TRUE, TRUE, 0);
+	gtk_widget_set_name(GTK_WIDGET(but), name);
+	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(but), TRUE, TRUE, 0);
 	free(name);
 }
 
@@ -104,6 +104,7 @@ void	add_rotate_scroll_bar(GtkWidget *interface, char *label_str, t_map *map)
 	box_h = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	add_fleche(box_h, map, "l", label_str);
 	add_fleche(box_h, map, "r", label_str);
+	(void)map;
 	gtk_box_pack_start(GTK_BOX(box), GTK_WIDGET(box_h), TRUE, TRUE, 2);
 	gtk_box_pack_start(GTK_BOX(interface), GTK_WIDGET(box), TRUE, TRUE, 5);
 }

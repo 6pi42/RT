@@ -6,8 +6,8 @@ SCENE
 {
 	- Window
 	{
-		width: 1980
-		height: 1280
+		width: 600
+		height: 600
 	}
 
 	- Camera

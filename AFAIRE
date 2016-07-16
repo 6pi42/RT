@@ -14,3 +14,4 @@ faire les scene
 obj selected = NULL sans segfault
 multispot
 ombre
+multisampling
