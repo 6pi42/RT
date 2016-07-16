@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/16 11:24:17 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/16 11:25:01 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,8 +116,9 @@ int		*apply_trans(t_map *map, t_inter *inter, int *color)
 		if (inter[i].id != -1 && tmp[i].id != -1 && inter[i].id != tmp[i].id
 		&& map->scene.mat[map->scene.shape[tmp[i].id].mat_id].krefrac != 0)
 		{
-			color[i] = color_add(color[i],
-				color_mul(get_texture_color(map, tmp[i], map->scene.shape[tmp[i].id], get_inter_pos(tmp[i].from, tmp[i])),
+			color[i] = color_add(color[i], color_mul(
+				get_texture_color(map, tmp[i], map->scene.shape[tmp[i].id],
+				get_inter_pos(tmp[i].from, tmp[i])),
 				map->scene.mat[map->scene.shape[tmp[i].id].mat_id].krefrac / 2));
 		}
 		i++;
@@ -127,6 +128,7 @@ int		*apply_trans(t_map *map, t_inter *inter, int *color)
 
 int		*shade(t_map *map, t_inter *inter)
 {
+	int		*is_shadow;
 	t_utils utils;
 	int		i;
 	cl_float4 tmp;
@@ -134,6 +136,7 @@ int		*shade(t_map *map, t_inter *inter)
 
 	color = (int*)malloc(sizeof(int) * (size_t)(map->height * map->width));
 	i = 0;
+	is_shadow = shadow(map, inter);
 	while (i < (int)(map->height * map->width))
 	{
 		color[i] = 0x0;
@@ -151,10 +154,13 @@ int		*shade(t_map *map, t_inter *inter)
 			else
 				color[i] = color_from_float4( map->scene.shape[inter[i].id].color);
 			color[i] = iter_spot(map, map->scene.mat[map->scene.shape[inter[i].id].mat_id], utils, color[i]);
+			if (is_shadow[i] != 0)
+				color[i] = color_mul(color[i], 0.3f);
 		}
 		i++;
 	}
 	if (map->config.transparence)
 		color = apply_trans(map, inter, color);
+	free(is_shadow);
 	return (color);
 }

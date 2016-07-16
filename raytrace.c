@@ -6,52 +6,25 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 11:29:58 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/14 14:36:30 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/16 11:25:38 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt.h"
 
-void scene_update(t_map *map)
+void	scene_update(t_map *map)
 {
 	(void)map;
 }
-/*
-	void	display_thread(t_map *map, t_inter *inter, t_ray *ray)
-	{
-	pthread_t	tid[1];
-	t_args		*arg1;
 
-	arg1 = malloc(sizeof(t_args));
-	arg1->map = map;
-	arg1->inter = inter;
-	arg1->ray = ray;
-	pthread_create(&tid[0], NULL, (void*)shade, (void*)arg1);
-	pthread_join(tid[0], NULL);
-	free(inter);
-	free(ray);
-	free(arg1);
-//pthread_exit(tid[0]);
-}
-*/
-void	raytrace(t_map *map)
+void	disp(t_map *map, int *shading)
 {
-	t_ray	*primary;
-	t_inter	*inter;
-	GdkPixbuf	*pixel_buf;
-	int		*shading;
-	int		i;
-	int		k;
 	unsigned char	*buf;
+	GdkPixbuf		*pixel_buf;
+	int				i;
+	int				k;
 
-	shading = NULL;
-	buf = (unsigned char*)malloc(sizeof(unsigned char) * (map->height *
-		map->width * 3));
-	primary = get_primary(map);
-	inter = get_inter(map, (size_t)(map->height * map->width), primary);
-	//display_thread(map, inter, primary);
-	//shading = get_perl_tex(map->height, map->width, 50);
-	shading = get_color2(map, inter, shading, map->scene.max_depth);
+	buf = (unsigned char*)malloc(map->height * map->width * 3);
 	i = 0;
 	k = 0;
 	while (i < (int)map->width * (int)map->height)
@@ -61,17 +34,27 @@ void	raytrace(t_map *map)
 		buf[k + 2] = (shading[i] & 0xFF);
 		k += 3;
 		i++;
-	}	
-	pixel_buf = gdk_pixbuf_new_from_data((guchar*)buf,GDK_COLORSPACE_RGB,
+	}
+	pixel_buf = gdk_pixbuf_new_from_data((guchar*)buf, GDK_COLORSPACE_RGB,
 			FALSE, 8, map->width, map->height, map->width * 3, NULL, NULL);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(map->render), pixel_buf);
 	g_object_unref(G_OBJECT(pixel_buf));
-	if (pixel_buf)
-	{
-		//printf("free pix buf\n");
-	//	g_free(pixel_buf);
-	}
+	//if (pixel_buf)
+		//g_free(pixel_buf);
 	free(buf);
+}
+
+void	raytrace(t_map *map)
+{
+	t_ray			*primary;
+	t_inter			*inter;
+	int				*shading;
+
+	shading = NULL;
+	primary = get_primary(map);
+	inter = get_inter(map, (size_t)(map->height * map->width), primary);
+	shading = get_color2(map, inter, shading, map->scene.max_depth);
+	disp(map, shading);
 	free(primary);
 	free(inter);
 	free(shading);

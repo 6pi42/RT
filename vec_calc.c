@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/24 03:40:31 by apaget            #+#    #+#             */
-/*   Updated: 2016/04/05 15:53:32 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 17:08:08 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ cl_float4	cross_vec(cl_float4 v1, cl_float4 v2)
 	return (result);
 }
 
-double	len_vec(cl_float4 v1)
+double		len_vec(cl_float4 v1)
 {
 	return (sqrt(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z));
 }

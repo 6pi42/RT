@@ -6,7 +6,11 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:53:34 by emontagn          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2016/07/16 11:23:11 by apaget           ###   ########.fr       */
+=======
+/*   Updated: 2016/07/15 14:00:31 by emontagn         ###   ########.fr       */
+>>>>>>> cdbd74ef97201869db8f59d1e3713a872be01815
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +31,9 @@ cl_float4	get_position(char *line)
 		i++;
 	if (i != 3)
 		printf("error\n");
-	pos.x = atoi_double(tab[0]);
-	pos.y = atoi_double(tab[1]);
-	pos.z = atoi_double(tab[2]);
+	pos.x = atof(tab[0]);
+	pos.y = atof(tab[1]);
+	pos.z = atof(tab[2]);
 	pos.w = 0.0f;
 	i = 0;
 	while (tab[i])
@@ -56,13 +60,13 @@ cl_float4	get_vector(char *line)
 		i++;
 	if (!(i == 3 || i == 4))
 		printf("error\n");
-	vector.x = atoi_double(tab[0]);
-	vector.y = atoi_double(tab[1]);
-	vector.z = atoi_double(tab[2]);
+	vector.x = atof(tab[0]);
+	vector.y = atof(tab[1]);
+	vector.z = atof(tab[2]);
 	if (i == 3)
 		vector.w = 0.0f;
 	else
-		vector.w = atoi_double(tab[3]);
+		vector.w = atof(tab[3]);
 	i = 0;
 	while (tab[i])
 	{
@@ -88,7 +92,7 @@ cl_float4	get_radius(char *line)
 		i++;
 	if (i != 1)
 		printf("error\n");
-	radius.x = atoi_double(tab[0]);
+	radius.x = atof(tab[0]);
 	radius.y = 0.0f;
 	radius.z = 0.0f;
 	radius.w = 0.0f;

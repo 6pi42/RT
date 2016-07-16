@@ -6,7 +6,7 @@
 #    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/07/14 15:52:42 by apaget           ###   ########.fr        #
+#    Updated: 2016/07/16 11:25:58 by apaget           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,6 +44,8 @@ SRC =	main.c				\
 		signal_fct.c		\
 		texture_loading.c	\
 		texturing.c			\
+		texturing_utils.c	\
+		bump_utils.c		\
 		bump_mapping.c		\
 		gtk_build.c			\
 		gtk_button.c		\

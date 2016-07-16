@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amathias <amathias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 06:44:56 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/15 15:34:47 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,28 +70,11 @@ int		main(int argc, char **argv)
 	t_prog		prog;
 	t_shape		*shape;
 	t_camera	cam;
-	t_mat		mat;
-	t_spot		spot;
 
 	if (argc != 2)
 		return (1);
 	map.scene.nb_shape = get_nb_shape(argv[1]);
 	shape = parse(&map, argv[1]);
-	//Add that to parsing
-	mat.ka = 0.2f;
-	mat.kd = 0.6f;
-	mat.ks = 0.8f;
-	mat.ktran = 0.0f;
-	mat.kreflec = 0.0f;
-	mat.krefrac	= 0.0f;
-	// Same	
-	spot.type = 1;
-	spot.pos.x = 100.0f;
-	spot.pos.y = 1000.0f;
-	spot.pos.z = 100.0f;
-	spot.pos.w = 0.0f;
-	spot.color = 0xFFFFFF;
-	spot.intensity = 42.0f;
 	int *tex = get_perl_tex(512, 512, 100);
 
 	(void)tex;
@@ -101,11 +84,20 @@ int		main(int argc, char **argv)
 	map.scene.max_depth = 0;
 	map.scene.shape = shape;
 	map.scene.cam = &cam;
-	map.scene.spot = &spot;
 	map.scene.nb_spot = 1;
 	map.obj_selected = shape;
 	map.scene.nb_mat = 1;
 	map.fix = 0;
+
+	printf("\nMATERIAL\n\n\tka:%.2f\t\tks:%.2f\t\tkd:%.2f\t\n\tktran:%.2f\tkreflec:%.2f\tkrefrac:%.2f\t\n",
+map.scene.mat[0].ka, map.scene.mat[0].ks, map.scene.mat[0].kd, map.scene.mat[0].ktran,
+map.scene.mat[0].kreflec, map.scene.mat[0].krefrac);
+
+	printf("\n\toff_x:%.2f\toff_y:%.2f\tscale:%.2f\n",
+map.scene.mat[0].tex[0].off_x, map.scene.mat[0].tex[0].off_y,
+map.scene.mat[0].tex[0].scale);
+
+
 
 
 	gtk_init(&argc, &argv);

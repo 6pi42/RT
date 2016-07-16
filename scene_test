@@ -7,7 +7,11 @@ SCENE
 	- Window
 	{
 		width: 600
+<<<<<<< HEAD
 		height: 600
+=======
+		height: 545
+>>>>>>> cdbd74ef97201869db8f59d1e3713a872be01815
 	}
 
 	- Camera
@@ -19,7 +23,7 @@ SCENE
 	{
 		type: 1
 		rgb: 255 255 255
-		pos: 250.0 100.0 0.0
+		pos: 250.0 100.0 500.0
 		intensity: 42.0
 	}
 
@@ -34,53 +38,15 @@ MATERIAL
 	- mat 0
 	{
 		bump: bump.jpg
-		tex: tex.png
+		tex: apple.jpeg
+		off_x: 0.0
+		off_y: 0.0
+		scale: 0.1
 		ka: 1.0
 		ks: 0.9
 		kd: 0.8
 		ktran: 0.0
 		kreflec: 0.9
-		krefrac: 0.0
-	}
-
-	- mat 1
-	{
-		tex: bois.jpg
-		ka: 1.0
-		ks: 0.5
-		kd: 0.8
-		ktran: 0.0
-		kreflec: 0.0
-		krefrac: 0.0
-	}
-
-	- mat 2
-	{
-		ka: 1.0
-		ks: 0.5
-		kd: 0.8
-		ktran: 0.0
-		kreflec: 0.0
-		krefrac: 0.0
-	}
-
-	- mat 2
-	{
-		ka: 1.0
-		ks: 0.5
-		kd: 0.8
-		ktran: 0.0
-		kreflec: 0.0
-		krefrac: 0.0
-	}
-
-	- mat 2
-	{
-		ka: 1.0
-		ks: 0.5
-		kd: 0.8
-		ktran: 0.0
-		kreflec: 0.0
 		krefrac: 0.0
 	}
 }
@@ -97,37 +63,15 @@ SHAPES
 
 	- Plane
 	{
-		id: 1
+		id: 0
 		rgb: 190 190 0
 		pos: 0.0 0.0 -200.0
 		nor: 0.0 0.0 1.0
 	}
 
-	- Cylinder
-	{
-		id: 2
-		neg: 0
-		rgb: 190 190 0
-		pos: 0.0 0.0 200.0
-		dir: 0.0 1.0 0.0
-		rad: 50.0
-		nor: 0.0 0.0 1.0
-		decoupe: 0.0 0.0 0.0 0.0
-	}
-
 	- Sphere
 	{
-		id: 3
-		rad: 25.0
-		rgb: 255 255 255
-		pos: 0.0 0.0 0.0
-		decoupe: 1.0 0.0 0.0 1.0
-		neg: 0
-	}
-
-	- Sphere
-	{
-		id: 4
+		id: 0
 		rad: 25.0
 		rgb: 255 0 0
 		pos: 130.0 110.0 40.0

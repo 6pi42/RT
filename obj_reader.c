@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/13 11:28:47 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 08:57:53 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 15:53:25 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,16 +42,15 @@ t_obj	*obj_alloc(char *file_name, int v, int vn, int vt)
 
 void	obj_read(t_map *map, char *file_name)
 {
-	char *line;
-	t_obj *obj;
-	int fd;
+	char	*line;
+	t_obj	*obj;
+	int		fd;
 
 	obj = obj_alloc(filename, 0, 0, 0);
 	if ((fd = open(file_name, O_RDONLY)) == -1)
 		ft_putstr("error");
 	while (get_next_line(fd, &line) > 0)
 	{
-		//save vertex
 		if (ft_strsearch(line, "v ") != -1)
 			get_vector(ft_strchr(line, 'v') + 1);
 		if (ft_strsearch(line, "vn ") != -1)
@@ -61,5 +60,4 @@ void	obj_read(t_map *map, char *file_name)
 		if (ft_strsearch(line, "f ") != -1)
 			get_vector(ft_strchr(line, 'v') + 1);
 	}
-
 }

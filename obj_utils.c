@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   obj_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: amathias <amathias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/13 11:31:54 by amathias          #+#    #+#             */
-/*   Updated: 2016/05/13 16:00:13 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/15 14:00:41 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ cl_float4	get_vector(char *line)
 	while (tab[i])
 		i++;
 	if (i != 3)
-		printf("error\n");
-	vector.x = atoi_double(tab[0]);
-	vector.y = atoi_double(tab[1]);
-	vector.z = atoi_double(tab[2]);
+		ft_putstr("error\n");
+	vector.x = atof(tab[0]);
+	vector.y = atof(tab[1]);
+	vector.z = atof(tab[2]);
 	vector.w = 0.0f;
 	i = 0;
 	while (tab[i])
@@ -64,10 +64,10 @@ cl_float4	parse_element(char *line)
 	free(tab);
 }
 
-void	parse_face(char *line, t_obj *obj, t_shape *shape)
+void		parse_face(char *line, t_obj *obj, t_shape *shape)
 {
-	char		**tab;
-	int			i;
+	char	**tab;
+	int		i;
 
 	i = 0;
 	tab = ft_strsplit(line, ' ');
@@ -87,8 +87,7 @@ void	parse_face(char *line, t_obj *obj, t_shape *shape)
 	free(tab);
 }
 
-
-t_shape	get_face(char *line, t_obj *obj)
+t_shape		get_face(char *line, t_obj *obj)
 {
 	t_shape shape;
 
