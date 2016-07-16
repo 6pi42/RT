@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/10 10:04:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/06/29 14:14:32 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/16 18:31:18 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char	*get_img(t_map *map, int work_size)
 	int		k;
 	int		i;
 	int		j;
-	int		index;
+//	int		index;
 	char	*tmp;
 
 	if ((tmp = (char*)malloc(work_size)) == NULL)
@@ -29,10 +29,9 @@ char	*get_img(t_map *map, int work_size)
 		j = 0;
 		while (j < (int)map->width)
 		{
-			index = i * map->img.size_line + (j * map->img.bpp) / 8;
-			tmp[k] = map->img.data[index];
-			tmp[k + 1] = map->img.data[index + 1];
-			tmp[k + 2] = map->img.data[index + 2];
+			tmp[k + 2] = (map->img.data[(int)map->width * i + j] & 0xFF0000) >> 16;
+			tmp[k + 1] = (map->img.data[(int)map->width * i + j] & 0xFF00) >> 8;
+			tmp[k] = (map->img.data[(int)map->width * i + j] & 0xFF);
 			k += 3;
 			j++;
 		}

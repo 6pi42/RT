@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/16 17:07:35 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/16 19:41:21 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,9 @@ int		iter_spot(t_map *map, t_mat mat, t_utils utils, int color)
 		acolor[i] = c;
 		i++;
 	}
-	return (color_average(acolor, map->scene.nb_spot));
+	c = color_average(acolor, map->scene.nb_spot);
+	free(acolor);
+	return (c);
 }
 
 t_ray *prep_ray_trans(t_map *map, t_inter *inter)
@@ -134,6 +136,7 @@ int		*apply_trans(t_map *map, t_inter *inter, int *color)
 		}
 		i++;
 	}
+	free(ray);
 	return (color);
 }
 

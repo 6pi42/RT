@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 11:29:58 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/16 15:54:11 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/16 18:41:53 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,10 @@ void	disp(t_map *map, int *shading)
 	pixel_buf = gdk_pixbuf_new_from_data((guchar*)buf, GDK_COLORSPACE_RGB,
 			FALSE, 8, map->width, map->height, map->width * 3, NULL, NULL);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(map->render), pixel_buf);
+	if (map->img.data)
+		free(map->img.data);
+	map->img.data = shading;
 	g_object_unref(G_OBJECT(pixel_buf));
-	//if (pixel_buf)
-		//g_free(pixel_buf);
 	free(buf);
 }
 
@@ -57,5 +58,5 @@ void	raytrace(t_map *map)
 	disp(map, shading);
 	free(primary);
 	free(inter);
-	free(shading);
+	//free(shading);
 }

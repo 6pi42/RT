@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/16 17:07:37 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/16 19:41:31 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ typedef struct			s_img
 	int					size_line;
 	int					endian;
 	void				*img;
-	char				*data;
+	int					*data;
 }						t_img;
 
 typedef struct			s_inter
