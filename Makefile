@@ -6,7 +6,7 @@
 #    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/07/16 11:25:58 by apaget           ###   ########.fr        #
+#    Updated: 2016/07/16 15:03:01 by amathias         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,6 +47,7 @@ SRC =	main.c				\
 		texturing_utils.c	\
 		bump_utils.c		\
 		bump_mapping.c		\
+		post_process.c		\
 		gtk_build.c			\
 		gtk_button.c		\
 		gtk_callback.c		\
