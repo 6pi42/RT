@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 02:40:29 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/13 09:52:23 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/16 16:33:08 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,12 @@ GtkWidget	*find_widget_with_name(char *name, t_map *map)
 	GList	*list;
 	char	*name2;
 
-	list = gtk_container_get_children(GTK_CONTAINER(map->obj_box));
+	list = gtk_container_get_children(GTK_CONTAINER(map->interface));
 	while (list)
 	{
 		name2 = (char*)gtk_widget_get_name((GtkWidget*)list->data);
 		if (ft_strsearch(name2, name) != -1)
-		{
-			printf("name find %s \n", name);
 			return (list->data);
-		}
 		list = list->next;
 	}
 	return (NULL);
@@ -42,7 +39,6 @@ void		connect_scroll_bar(t_map *map, char *name, float value)
 	if (!list || !list->next)
 		return ;
 	tmp = (GtkWidget*)list->next->data;
-	printf("name widget %s et value %f\n", gtk_widget_get_name(tmp), value);
 	gtk_range_set_value(GTK_RANGE(tmp), value);
 	//draw(map);
 }

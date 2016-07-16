@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/16 12:49:57 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/16 16:29:53 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ int		*apply_trans(t_map *map, t_inter *inter, int *color)
 
 int		*shade(t_map *map, t_inter *inter)
 {
-	int		*is_shadow;
+	//int		*is_shadow;
 	t_utils utils;
 	int		i;
 	cl_float4 tmp;
@@ -136,7 +136,7 @@ int		*shade(t_map *map, t_inter *inter)
 
 	color = (int*)malloc(sizeof(int) * (size_t)(map->height * map->width));
 	i = 0;
-	is_shadow = shadow(map, inter);
+	//is_shadow = shadow(map, inter);
 	while (i < (int)(map->height * map->width))
 	{
 		color[i] = 0x0;
@@ -151,20 +151,21 @@ int		*shade(t_map *map, t_inter *inter)
 				color[i] = get_texture_color(map, inter[i],
 					map->scene.shape[inter[i].id],
 					get_inter_pos(inter[i].from, inter[i]));
+
 				utils.inter.normal = get_bumped_normal(map, inter[i],
 					map->scene.shape[inter[i].id],
 					get_inter_pos(inter[i].from, inter[i]));
 			}
 			else
-				color[i] = color_from_float4( map->scene.shape[inter[i].id].color);
-			color[i] = iter_spot(map, map->scene.mat[map->scene.shape[inter[i].id].mat_id], utils, color[i]);
-			if (is_shadow[i] != 0)
-				color[i] = color_mul(color[i], 0.3f);
+				color[i] = color_from_float4(map->scene.shape[inter[i].id].color);
+			//color[i] = iter_spot(map, map->scene.mat[map->scene.shape[inter[i].id].mat_id], utils, color[i]);
+			//if (is_shadow[i] != 0)
+			//	color[i] = color_mul(color[i], 0.3f);
 		}
 		i++;
 	}
 	if (map->config.transparence)
 		color = apply_trans(map, inter, color);
-	free(is_shadow);
+	//free(is_shadow);
 	return (color);
 }

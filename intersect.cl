@@ -203,6 +203,8 @@ bool intersect_cone(t_ray *ray, t_shape cyl, float *t)
 	float k = (1.0f + cyl.radius.x * cyl.radius.x);
 	float a = dot(ray->dir, ray->dir) - k * dir_axis *
 		dir_axis;
+	if (a < 0.001 && a > -0.001)
+		a = 0.001;
 	float b = 2.0f * (dot(ray->dir, x) - k * dir_axis *
 		x_axis);
 	float c = dot(x, x) - k * (x_axis * x_axis);

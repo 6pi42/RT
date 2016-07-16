@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/25 10:21:01 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/14 15:31:46 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/16 16:10:44 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,6 @@ int		color_from_float4(cl_float4 color)
 	tmp = 0;
 	tmp = (int)color.z * 256 * 256;
 	tmp += (int)color.y * 256;
-	tmp += (int)color.z;
+	tmp += (int)color.x;
 	return (tmp);
 }

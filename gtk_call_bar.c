@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 02:48:16 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/14 18:25:30 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/16 14:45:01 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	color_bare(GtkWidget *widget, t_map *map)
 	t_mat *mat;
 
 	mat = &map->scene.mat[map->obj_selected->mat_id];
+	printf("clicked : id : %p\n", map->obj_selected);
 	if (ft_strsearch("R :", (char*)gtk_widget_get_name(widget)) != -1)
 		map->obj_selected->color.x = gtk_range_get_value(GTK_RANGE(widget));
 	else if (ft_strsearch("G :", (char*)gtk_widget_get_name(widget)) != -1)

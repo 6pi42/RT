@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:52:38 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/15 12:01:10 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/07/16 13:44:21 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	init_shape(t_parse *fuck)
 	fuck->shape[fuck->nb].pos.x = 0;
 	fuck->shape[fuck->nb].pos.y = 0;
 	fuck->shape[fuck->nb].pos.z = 0;
-	fuck->shape[fuck->nb].axis.x = 0;
+	fuck->shape[fuck->nb].axis.x = 1;
 	fuck->shape[fuck->nb].axis.y = 0;
 	fuck->shape[fuck->nb].axis.z = 0;
 	fuck->shape[fuck->nb].color.x = 255;

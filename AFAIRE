@@ -3,15 +3,8 @@ leaks
 norm 
 segfault du bitmap writer
 le cone encore et tjs
-matrice rot bug sur Z
-etendre les texture
-les bug ecran noir de temps en temps
-+ segfault q a cause d'un mat-id qui part en couille
-implementer les filtres
-bug connection des boutton qd on click
+impleter filtre gtk
 bug cercle saffiche qui qd ils veut se fdp
 faire les scene
 obj selected = NULL sans segfault
-multispot
-ombre
 multisampling

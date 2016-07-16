@@ -6,7 +6,7 @@
 /*   By: amathias <amathias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/15 15:34:47 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/07/16 12:55:17 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,17 +88,6 @@ int		main(int argc, char **argv)
 	map.obj_selected = shape;
 	map.scene.nb_mat = 1;
 	map.fix = 0;
-
-	printf("\nMATERIAL\n\n\tka:%.2f\t\tks:%.2f\t\tkd:%.2f\t\n\tktran:%.2f\tkreflec:%.2f\tkrefrac:%.2f\t\n",
-map.scene.mat[0].ka, map.scene.mat[0].ks, map.scene.mat[0].kd, map.scene.mat[0].ktran,
-map.scene.mat[0].kreflec, map.scene.mat[0].krefrac);
-
-	printf("\n\toff_x:%.2f\toff_y:%.2f\tscale:%.2f\n",
-map.scene.mat[0].tex[0].off_x, map.scene.mat[0].tex[0].off_y,
-map.scene.mat[0].tex[0].scale);
-
-
-
 
 	gtk_init(&argc, &argv);
 	init_config(&map.config);

@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/02 15:34:48 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/14 18:25:14 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/16 15:16:40 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,14 @@ int		key_press(GtkWidget *widget, GdkEventKey *event, t_map *map)
 	if (!map->config.fix)
 	{
 		if (event->keyval == 'a')
-			map->key.mright = 1;
+		map->free_cam.pos = sub_vec(map->free_cam.pos, scale_vec(10.0f,  map->free_cam.left));
 		if (event->keyval == 'd')
-			map->key.mleft = 1;
+		map->free_cam.pos = add_vec(map->free_cam.pos, scale_vec(10.0f,  map->free_cam.left));
 		if (event->keyval == 'w')
-			map->key.up = 1;
+		map->free_cam.pos = add_vec(map->free_cam.pos, scale_vec(10.0f,  map->free_cam.forward));
 		if (event->keyval == 's')
-			map->key.down = 1;
-		update_cam(&map->free_cam, &map->key, map);
+		map->free_cam.pos = sub_vec(map->free_cam.pos, scale_vec(10.0f,  map->free_cam.forward));
+		draw(map);
 	}
 	if (event->keyval == 102)
 		map->config.fix ^= 1;
