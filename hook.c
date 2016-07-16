@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/02 15:34:48 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 07:56:22 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/14 18:25:14 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ void	motion_notify(GtkWidget *widget, GdkEventMotion *event, t_map *map)
 		map->free_cam.old_mouse_pos.y = event->y;
 		map->free_cam.old_mouse_pos.x = event->x;
 		vector_from_angle(&map->free_cam);
-		if (!map->key.mright && !map->key.mleft && !map->key.up &&
-				!map->key.down)
+		//if (!map->key.mright && !map->key.mleft && !map->key.up &&
+		//		!map->key.down)
 			draw(map);
 	}
 }

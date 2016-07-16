@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/30 10:25:39 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/14 14:36:40 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/16 10:38:32 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ cl_float4	plane_bumpmapping(t_tex *tex, t_inter inter, cl_float4 inter_pos)
 	u_axis.z = -inter.normal.x;
 	v_axis = cross_vec(inter.normal, u_axis);
 	color = bilinear_filtering(tex,
-		tex->off_x + fmod(docl_float4(inter_pos, v_axis) * tex->scale, tex->w),
-		tex->off_y + fmod(docl_float4(inter_pos, u_axis) * tex->scale, tex->h));
+		tex->off_x + docl_float4(inter_pos, v_axis) * tex->scale,
+		tex->off_y + docl_float4(inter_pos, u_axis) * tex->scale);
 	return (calc_binormal(inter.normal, get_bump_normal(color)));
 }
 
@@ -74,20 +74,28 @@ cl_float4	cylinder_bumpmapping(t_tex *tex, t_inter inter, t_shape shape,
 cl_float4	get_bumped_normal(t_map *map, t_inter inter, t_shape shape,
 				cl_float4 inter_pos)
 {
+	t_tex		*bump;
 	t_tex		*tex;
 	cl_float4	normal;
 
 	(void)map;
-	tex = map->scene.mat[shape.mat_id].bump;
+	bump = map->scene.mat[shape.mat_id].bump;
+	tex = map->scene.mat[shape.mat_id].tex;
 	normal = inter.normal;
-	if (tex)
+	if (bump)
 	{
+		bump->off_x = tex->off_x;
+		bump->off_y = tex->off_x;
+		bump->scale = tex->scale;
+		bump->h = tex->h;
+		bump->w = tex->w;
+	//printf("off %f %f scale %f\n", bump->off_x, bump->off_y, bump->scale);
 		if (shape.type.x == 1.0f)
-			normal = sphere_bumpmapping(tex, inter);
+			normal = sphere_bumpmapping(bump, inter);
 		else if (shape.type.x == 2.0f)
-			normal = plane_bumpmapping(tex, inter, inter_pos);
+			normal = plane_bumpmapping(bump, inter, inter_pos);
 		else if (shape.type.x == 3.0f || shape.type.x == 4.0f)
-			normal = cylinder_bumpmapping(tex, inter, shape, inter_pos);
+			normal = cylinder_bumpmapping(bump, inter, shape, inter_pos);
 	}
 	return (normal);
 }

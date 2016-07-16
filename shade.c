@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/15 14:00:16 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/16 12:49:57 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,8 +148,12 @@ int		*shade(t_map *map, t_inter *inter)
 			tmp = map->scene.shape[inter[i].id].color;
 			if (map->config.texture)
 			{
-				inter[i].normal = get_bumped_normal(map, inter[i], map->scene.shape[inter[i].id], get_inter_pos(inter[i].from, inter[i]));
-				color[i] = get_texture_color(map, inter[i], map->scene.shape[inter[i].id], get_inter_pos(inter[i].from, inter[i]));
+				color[i] = get_texture_color(map, inter[i],
+					map->scene.shape[inter[i].id],
+					get_inter_pos(inter[i].from, inter[i]));
+				utils.inter.normal = get_bumped_normal(map, inter[i],
+					map->scene.shape[inter[i].id],
+					get_inter_pos(inter[i].from, inter[i]));
 			}
 			else
 				color[i] = color_from_float4( map->scene.shape[inter[i].id].color);

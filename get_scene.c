@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/18 16:16:11 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/16 13:03:19 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/07/16 13:08:44 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,9 +118,9 @@ void	get_material(int fd, t_parse *fuck)
 		else if ((j = ft_strsearch(line, "bump: ")) != -1)
 		{
 			mat[fuck->nb_mat].bump = load_texture(ft_strchr(line, ' ') + 1);
-			mat[fuck->nb_mat].bump->off_x = mat[fuck->nb_mat].tex->off_x;
-			mat[fuck->nb_mat].bump->off_y = mat[fuck->nb_mat].tex->off_y;
-			mat[fuck->nb_mat].bump->scale = mat[fuck->nb_mat].tex->scale;
+			//mat[fuck->nb_mat].bump->off_x = mat[fuck->nb_mat].tex->off_x;
+			//mat[fuck->nb_mat].bump->off_y = mat[fuck->nb_mat].tex->off_y;
+			//mat[fuck->nb_mat].bump->scale = mat[fuck->nb_mat].tex->scale;
 
 		}
 		else if ((j = ft_strsearch(line, "off_x: ")) != -1)

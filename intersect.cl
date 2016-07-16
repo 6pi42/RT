@@ -256,9 +256,12 @@ static float4 get_normal_sphere(t_shape obj, float4 inter, float *sol)
 	return(norm);
 }
 
-static float4 get_normal_plan(t_shape obj, float4 inter)
+static float4 get_normal_plan(t_shape obj, t_ray ray, float4 inter)
 {
-	return(obj.radius);
+	if (dot(ray.dir, obj.radius) > 0.0f)
+			return (-obj.radius);
+	else
+			return(obj.radius);
 }
 
 static float4 get_normal_ellips(t_shape ellips, float4 inter)
@@ -306,7 +309,7 @@ static float4 get_normal(t_shape obj, float4 inter_pt, t_inter *inter, t_ray ray
 	if (obj.type.x == 1.0f)
 		norm = get_normal_sphere(obj, inter_pt, sol);
 	if (obj.type.x == 2.0f)
-		norm = get_normal_plan(obj, inter_pt);
+		norm = get_normal_plan(obj, ray, inter_pt);
 	if (obj.type.x == 3.0f)
 		norm = get_normal_cyl(obj, inter_pt, inter->dist, ray, sol);
 	if (obj.type.x == 4.0f)

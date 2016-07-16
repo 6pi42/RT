@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 11:32:14 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/15 14:07:57 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/15 15:28:44 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,5 +84,6 @@ int		*shadow(t_map *map, t_inter *inter)
 		}
 		i++;
 	}
+	free(shadow);
 	return (is_shadow);
 }
