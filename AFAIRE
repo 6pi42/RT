@@ -1,12 +1,15 @@
+PULL jai tout push et merge
+
+
 le parseur fuite mem changer
 leaks
 norm 
 
-le cone encore et tjs
 impleter filtre gtk
 obj selected = NULL sans segfault
-integrer au parser la taille cone cyl
 
+
+integrer au parser la taille cone cyl
 faire les scene
 multisampling
 integrer le obj au parseur et ajouter les rotation
