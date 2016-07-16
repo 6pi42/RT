@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/18 16:16:11 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/15 15:47:05 by emontagn         ###   ########.fr       */
+/*   Updated: 2016/07/16 13:03:19 by emontagn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,7 @@ void	get_spotlight(int fd, t_map *map)
 		else if ((j = ft_strsearch(line, "type: ")) != -1)
 			map->scene.spot[map->spoti].type = atoi(ft_strchr(line, ' ') + 1);
 		else if ((j = ft_strsearch(line, "intensity: ")) != -1)
-			map->scene.spot[map->spoti].intensity = atof(ft_strchr(line,
-						' ') + 1);
+			map->scene.spot[map->spoti].intensity = atof(ft_strchr(line, ' ') + 1);
 		free(line);
 	}
 	if (ret == -1)
