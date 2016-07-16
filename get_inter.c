@@ -6,7 +6,7 @@
 /*   By: amathias <amathias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/18 17:14:53 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/14 16:49:09 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/16 16:59:24 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ t_inter	*get_inter(t_map *map, size_t work_size, t_ray *ray)
 	cl_ulong	time_end;
 	double		total_time;
 
+	printf("Calcule nouveau inter\n");
 	ptr = (t_inter*)malloc(sizeof(t_inter) * work_size);
 	init_cam(map);
 	map->scene.cam->ray = map->free_cam.dir;

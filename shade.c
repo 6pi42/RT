@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/16 16:41:39 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/16 17:07:35 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ int		*shade(t_map *map, t_inter *inter)
 
 	color = (int*)malloc(sizeof(int) * (size_t)(map->height * map->width));
 	i = 0;
-	is_shadow = shadow(map, inter);
+	is_shadow = map->config.ombre == 1 ? shadow(map, inter) : NULL;
 	while (i < (int)(map->height * map->width))
 	{
 		color[i] = 0x0;
@@ -156,7 +156,7 @@ int		*shade(t_map *map, t_inter *inter)
 			utils.inter = inter[i];
 			utils.ray = inter[i].from;
 			utils.inter_pos = get_inter_pos(utils.ray, utils.inter);
-			utils.shadow = is_shadow[i];
+			utils.shadow = map->config.ombre ? is_shadow[i] : 0;
 			tmp = map->scene.shape[inter[i].id].color;
 			if (map->config.texture)
 			{
@@ -176,6 +176,7 @@ int		*shade(t_map *map, t_inter *inter)
 	}
 	if (map->config.transparence)
 		color = apply_trans(map, inter, color);
-	free(is_shadow);
+	if (is_shadow)
+		free(is_shadow);
 	return (color);
 }

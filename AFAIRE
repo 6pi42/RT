@@ -1,10 +1,12 @@
 le parseur fuite mem changer
 leaks
 norm 
-segfault du bitmap writer
+
 le cone encore et tjs
 impleter filtre gtk
-bug cercle saffiche qui qd ils veut se fdp
-faire les scene
 obj selected = NULL sans segfault
+integrer au parser la taille cone cyl
+
+faire les scene
 multisampling
+integrer le obj au parseur et ajouter les rotation
