@@ -7,7 +7,11 @@ SCENE
 	- Window
 	{
 		width: 600
+<<<<<<< HEAD
+		height: 600
+=======
 		height: 545
+>>>>>>> cdbd74ef97201869db8f59d1e3713a872be01815
 	}
 
 	- Camera
