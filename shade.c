@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/23 10:59:59 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/16 12:49:57 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/16 16:29:34 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,27 +55,38 @@ static int	get_color(t_map *map, t_mat mat, t_utils utils, int color)
 	spec = color_mul(spot.color,
 	spec_light(spot, utils.inter, utils.ray, utils.inter_pos) * mat.ks);
 	diffuse = color_mul(color, mat.kd * diffuse_lighting(spot, utils.inter.normal, utils.inter_pos));
-	return (color_add(spec, color_mul(diffuse, mat.ka)));
+	return (color_add(color_add(spec, color_mul(color, mat.ka)), diffuse));
 }
 
 int		iter_spot(t_map *map, t_mat mat, t_utils utils, int color)
 {
 	int i;
+	int c;
+	int	*acolor;
 
 	i = 0;
 	(void)mat;
+	acolor = (int*)malloc(sizeof(int) * map->scene.nb_spot);
 	while (i < map->scene.nb_spot)
 	{
 		// check shadow here
+		c = 0x00;
 		if (utils.inter.id != -1)
 		{
 			mat = map->scene.mat[map->scene.shape[utils.inter.id].mat_id];
 			map->current_spot = map->scene.spot[i];
-			color = get_color(map, mat, utils, color);
+			if (utils.shadow)
+			{
+				c = color_mul(get_color(map, mat, utils, color), 0.2);
+				utils.shadow--;
+			}
+			else
+				c = get_color(map, mat, utils, color);
 		}
+		acolor[i] = c;
 		i++;
 	}
-	return (color);
+	return (color_average(acolor, map->scene.nb_spot));
 }
 
 t_ray *prep_ray_trans(t_map *map, t_inter *inter)
@@ -145,6 +156,7 @@ int		*shade(t_map *map, t_inter *inter)
 			utils.inter = inter[i];
 			utils.ray = inter[i].from;
 			utils.inter_pos = get_inter_pos(utils.ray, utils.inter);
+			utils.shadow = is_shadow[i];
 			tmp = map->scene.shape[inter[i].id].color;
 			if (map->config.texture)
 			{
@@ -158,8 +170,6 @@ int		*shade(t_map *map, t_inter *inter)
 			else
 				color[i] = color_from_float4( map->scene.shape[inter[i].id].color);
 			color[i] = iter_spot(map, map->scene.mat[map->scene.shape[inter[i].id].mat_id], utils, color[i]);
-			if (is_shadow[i] != 0)
-				color[i] = color_mul(color[i], 0.3f);
 		}
 		i++;
 	}

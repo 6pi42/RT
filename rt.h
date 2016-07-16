@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/16 11:25:24 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/16 15:34:20 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,7 @@ typedef	struct			s_utils
 	t_inter				inter;
 	t_ray				ray;
 	cl_float4			inter_pos;
+	int					shadow;
 }						t_utils;
 
 typedef struct			s_conf
@@ -288,6 +289,9 @@ void					init_cam(t_map *map);
 int						color_mul(int color, float coef);
 int						color_add(int c1, int c2);
 int						color_sub(int c1, int c2);
+int						color_average(int *rgb, int len);
+int						*post_greyshade(t_map *map, int *color);
+int						*post_sepia(t_map *map, int *color);
 
 void					raytracer(t_map *map);
 cl_float4				get_inter_pos(t_ray ray, t_inter inter);
