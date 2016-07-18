@@ -1,0 +1,118 @@
+RT
+- - -
+
+
+SCENE
+{
+	- Window
+	{
+		width: 1920
+		height: 1080
+	}
+
+	- Camera
+	{
+		pos: 350.0 100.0 40.0
+	}
+
+	- Spotlight
+	{
+		type: 1
+		rgb: 255 255 255
+		pos: 250.0 100.0 0.0
+		intensity: 42.0
+	}
+
+	- Multi Sampling
+	{
+		power: 0
+	}
+}
+
+MATERIAL
+{
+	- mat 0
+	{
+		ka: 1.0
+		ks: 0.9
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.9
+		krefrac: 0.0
+	}
+
+	- mat 1
+	{
+		ka: 1.0
+		ks: 0.5
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.0
+		krefrac: 0.0
+	}
+
+	- mat 2
+	{
+		ka: 1.0
+		ks: 0.5
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.0
+		krefrac: 1.0
+	}
+
+	- mat 3
+	{
+		ka: 1.0
+		ks: 0.5
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.0
+		krefrac: 0.0
+	}
+
+	- mat 4
+	{
+		tex: apple.jpeg
+		ka: 1.0
+		ks: 0.5
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.0
+		krefrac: 1.0
+	}
+}
+
+SHAPES
+{
+	- Plane
+	{
+		id: 0
+		rgb: 128 128 0
+		pos: 0.0 0.0 0.0
+		nor: 0.0 1.0 0.0
+	}
+
+	- Plane
+	{
+		id: 1
+		rgb: 190 190 0
+		pos: 0.0 0.0 -200.0
+		nor: 0.0 0.0 1.0
+	}
+
+	- Plane
+	{
+		id: 4
+		rgb: 255 255 255
+		pos: 40.0 40.0 40.0
+		nor: 1.0 0.0 0.0
+	}
+	- Sphere
+	{
+		id: 2
+		rad: 25.0
+		rgb: 255 255 255
+		pos: 10.0 10.0 10.0
+		neg: 0
+	}

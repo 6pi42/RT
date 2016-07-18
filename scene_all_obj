@@ -1,0 +1,133 @@
+RT
+- - -
+
+
+SCENE
+{
+	- Window
+	{
+		width: 800
+		height: 700
+	}
+
+	- Camera
+	{
+		pos: 0 20 -100.0
+		phi: 0.0
+		theta: 0.0
+	}
+
+	- Spotlight
+	{
+		type: 1
+		rgb: 255 255 255
+		pos: 250.0 100.0 0.0
+		intensity: 42.0
+	}
+
+	- Multi Sampling
+	{
+		power: 0
+	}
+}
+
+MATERIAL
+{
+	- mat 0
+	{
+		ka: 1.0
+		ks: 1.0
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.9
+		krefrac: 1.0
+	}
+
+	- mat 0
+	{
+		ka: 1.0
+		ks: 1.0
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.9
+		krefrac: 1.0
+	}
+
+	- mat 0
+	{
+		ka: 1.0
+		ks: 1.0
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.9
+		krefrac: 1.0
+	}
+
+	- mat 0
+	{
+		ka: 1.0
+		ks: 1.0
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.9
+		krefrac: 1.0
+	}
+
+	- mat 0
+	{
+		ka: 1.0
+		ks: 1.0
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.9
+		krefrac: 1.0
+	}
+
+	- mat 0
+	{
+		ka: 1.0
+		ks: 1.0
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.9
+		krefrac: 1.0
+	}
+}
+
+SHAPES
+{
+	- Plane
+	{
+		id: 0
+		rgb: 128 128 0
+		pos: 0.0 -20.0 0.0
+		nor: 0.0 1.0 0.0
+	}
+
+	- Cylinder
+	{
+		id: 1
+		neg: 0
+		rgb: 190 190 0
+		pos: -44.0 2.0 24.0
+		dir: 0.0 1.0 0.0
+		rad: 10.0
+	}
+
+	- Sphere
+	{
+		id: 2
+		rad: 10.0
+		rgb: 255 0 0
+		pos: 0.0 7.0 24.0
+	}
+
+	- Cone
+	{
+		id: 3
+		pos: 0.0 20.0 100.0
+		rgb: 255 0 165
+		agl: 0.2
+		dir: 0.0 1.0 0.0
+	}
+}
