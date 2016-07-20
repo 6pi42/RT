@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/04 01:07:27 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/17 19:32:34 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/18 18:46:05 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ void	vector_from_angle(t_cam *cam)
 	normalize_vec(&cam->left);
 	cam->target = add_vec(cam->pos, cam->forward);
 	cam->dir = cam->forward;
-	printf("conf cam : pos: %f %f %f\n phi : %f theta %f", cam->pos.x, cam->pos.y, cam->pos.z, cam->phi, cam->theta);
 	normalize_vec(&cam->dir);
 }
 

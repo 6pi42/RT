@@ -6,7 +6,7 @@
 /*   By: amathias <amathias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/29 10:24:51 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/14 16:48:32 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/19 17:13:27 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,13 @@ t_tex	*load_texture(char *file_name)
 	{
 		ft_putstr("Gdk cannnot load texture\n");
 		g_error_free(error);
+		exit(0);
 		return (NULL);
 	}
 	tex->w = gdk_pixbuf_get_width(pixbuf);
 	tex->h = gdk_pixbuf_get_height(pixbuf);
+	//printf("%lu %d\n", gdk_pixbuf_get_byte_length(pixbuf), tex->w * tex->h);
+	//printf("c: %d\n", gdk_pixbuf_get_n_channels(pixbuf));
 	tex->buffer = convert_texture(gdk_pixbuf_get_pixels(pixbuf), tex->w, tex->h,
 					gdk_pixbuf_get_n_channels(pixbuf));
 	g_object_unref(pixbuf);

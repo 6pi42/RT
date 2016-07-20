@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 10:57:13 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/13 06:11:39 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/18 14:26:52 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ cl_float4	get_dir(t_map *map, float x, float y)
 	return (dir);
 }
 
-t_ray		*get_primary(t_map *map)
+t_ray		*get_primary(t_map *map, int multi)
 {
 	t_ray	*ray;
 	int		x;
@@ -52,7 +52,11 @@ t_ray		*get_primary(t_map *map)
 		while (x < (int)map->width)
 		{
 			ray[i].origin = map->scene.cam->origin;
-			ray[i].ray = get_dir(map, (float)x, (float)y);
+			ray[i].ray = !multi ? get_dir(map, (float)x, (float)y) :
+				get_dir(map, (float)x + (float)0.5f *
+				cos(((360.0f / map->multi_sampling) * multi) * M_PI / 180.0f),
+				y + (float)0.5f *
+				sin(((360.0f / map->multi_sampling) * multi) * M_PI / 180.0f));
 			i++;
 			x++;
 		}

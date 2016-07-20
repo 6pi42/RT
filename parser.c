@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:54:18 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/17 19:03:03 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/19 14:37:12 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,22 +66,6 @@ int		get_nb_shape(char *file)
 	return (shape_nb);
 }
 
-int		get_nb_spot(char *file)
-{
-	int		spot_nb;
-
-	spot_nb = get_number(file, "Spotlight");
-	return (spot_nb);
-}
-
-int		get_nb_mat(char *file)
-{
-	int		spot_nb;
-
-	spot_nb = get_number(file, "mat");
-	return (spot_nb);
-}
-
 void	parsing(t_parse *fuck, t_map *map, char *line, int fd)
 {
 	if (ft_strsearch(line, "Multi Sampling") != -1)
@@ -108,9 +92,6 @@ void	parsing(t_parse *fuck, t_map *map, char *line, int fd)
 		get_cercle(fd, fuck);
 	else if (ft_strsearch(line, "Triangle") != -1)
 		get_triangle(fd, fuck);
-	else if (ft_strsearch(line, "Thorus") != -1)
-		get_thorus(fd, fuck);
-	free(line);
 }
 
 t_shape	*parse(t_map *map, char *file)
@@ -120,23 +101,21 @@ t_shape	*parse(t_map *map, char *file)
 	int		fd;
 	t_parse fuck;
 
-	fuck.nb = 0;
-	fuck.nb_mat = 0;
-	fuck.map = map;
+	init_parser_value(map, &fuck);
 	map->spoti = 0;
 	map->scene.nb_shape = get_nb_shape(file);
 	map->scene.nb_spot = get_nb_spot(file);
 	map->scene.nb_mat = get_nb_mat(file);
-
-	printf("NB OF SHAPES:%d\n", map->scene.nb_shape);
-	printf("NB OF MAT:%d\n", map->scene.nb_mat);
 	map->scene.spot = (t_spot *)malloc(sizeof(t_spot) * map->scene.nb_spot);
 	fuck.shape = (t_shape*)malloc(sizeof(t_shape) * map->scene.nb_shape);
 	map->scene.mat = (t_mat*)malloc(sizeof(t_mat) * map->scene.nb_mat);
 	if ((fd = open(file, O_RDONLY)) == -1)
-		printf("error open\n");
+		exit(0);
 	while ((ret = get_next_line(fd, &line)) > 0)
+	{
 		parsing(&fuck, map, line, fd);
+		free(line);
+	}
 	if (ret == -1)
 		printf("error ret -1\n");
 	close(fd);

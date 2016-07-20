@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/07/17 11:19:09 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/17 14:09:46 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/18 14:19:06 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,9 @@ int		plane_chessboard(int c, cl_float4 inter_pos)
 {
 	int			sum;
 	int			color;
-	//u_axis.x = inter.normal.y;
-	//u_axis.y = inter.normal.z;
-	//u_axis.z = -inter.normal.x;
-	//v_axis = cross_vec(inter.normal, u_axis);
-	/*float dist = dis_point(inter_pos, shape.pos);
-	cl_float4 tmp;
-	tmp.x = 0.0f;
-	tmp.y = 1.0f;
-	tmp.z = 0.0f;
-	tmp.w = 0.0f;
-	float agl = docl_float4(cross_vec(tmp, inter.normal), sub_vec(shape.pos, inter_pos));
-	float x = dist * cos(agl * M_PI / 180.0f);
-	float y = dist * sin(agl * M_PI / 180.0f); */
-	sum = (int)round(inter_pos.x / 10.0f) + (int)round(inter_pos.y / 10.0f) + (int)round(inter_pos.z / 10.0f);
+
+	sum = (int)round(inter_pos.x / 10.0f) + (int)round(inter_pos.y / 10.0f)
+			+ (int)round(inter_pos.z / 10.0f);
 	if (is_even(sum))
 		color = c;
 	else

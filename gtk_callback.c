@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 07:29:15 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/17 14:23:40 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/19 14:33:23 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,13 @@ void	open_generateur_scene(t_map *map)
 
 void	load_new_scene(t_map *map, char *file_name)
 {
-	printf("le fichier charger : %s\n", file_name);
-	free_scene(&map->scene); // TODO: MEMORY non allocated apparament 
+	free_scene(&map->scene);
 	map->scene.nb_shape = get_nb_shape(file_name);
 	map->scene.shape = parse(map, file_name);
-	printf("ptr shape : %p\n", map->scene.shape);
-	map->obj_selected = NULL; 
+	map->obj_selected = NULL;
 	init_inter(map, map->height * map->width);
-	printf("coucou\n");
-	raytrace(map);
+	draw(map);
+	printf("fin raytrace\n");
 }
 
 void	choose_file(GtkWidget *widget, t_map *map)
@@ -90,7 +88,7 @@ void	choose_file(GtkWidget *widget, t_map *map)
 		filename = gtk_file_chooser_get_filename(chooser);
 		printf(" DEBUG FILENAME %s\n\n", filename);
 		load_new_scene(map, filename);
-		//free(filename);
+		free(filename);
 	}
 	gtk_widget_destroy(dialog);
 }

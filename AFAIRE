@@ -1,12 +1,18 @@
-le parseur fuite mem changer
-leaks
-norm 
-
-integrer au parser la taille cone cyl + att limit cap pr le bug
 faire les scene
-multisampling
-integrer le obj au parseur et ajouter les rotation
+enlever debug.c
+texture suivre rotation
+!bus error
+trou dans le cylindre
 
 
-OPTION
-perturbation complexe
+
+
+
+ARN
+	integrer le obj au parseur 
+
+ED
+	completer parseur + securiser le parseur
+
+6pie
+	ajouter elipsoide

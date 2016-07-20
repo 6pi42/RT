@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/07/14 14:31:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/14 14:36:12 by amathias         ###   ########.fr       */
+/*   Updated: 2016/07/19 19:58:06 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,22 @@ cl_float4	get_bump_normal(int color)
 
 cl_float4	get_perpendicular_vec(cl_float4 normal)
 {
-	cl_float4 perp;
 	cl_float4 tmp;
 
-	tmp.x = 0.0f;
-	tmp.y = 0.0f;
-	tmp.z = 1.0f;
-	tmp.w = 0.0f;
-	perp = cross_vec(normal, tmp);
-	normalize_vec(&perp);
-	return (perp);
+	if (normal.x == 0)
+	{
+		tmp.x = normal.x;
+		tmp.y = normal.y * cos(90 * M_PI / 180) - normal.z * sin(90 * M_PI / 180);
+		tmp.z = normal.y * sin(90 * M_PI / 180) + normal.z * cos(90 * M_PI / 180);
+	}
+	else
+	{
+		tmp.x = normal.z * sin(90 * M_PI / 180) + normal.x * cos(90 * M_PI / 180);
+		tmp.y = normal.y;
+		tmp.z = normal.z * cos(90 * M_PI / 180) - normal.x * sin(90 * M_PI / 180);
+	}
+	normalize_vec(&tmp);
+	return (tmp);
 }
 
 cl_float4	mul_mat3_vector(cl_float4 tan, cl_float4 bi, cl_float4 norm,

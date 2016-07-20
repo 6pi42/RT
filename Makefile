@@ -6,7 +6,7 @@
 #    By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/03 11:09:29 by amathias          #+#    #+#              #
-#    Updated: 2016/07/17 17:34:26 by apaget           ###   ########.fr        #
+#    Updated: 2016/07/19 16:21:26 by apaget           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,12 +15,22 @@ INC = /
 SRC =	main.c				\
 		get_inter.c			\
 		get_primary.c		\
+		debug.c				\
 		mat_eval.c			\
+		get_mat_parse.c		\
+		get_ray.c			\
 		gtk_build_bar.c		\
 		shade.c				\
+		shade2.c			\
 		world_conf.c		\
+		obj_seg_test.c		\
+		world_conf2.c		\
 		perlin2.c			\
+		gtk_build_bar2.c	\
 		gtk_build_menu.c	\
+		gtk_build_menu2.c	\
+		gtk_build_menu3.c	\
+		gtk_call_bar2.c		\
 		gtk_call_bar.c		\
 		init_value.c		\
 		gtk_call_mouse.c	\
@@ -36,8 +46,11 @@ SRC =	main.c				\
 		move.c				\
 		parser.c			\
 		get_shape.c			\
+		get_shape2.c		\
+		get_shape3.c		\
 		get_scene.c			\
 		get_tools.c			\
+		get_tools2.c		\
 		bitmap_writer.c		\
 		color.c				\
 		color2.c			\
@@ -50,12 +63,14 @@ SRC =	main.c				\
 		get_normal_perlin.c	\
 		bump_mapping.c		\
 		chessboard.c		\
+		perturb.c			\
 		post_process.c		\
+		obj_reader.c		\
+		obj_utils.c			\
 		gtk_build.c			\
 		gtk_button.c		\
 		gtk_callback.c		\
 		gtk_connect.c		\
-		
 
 OBJ = $(SRC:.c=.o)
 NAME = rt

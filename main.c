@@ -6,7 +6,7 @@
 /*   By: amathias <amathias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:05:26 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/17 19:31:16 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/19 17:59:53 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,13 +76,15 @@ int		main(int argc, char **argv)
 		return (1);
 	map.scene.nb_shape = get_nb_shape(argv[1]);
 	shape = parse(&map, argv[1]);
-
+	//obj_read(&map, "cube.obj");
+	//map.scene.nb_shape = 12;
 	map.scene.max_depth = 0;
 	map.scene.shape = shape;
 	map.scene.cam = &cam;
-	map.obj_selected = shape;
+	map.obj_selected = map.scene.shape;
+	//map.obj_selected = shape;
 	map.fix = 0;
-
+	print_scene(&map);
 	gtk_init(&argc, &argv);
 	init_config(&map.config);
 	create_interface(&map);
@@ -92,6 +94,6 @@ int		main(int argc, char **argv)
 	ocl_init(&map.env, prog);
 	init_inter(&map, (size_t)(map.width * map.height));
 	gettimeofday(&map.fps.start, NULL);
-	draw(&map);
+	raytrace(&map);
 	gtk_main();
 }

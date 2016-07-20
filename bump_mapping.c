@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/30 10:25:39 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/17 18:07:10 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/19 19:47:12 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,22 @@ cl_float4	plane_bumpmapping(t_tex *tex, t_inter inter, cl_float4 inter_pos)
 	cl_float4	v_axis;
 	int			color;
 
-	u_axis.x = inter.normal.y;
-	u_axis.y = inter.normal.z;
-	u_axis.z = -inter.normal.x;
-	v_axis = cross_vec(inter.normal, u_axis);
+	if (inter.normal.x == 0)
+	{
+		u_axis.x = inter.normal.x;
+		u_axis.y = inter.normal.y * cos(90 * M_PI / 180) - inter.normal.z * sin(90 * M_PI / 180);
+		u_axis.z = inter.normal.y * sin(90 * M_PI / 180) + inter.normal.z * cos(90 * M_PI / 180);
+		v_axis = cross_vec(inter.normal, u_axis);
+	}
+	else
+	{
+		v_axis.x = inter.normal.z * sin(90 * M_PI / 180) + inter.normal.x * cos(90 * M_PI / 180);
+		v_axis.y = inter.normal.y;
+		v_axis.z = inter.normal.z * cos(90 * M_PI / 180) - inter.normal.x * sin(90 * M_PI / 180);
+		u_axis = cross_vec(inter.normal, v_axis);
+	}
+	normalize_vec(&u_axis);
+	normalize_vec(&v_axis);
 	color = bilinear_filtering(tex,
 		tex->off_x + docl_float4(inter_pos, v_axis) * tex->scale,
 		tex->off_y + docl_float4(inter_pos, u_axis) * tex->scale);
@@ -71,22 +83,6 @@ cl_float4	cylinder_bumpmapping(t_tex *tex, t_inter inter, t_shape shape,
 	return (calc_binormal(inter.normal, get_bump_normal(color)));
 }
 
-cl_float4	get_sin_perturbation(t_map *map, t_shape shape, cl_float4 inter_pos,
-		t_inter inter)
-{
-	cl_float4 orientation;
-	cl_float4	new;
-	float dist;
-	(void)map;
-
-	orientation = sub_vec(inter_pos, shape.pos);
-	dist = dis_point(inter_pos, shape.pos);
-	normalize_vec(&orientation);
-	new = add_vec(inter.normal, scale_vec(exp(-dist / 5) * sin (dist) * 20, orientation));
-	normalize_vec(&new);
-	return (new);
-}
-
 cl_float4	get_bumped_normal(t_map *map, t_inter inter, t_shape shape,
 				cl_float4 inter_pos)
 {
@@ -100,16 +96,19 @@ cl_float4	get_bumped_normal(t_map *map, t_inter inter, t_shape shape,
 	normal = inter.normal;
 	if (bump)
 	{
-		bump->off_x = 0.5f;
-		bump->off_y = 0.0f;
-		/*
-		bump->off_x = tex->off_x;
-		bump->off_y = tex->off_x;
-		bump->scale = tex->scale;
-		bump->h = tex->h;
-		bump->w = tex->w;
-		*/
-		bump->scale = 0.5;
+		if (!tex)
+		{
+			bump->off_x = 0.0f;
+			bump->off_y = 0.0f;
+			bump->scale = 0.001f;
+		}
+		else
+		{
+			bump->off_x = tex->off_x;
+			bump->off_y = tex->off_y;
+			bump->scale = tex->scale;
+		}
+		
 		if (shape.type.x == 1.0f)
 			normal = sphere_bumpmapping(bump, inter);
 		else if (shape.type.x == 2.0f)
@@ -117,7 +116,7 @@ cl_float4	get_bumped_normal(t_map *map, t_inter inter, t_shape shape,
 		else if (shape.type.x == 3.0f || shape.type.x == 4.0f)
 			normal = cylinder_bumpmapping(bump, inter, shape, inter_pos);
 	}
-		else if (shape.type.x == 2.0f)
-			normal = get_sin_perturbation(map, shape, inter_pos, inter);
+	else if (shape.type.x == 2.0f && bump == (t_tex*)0x1)
+		normal = get_sin_perturbation(map, shape, inter_pos, inter);
 	return (normal);
 }

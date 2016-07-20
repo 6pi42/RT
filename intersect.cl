@@ -312,6 +312,7 @@ static float4 get_normal_cyl(t_shape cyl, float4 inter, float t, t_ray ray, floa
 		return (-norm);
 	return (norm);
 }
+
 static float4 get_normal_cube(t_shape cyl, float4 inter)
 {
 	float4 norm;
@@ -320,6 +321,20 @@ static float4 get_normal_cube(t_shape cyl, float4 inter)
 	norm.z = 0;
 	norm.w = 0;
 	return (norm);
+}
+
+static float4 get_normal_triangle(t_ray ray, t_shape obj)
+{
+	float4 e1, e2, norm;
+
+	e1 = obj.pos - obj.radius;
+	e2 = obj.axis - obj.radius;
+	norm = cross(e1, e2);
+	norm = fast_normalize(norm);
+	if (dot(ray.dir, norm) > 0.0f)
+			return (-norm);
+	else
+			return(norm);
 }
 
 static float4 get_normal(t_shape obj, float4 inter_pt, t_inter *inter, t_ray ray, float *sol)
@@ -340,6 +355,8 @@ static float4 get_normal(t_shape obj, float4 inter_pt, t_inter *inter, t_ray ray
 		norm = get_normal_cone(obj, ray, inter->dist, sol);
 	if (obj.type.x == 5.0f)
 		norm = get_normal_ellips(obj, inter_pt);
+	if (obj.type.x == 8.0f)
+		norm = get_normal_triangle(ray, obj);
 	norm = fast_normalize(norm);
 	return (norm);
 }
@@ -505,17 +522,19 @@ static int intersect_all(t_ray *ray,
 			copy_tab(end, save, 3);
 		if (shape[i].type.x == 4.0f && intersect_cone(ray, shape[i], save))
 			copy_tab(end, save, 3);
-		//if (shape[i].type.x == 5.0f && intersect_ellips(ray, shape[i]))
-		//	tmp = sol[0];
+		if (shape[i].type.x == 5.0f && intersect_ellips(ray, shape[i]))
+			tmp = sol[0];
 		if (shape[i].type.x == 7.0f && intersect_disque(ray, shape[i], save))
 			copy_tab(end, save, 3);
 		if (shape[i].type.x == 8.0f && intersect_triangle(ray, shape[i], save))
 			copy_tab(end, save, 3);
-		if (end[0] != -1 && (shape[i].type.x == 4.0f || shape[i].type.x == 3.0f))
-			cap_obj(shape[i], ray, end, 50);
+		if (end[0] != -1.0f && (shape[i].type.x == 4.0f || shape[i].type.x == 3.0f))
+			cap_obj(shape[i], ray, end, shape[i].type.w);
 		if (fast_length(shape[i].axe_decoupe) != 0 && end[0] != -1)
+		{
 			cut_obj(shape[i], ray, end, (int)shape[i].axe_decoupe.w);
-			tmp = end[0];
+		}
+		tmp = end[0];
 		if (tmp != -1.0f && (*t1 == -1.0f || tmp < *t1))
 		{
 			*t1 = tmp;
@@ -552,7 +571,6 @@ __kernel void intersect(__global t_inter *out, __global t_ray* ray,
 	global_addr = get_global_id(0);
 
 	r = ray[global_addr];
-	//printf("%f %f %f\n", r.dir.x, r.dir.y, r.dir.z);
 	inter.dist = -1.0f;
 	inter.normal = (float4)(0.0f, 0.0f, 0.0f ,0.0f);
 	if (fast_length(r.dir) != 0.0f)

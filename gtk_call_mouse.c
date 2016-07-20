@@ -6,7 +6,7 @@
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/06/10 02:46:46 by apaget            #+#    #+#             */
-/*   Updated: 2016/07/17 18:51:14 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/18 14:24:44 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,13 @@ void	switch_focus(GtkWidget *widget, GdkEventButton *event, t_map *map)
 {
 	t_ray	*prim;
 	t_inter	*tmp;
-	int		id = -1;
+	int		id;
 
-	if (event->y * map->width + event->x > map->width * map->height)
-		return;
+	id = -1;
 	(void)widget;
-	prim = get_primary(map);
+	if (event->y * map->width + event->x > map->width * map->height)
+		return ;
+	prim = get_primary(map, 0);
 	tmp = get_inter(map, (int)(map->height * map->width), prim);
 	id = tmp[(int)((int)event->y * map->width + (int)event->x)].id;
 	if (id != -1)

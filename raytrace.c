@@ -6,7 +6,7 @@
 /*   By: amathias <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/19 11:29:58 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/17 18:54:35 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/19 18:00:10 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,27 @@ void	disp(t_map *map, int *shading)
 	free(buf);
 }
 
+void	multi_sample(t_map *map, int *shading, unsigned int multi)
+{
+	t_ray	*primary;
+	t_inter	*inter;
+	int		*tmp;
+	int		i;
+
+	i = 0;
+	tmp = NULL;
+	while ((unsigned int)i < multi - 1)
+	{
+		primary = get_primary(map, i);
+		inter = get_inter(map, (size_t)(map->height * map->width), primary);
+		tmp = get_color2(map, inter, shading, map->scene.max_depth);
+		color_average_array(map, shading, tmp);
+		free(primary);
+		free(inter);
+		i++;
+	}
+}
+
 void	raytrace(t_map *map)
 {
 	t_ray			*primary;
@@ -52,11 +73,13 @@ void	raytrace(t_map *map)
 	int				*shading;
 
 	shading = NULL;
-	primary = get_primary(map);
+	primary = get_primary(map, 0);
 	inter = get_inter(map, (size_t)(map->height * map->width), primary);
+	printf("coucou\n");
 	shading = get_color2(map, inter, shading, map->scene.max_depth);
+	if (map->multi_sampling)
+		multi_sample(map, shading, map->multi_sampling);
 	disp(map, shading);
 	free(primary);
 	free(inter);
-	//free(shading);
 }

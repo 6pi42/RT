@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/04/15 13:53:34 by emontagn          #+#    #+#             */
-/*   Updated: 2016/07/16 11:27:23 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/18 17:17:18 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,16 +59,12 @@ cl_float4	get_vector(char *line)
 	vector.x = atof(tab[0]);
 	vector.y = atof(tab[1]);
 	vector.z = atof(tab[2]);
-	if (i == 3)
-		vector.w = 0.0f;
-	else
+	vector.w = 0.0f;
+	if (i == 4)
 		vector.w = atof(tab[3]);
-	i = 0;
-	while (tab[i])
-	{
+	i = -1;
+	while (tab[++i])
 		free(tab[i]);
-		i++;
-	}
 	free(tab);
 	return (vector);
 }
@@ -129,62 +125,4 @@ cl_float4	get_radius2(char *line)
 	}
 	free(tab);
 	return (radius);
-}
-
-cl_float4	get_rgb(char *line)
-{
-	char		**tab;
-	cl_float4	color;
-	int			i;
-
-	i = 0;
-	while (line[i] == '\t')
-		i++;
-	tab = ft_strsplit(line + i, ' ');
-	i = 0;
-	while (tab[i])
-		i++;
-	if (i != 3)
-		printf("error\n");
-	color.x = atoi(tab[0]);
-	color.y = atoi(tab[1]);
-	color.z = atoi(tab[2]);
-	color.w = 0.0f;
-	i = 0;
-	while (tab[i])
-	{
-		free(tab[i]);
-		i++;
-	}
-	free(tab);
-	return (color);
-}
-
-int		get_rgb_int(char *line)
-{
-	char		**tab;
-	int			rgb;
-	int			i;
-
-	i = 0;
-	while (line[i] == '\t')
-		i++;
-	tab = ft_strsplit(line + i, ' ');
-	i = 0;
-	while (tab[i])
-		i++;
-	if (i != 3)
-		printf("error\n");
-	rgb = 0;
-	rgb += atoi(tab[0]) * 256 * 256;
-	rgb += atoi(tab[1]) * 256;
-	rgb += atoi(tab[2]);
-	i = 0;
-	while (tab[i])
-	{
-		free(tab[i]);
-		i++;
-	}
-	free(tab);
-	return (rgb);
 }

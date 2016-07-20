@@ -1,13 +1,12 @@
 /* ************************************************************************** */
-
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   gtk_build.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: apaget <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/05/18 23:13:36 by apaget            #+#    #+#             */
-/*   Updated: 2016/05/19 12:57:38 by apaget           ###   ########.fr       */
+/*   Created: 2016/07/18 14:20:37 by apaget            #+#    #+#             */
+/*   Updated: 2016/07/18 14:22:03 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +14,18 @@
 
 void	set_css_style(t_map *map, char *css_file)
 {
-	GtkCssProvider *provider;
-	GdkDisplay *display;
-	GdkScreen *screen;
-	GError *error;
+	GtkCssProvider	*provider;
+	GdkDisplay		*display;
+	GdkScreen		*screen;
 
 	(void)map;
-	(void)error;
 	(void)css_file;
 	display = gdk_display_get_default();
 	screen = gdk_display_get_default_screen(display);
 	provider = gtk_css_provider_new();
 	provider = gtk_css_provider_get_named("Adwaita", "dark");
-	//gtk_css_provider_load_from_path(provider, css_file, &error);
 	gtk_style_context_add_provider_for_screen(screen,
-									GTK_STYLE_PROVIDER (provider),
+									GTK_STYLE_PROVIDER(provider),
 									GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 	g_object_unref(provider);
 }

@@ -6,8 +6,8 @@ SCENE
 {
 	- Window
 	{
-		width: 800
-		height: 700
+		width: 500
+		height: 200
 	}
 
 	- Camera
@@ -21,7 +21,7 @@ SCENE
 	{
 		type: 1
 		rgb: 255 255 255
-		pos: 100.0 250.0 50.0
+		pos: 250.0 100.0 0.0
 		intensity: 42.0
 	}
 
@@ -35,30 +35,24 @@ MATERIAL
 {
 	- mat 0
 	{
-		bump: perlin
-		off_x: 0.0
-		off_y: 0.0
-		scale: 0.001
+		tex: bois.jpg
 		ka: 1.0
 		ks: 1.0
 		kd: 0.8
 		ktran: 0.0
 		kreflec: 0.9
-		krefrac: 0.0
+		krefrac: 1.0
 	}
 
 	- mat 0
 	{
-		tex: brick.png
-		off_x: 0.0
-		off_y: 0.0
-		scale: 0.001
+		tex: damier
 		ka: 2.0
 		ks: 1.0
 		kd: 0.8
 		ktran: 0.0
 		kreflec: 0.9
-		krefrac: 0.0
+		krefrac: 1.0
 	}
 
 	- mat 0
@@ -68,7 +62,7 @@ MATERIAL
 		kd: 0.8
 		ktran: 0.0
 		kreflec: 0.9
-		krefrac: 0.0
+		krefrac: 1.0
 	}
 
 	- mat 0
@@ -78,7 +72,7 @@ MATERIAL
 		kd: 0.8
 		ktran: 0.0
 		kreflec: 0.9
-		krefrac: 0.0
+		krefrac: 1.0
 	}
 
 	- mat 0
@@ -89,7 +83,7 @@ MATERIAL
 		kd: 0.8
 		ktran: 0.0
 		kreflec: 0.9
-		krefrac: 0.0
+		krefrac: 1.0
 	}
 
 	- mat 0
@@ -99,12 +93,19 @@ MATERIAL
 		kd: 0.8
 		ktran: 0.0
 		kreflec: 0.9
-		krefrac: 0.0
+		krefrac: 1.0
 	}
 }
 
 SHAPES
 {
+	- Plane
+	{
+		id: 0
+		rgb: 128 128 0
+		pos: 0.0 -20.0 0.0
+		nor: 0.0 1.0 0.0
+	}
 
 	- Cylinder
 	{
@@ -133,14 +134,5 @@ SHAPES
 		agl: 0.2
 		dir: 0.0 1.0 0.0
 		size: 20.0
-	}
-
-	- Ellipsoid
-	{
-		id: 4
-		pos: 0.0 0.0 0.0
-		rgb: 255 255 0
-		rad: 20.0 50.0 90.0
-		neg: 0
 	}
 }

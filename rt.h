@@ -6,7 +6,7 @@
 /*   By: emontagn <emontagn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/03/31 11:34:06 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/17 21:10:45 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/19 17:12:19 by apaget           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,18 @@ typedef struct			s_shape
 	cl_float4			axe_decoupe;
 	cl_int				mat_id;
 }						t_shape;
+
+typedef struct			s_obj
+{
+	int					nb_v;
+	cl_float4			*v;
+	int					nb_vn;
+	cl_float4			*vn;
+	int					nb_vt;
+	cl_float4			*vt;
+	int					nb_f;
+	t_shape				*f;
+}						t_obj;
 
 typedef struct			s_camera
 {
@@ -204,6 +216,7 @@ typedef struct			s_map
 	GtkWidget			*interface;
 	GtkWidget			*world_interface;
 	GtkWidget			*event_box;
+	size_t				work_size;
 	unsigned int		multi_sampling;
 	t_spot				current_spot;
 	t_conf				config;
@@ -269,11 +282,11 @@ void					move(t_map *map);
 void					rotate(t_map *map);
 void					init_key(t_map *map);
 int						key_release(GtkWidget *widget, GdkEventKey *event,
-							t_map *map);
+		t_map *map);
 int						key_press(GtkWidget *widget, GdkEventKey *event,
-							t_map *map);
+		t_map *map);
 void					motion_notify(GtkWidget *widget, GdkEventMotion *event,
-							t_map *map);
+		t_map *map);
 
 cl_float4				sub_vec(cl_float4 v1, cl_float4 v2);
 cl_float4				add_vec(cl_float4 v1, cl_float4 v2);
@@ -294,6 +307,7 @@ int						color_mul(int color, float coef);
 int						color_add(int c1, int c2);
 int						color_sub(int c1, int c2);
 int						color_average(int *rgb, int len);
+void					color_average_array(t_map *map, int *a1, int *a2);
 int						*post_greyshade(t_map *map, int *color);
 int						*post_sepia(t_map *map, int *color);
 
@@ -301,7 +315,7 @@ void					raytracer(t_map *map);
 cl_float4				get_inter_pos(t_ray ray, t_inter inter);
 void					raytrace(t_map *map);
 int						*shade(t_map *map, t_inter *inter);
-t_ray					*get_primary(t_map *map);
+t_ray					*get_primary(t_map *map, int multi);
 void					init_inter(t_map *map, size_t work_size);
 t_inter					*get_inter(t_map *map, size_t work_size, t_ray *ray);
 void					init_cam(t_map *map);
@@ -314,21 +328,23 @@ int						color_add4(int c1, int c2, int c3, int c4);
 int						bilinear_filtering(t_tex *tex, float x, float y);
 int						*get_normal_perlin(int *tex, int height, int width);
 cl_float4				get_bumped_normal(t_map *map, t_inter inter,
-							t_shape shape, cl_float4 inter_pos);
+		t_shape shape, cl_float4 inter_pos);
 cl_float4				plane_bumpmapping(t_tex *tex, t_inter inter,
-							cl_float4 inter_pos);
+		cl_float4 inter_pos);
 cl_float4				sphere_bumpmapping(t_tex *tex, t_inter inter);
 int						get_texture_color(t_map *map, t_inter inter,
-							t_shape shape, cl_float4 inter_pos);
+		t_shape shape, cl_float4 inter_pos);
 int						plane_texturing(t_tex *tex, t_inter inter,
-							cl_float4 inter_pos);
+		cl_float4 inter_pos);
 int						sphere_texturing(t_tex *tex, t_inter inter);
 cl_float4				get_perpendicular_vec(cl_float4 normal);
 cl_float4				mul_mat3_vector(cl_float4 tan, cl_float4 bi,
-							cl_float4 norm, cl_float4 bump);
+		cl_float4 norm, cl_float4 bump);
 cl_float4				get_bump_normal(int color);
 int						get_chessboard_color(t_map *map, t_inter inter,
-							t_shape shape, cl_float4 inter_pos);
+		t_shape shape, cl_float4 inter_pos);
+cl_float4				get_sin_perturbation(t_map *map, t_shape shape,
+		cl_float4 inter_pos, t_inter inter);
 
 int						ft_strsearch(char *str1, char *str2);
 t_shape					*parse(t_map *map, char *file);
@@ -340,7 +356,6 @@ void					get_plane(int fd, t_parse *fuck);
 void					get_cone(int fd, t_parse *fuck);
 void					get_cylinder(int fd, t_parse *fuck);
 void					get_triangle(int fd, t_parse *fuck);
-void					get_thorus(int fd, t_parse *fuck);
 void					get_cercle(int fd, t_parse *fuck);
 cl_float4				get_radius2(char *line);
 
@@ -357,28 +372,30 @@ void					get_camera(int fd, t_map *map);
 int						get_rgb_int(char *line);
 void					get_material(int fd, t_parse *fuck);
 void					init_material_value(t_mat *mat, t_parse *fuck);
+void					init_shape(t_parse *fuck);
+void					iter_cyl(t_parse *fuck, char *line);
 
 void					click_mult_sampling_button(GtkWidget *widget,
-							t_map *map);
+		t_map *map);
 void					sampling_bar(GtkWidget *widget, t_map *map);
 void					choose_file(GtkWidget *widget, t_map *map);
 void					color_bare(GtkWidget *widget, t_map *map);
 void					moove_obj(GtkWidget *widget, t_map *map);
 void					add_color_scroll_bar(GtkWidget *interface,
-							char *label_str, t_map *map);
+		char *label_str, t_map *map);
 void					add_coef_scroll_bar(GtkWidget *interface,
-							char *label_str, t_map *map);
+		char *label_str, t_map *map);
 void					check_bar(GtkWidget *widget, t_map *map);
 void					create_obj_interface(GtkWidget *interface, t_map *map);
 void					create_interface(t_map *map);
 void					update_old_pos(GtkWidget *widget,
-							GdkEventCrossing *event, t_map *map);
+		GdkEventCrossing *event, t_map *map);
 void					switch_focus(GtkWidget *widget,
-							GdkEventButton *event, t_map *map);
+		GdkEventButton *event, t_map *map);
 void					redraw(GtkWidget *widget, GdkEvent *event, t_map *map);
 void					set_obj_box(t_map *map);
 void					leave_event(GtkWidget *widget,
-							GdkEventCrossing *event, t_map *map);
+		GdkEventCrossing *event, t_map *map);
 void					free_scene(t_scene *scene);
 void					connect_signal_gtk(t_map *map);
 void					exit_rt(t_map *map);
@@ -392,30 +409,55 @@ void					load_new_scene(t_map *map, char *file_name);
 void					open_generateur_scene(t_map *map);
 int						color_from_float4(cl_float4 color);
 int						*get_color2(t_map *map, t_inter *inter,
-							int *color, int depth);
+		int *color, int depth);
 int						*get_reflect_color_tab(t_map *map, t_inter *inter,
-							int *color, int depth);
+		int *color, int depth);
 void					create_left_bar(GtkWidget *interface,
-							t_map *map, GtkWidget *onglet);
+		t_map *map, GtkWidget *onglet);
 void					create_obj_interface(GtkWidget *interface, t_map *map);
 void					create_interface(t_map *map);
+void					create_world_conf(t_map *map, GtkWidget *onglet);
+void					create_mat_conf(t_map *map, GtkWidget *onglet);
 void					manip_conf(t_map *map, GtkWidget *interface);
+void					create_transform_bar(t_map *map, GtkWidget *onglet);
 void					create_sub_menu(GtkWidget *menu,
-							t_map *map, char *label);
+		t_map *map, char *label);
 void					create_menu(GtkWidget *interface, t_map *map);
 void					set_css_style(t_map *map, char *css_file);
 void					create_label(GtkWidget *interface, char *label_str);
 void					set_event(GtkWidget *event_box, t_map *map);
 void					create_multi_sampling_bar(GtkWidget *interface,
-							t_map *map);
+		t_map *map);
 void					create_max_depth_bar(GtkWidget *interface, t_map *map);
 void					add_sep(GtkWidget *interface);
 int						*get_perl_tex(int height, int width, float res);
 void					add_moove_scroll_bar(GtkWidget *interface,
-							char *label_str, t_map *map, char *name);
+		char *label_str, t_map *map, char *name);
 void					add_rotate_scroll_bar(GtkWidget *interface,
-							char *label_str, t_map *map);
+		char *label_str, t_map *map);
 void					rotate_cone_cyl(GtkWidget *widget, t_map *map);
 void					rotate_obj(GtkWidget *widget, t_map *map);
+
+void					obj_read(t_map *map, char *file_name);
+cl_float4				get_objvector(char *line);
+t_shape					get_face(char *line, t_obj *obj);
+
+void	print_scene(t_map *map);
+t_tex	*load_perlin_tex(void);
+t_tex	*load_perlin_bump(void);
+t_ray	get_refract_ray(t_inter inter, t_ray ray, double indice);
+t_ray	get_reflec_ray(t_inter inter, t_ray ray);
+void	get_value(char *line, char *search, float *value);
+void	get_value_parse(t_mat *mat, char *line, t_parse *fuck);
+void	get_tex(t_mat *mat, char *line, t_parse *fuck);
+void	get_bump(t_mat *mat, char *line, t_parse *fuck);
+int		get_nb_spot(char *file);
+int		get_nb_mat(char *file);
+int		get_color(t_map *map, t_mat mat, t_utils utils, int color);
+void	connect_check_button2(GtkWidget *widget, t_map *map);
+void	init_parser_value(t_map *map, t_parse *fuck);
+int		get_trans_color(t_map *map, int color, t_inter tmp);
+int		test_obj(char *filename);
+void	free_tab(char **tab);
 
 #endif

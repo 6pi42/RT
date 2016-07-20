@@ -1,0 +1,139 @@
+RT
+- - -
+
+
+SCENE
+{
+	- Window
+	{
+		width: 800
+		height: 700
+	}
+
+	- Camera
+	{
+		pos: 20.0 20.0 0.0
+		phi: 0.0
+		theta: 0.0
+	}
+
+	- Spotlight
+	{
+		type: 1
+		rgb: 255 255 255
+		pos: 100.0 250.0 50.0
+		intensity: 42.0
+	}
+
+	- Multi Sampling
+	{
+		power: 0
+	}
+}
+
+MATERIAL
+{
+	- mat 0
+	{
+		ka: 0.76
+		ks: 1.00
+		kd: 0.77
+		ktran: 0.00
+		kreflec: 0.90
+		krefrac: 0.00
+		bump: water.jpg
+		off_x: 0.0
+		off_y: 0.0
+		scale: 0.1
+	}
+
+	- mat 1
+	{
+		tex: brick.png
+		bump: brick_n.png
+		scale: 0.01
+		off_x: 0.0
+		off_y: 0.0
+		ka: 0.4
+		ks: 0.8
+		kd: 0.2
+		ktran: 0.0
+		kreflec: 0.0
+		krefrac: 0.0
+	}
+
+	- mat 2
+	{
+		ka: 0.5
+		ks: 0.4
+		kd: 0.5
+		ktran: 0.0
+		kreflec: 0.9
+		krefrac: 0.0
+	}
+
+	- mat 0
+	{
+		ka: 4.0
+		ks: 1.0
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.9
+		krefrac: 0.0
+	}
+
+	- mat 0
+	{
+		ka: 6.0
+		ks: 1.0
+		kd: 0.8
+		ktran: 0.0
+		kreflec: 0.9
+		krefrac: 0.0
+	}
+}
+
+SHAPES
+{
+	- Plane
+	{
+		id: 0
+		rgb: 50 92 236
+		pos: 0.0 -20.0 0.0
+		nor: 0.0 1.0 0.0
+	}
+	- Plane
+	{
+		id: 1
+		rgb: 50 20 230
+		pos: -500.0 -20.0 -500.0
+		nor: 1.0 0.0 0.0
+	}
+	- Plane
+	{
+		id: 1
+		rgb: 50 20 230
+		pos: 500.0 -20.0 -500.0
+		nor: 1.0 0.0 0.0
+	}
+	- Plane
+	{
+		id: 1
+		rgb: 50 20 230
+		pos: 0.0 -200.0 -500.0
+		nor: 0.0 0.0 1.0
+	}
+	- Plane
+	{
+		id: 1
+		rgb: 50 20 230
+		pos: 0.0 -200.0 500.0
+		nor: 0.0 0.0 1.0
+	}
+	- Sphere
+	{
+		id: 2
+		pos: 255 0 0
+		rad: 50.0
+	}
+}

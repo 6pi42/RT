@@ -6,7 +6,7 @@
 /*   By: amathias <amathias@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/05/18 17:14:53 by amathias          #+#    #+#             */
-/*   Updated: 2016/07/17 13:33:55 by apaget           ###   ########.fr       */
+/*   Updated: 2016/07/18 15:22:42 by amathias         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,6 @@ void	init_inter(t_map *map, size_t work_size)
 t_inter	*get_inter(t_map *map, size_t work_size, t_ray *ray)
 {
 	t_inter		*ptr;
-	cl_event	event;
-	cl_ulong	time_start;
-	cl_ulong	time_end;
-	double		total_time;
 
 	ptr = (t_inter*)malloc(sizeof(t_inter) * work_size);
 	init_cam(map);
@@ -79,14 +75,8 @@ t_inter	*get_inter(t_map *map, size_t work_size, t_ray *ray)
 	clEnqueueWriteBuffer(map->env.cmds, map->env.clbuf.ray, CL_FALSE, 0,
 			work_size * sizeof(t_ray), ray, 0, NULL, NULL);
 	clEnqueueNDRangeKernel(map->env.cmds, map->env.kernel, 1, NULL,
-			&work_size, NULL, 0, NULL, &event);
+			&work_size, NULL, 0, NULL, NULL);
 	clEnqueueReadBuffer(map->env.cmds, map->env.clbuf.output,
 			CL_TRUE, 0, work_size * sizeof(t_inter), ptr, 0, NULL, NULL);
-	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START,
-			sizeof(time_start), &time_start, NULL);
-	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END,
-			sizeof(time_end), &time_end, NULL);
-	total_time = time_end - time_start;
-	//printf("\nExecution time = %0.3f ms\n", (total_time / 1000000.0));
 	return (ptr);
 }
